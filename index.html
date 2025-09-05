@@ -1,28 +1,212 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
   <title>清单Plus</title>
-  <link rel="manifest" href="manifest.json">
+
+  <!-- PWA hooks -->
+  <link rel="manifest" href="manifest.json" />
+  <meta name="theme-color" content="#0f1221" />
+  <link rel="icon" href="logo-192.png" sizes="192x192" />
+  <link rel="apple-touch-icon" href="logo-192.png" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+
+  <style>
+    :root {
+      --bg:#0b0e1a; --card:#13162a; --muted:#a9afc6; --text:#e9edf7;
+      --brand:#6f66ff; --brand-2:#8b7dff; --ok:#20c997; --danger:#ff6b6b;
+      --ring: 0 0 0 3px rgba(111,102,255,.25);
+    }
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;
+      color:var(--text);background:linear-gradient(180deg,#0e1130 0%, #0b0e1a 60%);
+      -webkit-font-smoothing:antialiased; text-rendering:optimizeLegibility;
+    }
+    .wrap{max-width:720px;margin:0 auto;padding:24px;min-height:100%;}
+    header{
+      display:flex;align-items:center;gap:12px;margin:8px 0 18px;
+    }
+    .logo{
+      width:40px;height:40px;border-radius:12px;background:#372f92 url('logo-192.png') center/85% no-repeat;
+      box-shadow:0 6px 20px rgba(111,102,255,.25);
+    }
+    h1{font-size:22px;margin:0;letter-spacing:.5px}
+    .muted{color:var(--muted);font-size:13px}
+
+    .card{background:var(--card);border:1px solid rgba(255,255,255,.06);border-radius:16px;box-shadow:0 10px 35px rgba(0,0,0,.35)}
+    .toolbar{display:flex;gap:10px;padding:14px;border-bottom:1px solid rgba(255,255,255,.06)}
+    input[type="text"]{
+      flex:1;border:none;border-radius:12px;padding:14px 14px;background:#0f1328;color:var(--text);
+      outline:none;box-shadow:inset 0 0 0 1px rgba(255,255,255,.06);
+    }
+    button{
+      border:none;background:var(--brand);color:white;font-weight:600;padding:14px 16px;border-radius:12px;cursor:pointer;
+      transition:transform .06s ease, box-shadow .12s ease; box-shadow:0 8px 20px rgba(111,102,255,.4);
+    }
+    button:active{transform:translateY(1px)}
+    .ghost{background:transparent;color:var(--muted);box-shadow:none;padding:12px 12px}
+    .ok{background:var(--ok);box-shadow:0 8px 20px rgba(32,201,151,.35)}
+
+    ul{list-style:none;margin:0;padding:8px 8px 6px}
+    li{
+      display:flex;align-items:center;gap:12px;padding:12px;border-radius:12px;margin:6px 6px;
+      background:#0e1226;border:1px solid rgba(255,255,255,.06)
+    }
+    .txt{flex:1;font-size:15px}
+    .done .txt{text-decoration:line-through;opacity:.6}
+    .tag{
+      font-size:11px;color:#c7cdf5;background:rgba(111,102,255,.15);padding:4px 8px;border-radius:999px;border:1px solid rgba(111,102,255,.35)
+    }
+    .actions{display:flex;gap:8px}
+    .chip{
+      font-size:12px;background:#0f1328;border:1px solid rgba(255,255,255,.08);color:var(--muted);
+      padding:6px 10px;border-radius:999px;cursor:pointer
+    }
+    .chip.active{color:white;background:rgba(111,102,255,.25);border-color:rgba(111,102,255,.6)}
+    .row{display:flex;gap:8px;align-items:center;justify-content:space-between;padding:12px}
+    .footer{margin:14px 2px;display:flex;gap:8px;flex-wrap:wrap}
+    .hint{font-size:12px;color:var(--muted);opacity:.9}
+    .ring{outline:var(--ring)}
+  </style>
 </head>
 <body>
-  <h1>📝 我的待办清单</h1>
-  <ul id="tasks"></ul>
-  <input type="text" id="new-task" placeholder="添加新任务...">
-  <button onclick="addTask()">添加</button>
+  <div class="wrap">
+    <header>
+      <div class="logo" aria-hidden="true"></div>
+      <div>
+        <h1>清单Plus</h1>
+        <div class="muted">一款简洁优雅的中文待办清单</div>
+      </div>
+    </header>
+
+    <div class="card">
+      <div class="toolbar">
+        <input id="newTask" type="text" placeholder="输入任务，回车添加…" />
+        <button id="addBtn">添加</button>
+        <button id="installBtn" class="ghost" title="安装到主屏幕">安装</button>
+      </div>
+
+      <div class="row">
+        <div class="muted">视图：</div>
+        <div class="actions">
+          <span class="chip active" data-filter="all">全部</span>
+          <span class="chip" data-filter="open">未完成</span>
+          <span class="chip" data-filter="done">已完成</span>
+          <span class="chip" id="clearDone">清除已完成</span>
+        </div>
+      </div>
+
+      <ul id="list"></ul>
+
+      <div class="footer row">
+        <div class="hint">✓ 支持离线、自动保存、添加到主屏幕</div>
+        <button id="exportBtn" class="ghost">导出</button>
+        <button id="importBtn" class="ghost">导入</button>
+        <input id="importFile" type="file" accept="application/json" hidden />
+      </div>
+    </div>
+  </div>
 
   <script>
-    function addTask() {
-      let input = document.getElementById("new-task");
-      let list = document.getElementById("tasks");
-      if (input.value.trim() !== "") {
-        let li = document.createElement("li");
-        li.textContent = input.value;
-        list.appendChild(li);
-        input.value = "";
-      }
+  // ---------- tiny store ----------
+  const storeKey = 'qingdanplus.tasks.v1';
+  const $ = s => document.querySelector(s);
+  const $$ = s => Array.from(document.querySelectorAll(s));
+  const state = {
+    tasks: JSON.parse(localStorage.getItem(storeKey) || '[]'),
+    filter: 'all'
+  };
+  const save = () => localStorage.setItem(storeKey, JSON.stringify(state.tasks));
+
+  // ---------- render ----------
+  function render(){
+    const ul = $('#list'); ul.innerHTML = '';
+    const view = state.tasks.filter(t =>
+      state.filter==='all' ? true :
+      state.filter==='open' ? !t.done : t.done
+    );
+    if(view.length === 0){
+      ul.innerHTML = `<li class="muted" style="justify-content:center;background:transparent;border:none">这里还没有任务～</li>`;
+      return;
     }
+    for(const t of view){
+      const li = document.createElement('li');
+      if(t.done) li.classList.add('done');
+      li.innerHTML = `
+        <span class="tag">${t.tag||'普通'}</span>
+        <div class="txt">${escapeHtml(t.text)}</div>
+        <div class="actions">
+          <button class="chip ok" data-act="toggle">${t.done?'恢复':'完成'}</button>
+          <button class="chip" data-act="edit">编辑</button>
+          <button class="chip" data-act="del" style="color:#ff8c8c;border-color:rgba(255,107,107,.5)">删除</button>
+        </div>
+      `;
+      li.querySelector('[data-act="toggle"]').onclick = () => { t.done=!t.done; save(); render(); }
+      li.querySelector('[data-act="edit"]').onclick = () => {
+        const nt = prompt('编辑任务内容：', t.text);
+        if(nt!=null && nt.trim()!==''){ t.text = nt.trim(); save(); render(); }
+      }
+      li.querySelector('[data-act="del"]').onclick = () => {
+        state.tasks = state.tasks.filter(x => x !== t); save(); render();
+      }
+      ul.appendChild(li);
+    }
+    // update chips
+    $$('.chip[data-filter]').forEach(ch => ch.classList.toggle('active', ch.dataset.filter===state.filter));
+  }
+  const escapeHtml = s => s.replace(/[&<>"']/g, c=>({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' }[c]));
+
+  // ---------- events ----------
+  function addTaskFromInput(){
+    const inp = $('#newTask');
+    const v = inp.value.trim();
+    if(!v) return;
+    state.tasks.unshift({ text:v, tag:'普通', done:false, ts:Date.now() });
+    inp.value=''; save(); render(); flash(inp);
+  }
+  const flash = el => { el.classList.add('ring'); setTimeout(()=>el.classList.remove('ring'), 350); }
+
+  $('#addBtn').onclick = addTaskFromInput;
+  $('#newTask').addEventListener('keydown', e => { if(e.key==='Enter') addTaskFromInput(); });
+  $$('.chip[data-filter]').forEach(ch => ch.onclick = () => { state.filter = ch.dataset.filter; render(); });
+  $('#clearDone').onclick = () => { state.tasks = state.tasks.filter(t=>!t.done); save(); render(); };
+
+  // import / export
+  $('#exportBtn').onclick = () => {
+    const blob = new Blob([JSON.stringify(state.tasks,null,2)], {type:'application/json'});
+    const a = document.createElement('a'); a.href = URL.createObjectURL(blob);
+    a.download = 'qingdanplus-tasks.json'; a.click(); URL.revokeObjectURL(a.href);
+  };
+  $('#importBtn').onclick = () => $('#importFile').click();
+  $('#importFile').onchange = async e => {
+    const file = e.target.files[0]; if(!file) return;
+    try{
+      const data = JSON.parse(await file.text());
+      if(Array.isArray(data)){ state.tasks = data; save(); render(); }
+      else alert('文件格式不正确');
+    }catch{ alert('解析失败'); }
+    e.target.value = '';
+  };
+
+  // ---------- install prompt ----------
+  let deferredPrompt = null;
+  window.addEventListener('beforeinstallprompt', e => { e.preventDefault(); deferredPrompt = e; $('#installBtn').style.display='inline-block'; });
+  $('#installBtn').onclick = async () => {
+    if(!deferredPrompt) return alert('请在浏览器菜单中选择“添加到主屏幕”');
+    deferredPrompt.prompt(); await deferredPrompt.userChoice; deferredPrompt = null; $('#installBtn').style.display='none';
+  };
+
+  // ---------- service worker ----------
+  if('serviceWorker' in navigator){
+    window.addEventListener('load', () => navigator.serviceWorker.register('./service-worker.js'));
+  }
+
+  // init
+  render();
   </script>
 </body>
 </html>
