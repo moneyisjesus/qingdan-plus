@@ -1,212 +1,230 @@
+Got it — you want the simple list **plus** due date & time like before. Here’s a drop-in **`index.html`** that adds:
+
+* Title + **due date** + **time**
+* Quick chips: Today / Tomorrow / Next week
+* Sorts by soonest due; overdue turns red
+* Keeps everything offline in `localStorage`
+* Still installable as a PWA (works with your existing `manifest.json` + `service-worker.js`)
+
+### What to do
+
+1. Replace your current `index.html` with the code below.
+2. Commit to GitHub → wait \~1–2 minutes → refresh the app on your phone.
+
+---
+
+```html
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-  <title>清单Plus</title>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"/>
+<title>清单Plus</title>
 
-  <!-- PWA hooks -->
-  <link rel="manifest" href="manifest.json" />
-  <meta name="theme-color" content="#0f1221" />
-  <link rel="icon" href="logo-192.png" sizes="192x192" />
-  <link rel="apple-touch-icon" href="logo-192.png" />
-  <meta name="apple-mobile-web-app-capable" content="yes" />
-  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+<link rel="manifest" href="manifest.json" />
+<meta name="theme-color" content="#0f1221" />
+<link rel="icon" href="logo-192.png" sizes="192x192" />
+<link rel="apple-touch-icon" href="logo-192.png" />
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
 
-  <style>
-    :root {
-      --bg:#0b0e1a; --card:#13162a; --muted:#a9afc6; --text:#e9edf7;
-      --brand:#6f66ff; --brand-2:#8b7dff; --ok:#20c997; --danger:#ff6b6b;
-      --ring: 0 0 0 3px rgba(111,102,255,.25);
-    }
-    *{box-sizing:border-box}
-    html,body{height:100%}
-    body{
-      margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;
-      color:var(--text);background:linear-gradient(180deg,#0e1130 0%, #0b0e1a 60%);
-      -webkit-font-smoothing:antialiased; text-rendering:optimizeLegibility;
-    }
-    .wrap{max-width:720px;margin:0 auto;padding:24px;min-height:100%;}
-    header{
-      display:flex;align-items:center;gap:12px;margin:8px 0 18px;
-    }
-    .logo{
-      width:40px;height:40px;border-radius:12px;background:#372f92 url('logo-192.png') center/85% no-repeat;
-      box-shadow:0 6px 20px rgba(111,102,255,.25);
-    }
-    h1{font-size:22px;margin:0;letter-spacing:.5px}
-    .muted{color:var(--muted);font-size:13px}
-
-    .card{background:var(--card);border:1px solid rgba(255,255,255,.06);border-radius:16px;box-shadow:0 10px 35px rgba(0,0,0,.35)}
-    .toolbar{display:flex;gap:10px;padding:14px;border-bottom:1px solid rgba(255,255,255,.06)}
-    input[type="text"]{
-      flex:1;border:none;border-radius:12px;padding:14px 14px;background:#0f1328;color:var(--text);
-      outline:none;box-shadow:inset 0 0 0 1px rgba(255,255,255,.06);
-    }
-    button{
-      border:none;background:var(--brand);color:white;font-weight:600;padding:14px 16px;border-radius:12px;cursor:pointer;
-      transition:transform .06s ease, box-shadow .12s ease; box-shadow:0 8px 20px rgba(111,102,255,.4);
-    }
-    button:active{transform:translateY(1px)}
-    .ghost{background:transparent;color:var(--muted);box-shadow:none;padding:12px 12px}
-    .ok{background:var(--ok);box-shadow:0 8px 20px rgba(32,201,151,.35)}
-
-    ul{list-style:none;margin:0;padding:8px 8px 6px}
-    li{
-      display:flex;align-items:center;gap:12px;padding:12px;border-radius:12px;margin:6px 6px;
-      background:#0e1226;border:1px solid rgba(255,255,255,.06)
-    }
-    .txt{flex:1;font-size:15px}
-    .done .txt{text-decoration:line-through;opacity:.6}
-    .tag{
-      font-size:11px;color:#c7cdf5;background:rgba(111,102,255,.15);padding:4px 8px;border-radius:999px;border:1px solid rgba(111,102,255,.35)
-    }
-    .actions{display:flex;gap:8px}
-    .chip{
-      font-size:12px;background:#0f1328;border:1px solid rgba(255,255,255,.08);color:var(--muted);
-      padding:6px 10px;border-radius:999px;cursor:pointer
-    }
-    .chip.active{color:white;background:rgba(111,102,255,.25);border-color:rgba(111,102,255,.6)}
-    .row{display:flex;gap:8px;align-items:center;justify-content:space-between;padding:12px}
-    .footer{margin:14px 2px;display:flex;gap:8px;flex-wrap:wrap}
-    .hint{font-size:12px;color:var(--muted);opacity:.9}
-    .ring{outline:var(--ring)}
-  </style>
+<style>
+  :root{--bg:#0b0e1a;--card:#13162a;--muted:#a9afc6;--text:#e9edf7;--brand:#6f66ff;--ok:#20c997;--danger:#ff6b6b}
+  *{box-sizing:border-box} html,body{height:100%}
+  body{margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;color:var(--text);
+       background:linear-gradient(180deg,#0e1130 0%, #0b0e1a 60%)}
+  .wrap{max-width:760px;margin:0 auto;padding:20px}
+  header{display:flex;gap:12px;align-items:center;margin:6px 0 14px}
+  .logo{width:40px;height:40px;border-radius:12px;background:#372f92 url('logo-192.png') center/85% no-repeat}
+  h1{font-size:22px;margin:0}
+  .muted{color:var(--muted);font-size:13px}
+  .card{background:#13162a;border:1px solid rgba(255,255,255,.08);border-radius:16px;box-shadow:0 10px 35px rgba(0,0,0,.35)}
+  .toolbar{display:grid;grid-template-columns:1fr 130px 110px auto;gap:10px;padding:14px;border-bottom:1px solid rgba(255,255,255,.06)}
+  input,button{border-radius:12px;border:1px solid rgba(255,255,255,.08);background:#0f1328;color:var(--text)}
+  input{padding:12px 12px;outline:none}
+  button{padding:12px 14px;border:none;background:var(--brand);color:#fff;font-weight:600;cursor:pointer}
+  button.ghost{background:transparent;border:1px solid rgba(255,255,255,.12);color:var(--muted)}
+  button.ok{background:var(--ok)} button.danger{background:var(--danger)}
+  .chips{display:flex;gap:8px;flex-wrap:wrap;padding:10px 14px;border-bottom:1px solid rgba(255,255,255,.06)}
+  .chip{font-size:12px;background:#0f1328;border:1px solid rgba(255,255,255,.10);color:var(--muted);padding:6px 10px;border-radius:999px;cursor:pointer}
+  .chip.active{color:#fff;border-color:rgba(111,102,255,.5);background:rgba(111,102,255,.22)}
+  ul{list-style:none;margin:0;padding:8px}
+  li{display:grid;grid-template-columns:auto 1fr auto;gap:10px;align-items:center;
+     padding:12px;margin:6px;border-radius:12px;background:#0e1226;border:1px solid rgba(255,255,255,.06)}
+  .title{font-size:15px} .meta{font-size:12px;color:var(--muted)}
+  .overdue .meta{color:#ffc2c2} .done .title{text-decoration:line-through;opacity:.6}
+</style>
 </head>
 <body>
-  <div class="wrap">
-    <header>
-      <div class="logo" aria-hidden="true"></div>
-      <div>
-        <h1>清单Plus</h1>
-        <div class="muted">一款简洁优雅的中文待办清单</div>
-      </div>
-    </header>
-
-    <div class="card">
-      <div class="toolbar">
-        <input id="newTask" type="text" placeholder="输入任务，回车添加…" />
-        <button id="addBtn">添加</button>
-        <button id="installBtn" class="ghost" title="安装到主屏幕">安装</button>
-      </div>
-
-      <div class="row">
-        <div class="muted">视图：</div>
-        <div class="actions">
-          <span class="chip active" data-filter="all">全部</span>
-          <span class="chip" data-filter="open">未完成</span>
-          <span class="chip" data-filter="done">已完成</span>
-          <span class="chip" id="clearDone">清除已完成</span>
-        </div>
-      </div>
-
-      <ul id="list"></ul>
-
-      <div class="footer row">
-        <div class="hint">✓ 支持离线、自动保存、添加到主屏幕</div>
-        <button id="exportBtn" class="ghost">导出</button>
-        <button id="importBtn" class="ghost">导入</button>
-        <input id="importFile" type="file" accept="application/json" hidden />
-      </div>
+<div class="wrap">
+  <header>
+    <div class="logo" aria-hidden="true"></div>
+    <div>
+      <h1>清单Plus</h1>
+      <div class="muted">带有日期与时间的待办清单（离线可用）</div>
     </div>
+  </header>
+
+  <div class="card">
+    <div class="toolbar">
+      <input id="taskText" placeholder="输入任务…"/>
+      <input id="taskDate" type="date"/>
+      <input id="taskTime" type="time"/>
+      <button id="addBtn">添加</button>
+    </div>
+
+    <div class="chips">
+      <span class="chip" data-quick="today">今天</span>
+      <span class="chip" data-quick="tomorrow">明天</span>
+      <span class="chip" data-quick="nextweek">下周同日</span>
+      <span class="chip" data-filter="all">全部</span>
+      <span class="chip active" data-filter="open">未完成</span>
+      <span class="chip" data-filter="done">已完成</span>
+      <span class="chip" id="clearDone">清除已完成</span>
+      <span class="chip" id="installBtn">安装到主屏幕</span>
+    </div>
+
+    <ul id="list"></ul>
   </div>
+</div>
 
-  <script>
-  // ---------- tiny store ----------
-  const storeKey = 'qingdanplus.tasks.v1';
-  const $ = s => document.querySelector(s);
-  const $$ = s => Array.from(document.querySelectorAll(s));
-  const state = {
-    tasks: JSON.parse(localStorage.getItem(storeKey) || '[]'),
-    filter: 'all'
-  };
-  const save = () => localStorage.setItem(storeKey, JSON.stringify(state.tasks));
+<script>
+const $ = s=>document.querySelector(s), $$=s=>Array.from(document.querySelectorAll(s));
+const storeKey='qingdanplus.tasks.v2';
 
-  // ---------- render ----------
-  function render(){
-    const ul = $('#list'); ul.innerHTML = '';
-    const view = state.tasks.filter(t =>
-      state.filter==='all' ? true :
-      state.filter==='open' ? !t.done : t.done
-    );
-    if(view.length === 0){
-      ul.innerHTML = `<li class="muted" style="justify-content:center;background:transparent;border:none">这里还没有任务～</li>`;
-      return;
-    }
-    for(const t of view){
-      const li = document.createElement('li');
-      if(t.done) li.classList.add('done');
-      li.innerHTML = `
-        <span class="tag">${t.tag||'普通'}</span>
-        <div class="txt">${escapeHtml(t.text)}</div>
-        <div class="actions">
-          <button class="chip ok" data-act="toggle">${t.done?'恢复':'完成'}</button>
-          <button class="chip" data-act="edit">编辑</button>
-          <button class="chip" data-act="del" style="color:#ff8c8c;border-color:rgba(255,107,107,.5)">删除</button>
-        </div>
-      `;
-      li.querySelector('[data-act="toggle"]').onclick = () => { t.done=!t.done; save(); render(); }
-      li.querySelector('[data-act="edit"]').onclick = () => {
-        const nt = prompt('编辑任务内容：', t.text);
-        if(nt!=null && nt.trim()!==''){ t.text = nt.trim(); save(); render(); }
-      }
-      li.querySelector('[data-act="del"]').onclick = () => {
-        state.tasks = state.tasks.filter(x => x !== t); save(); render();
-      }
-      ul.appendChild(li);
-    }
-    // update chips
-    $$('.chip[data-filter]').forEach(ch => ch.classList.toggle('active', ch.dataset.filter===state.filter));
+let state = {
+  tasks: JSON.parse(localStorage.getItem(storeKey) || '[]'), // [{id,text,tsDue,done}]
+  filter: 'open'
+};
+const save = () => localStorage.setItem(storeKey, JSON.stringify(state.tasks));
+const fmt = ts => {
+  if(!ts) return '无截止';
+  const d=new Date(ts);
+  const pad=n=>String(n).padStart(2,'0');
+  const ym = `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`;
+  const hm = `${pad(d.getHours())}:${pad(d.getMinutes())}`;
+  return `${ym} ${hm}`;
+};
+const isOverdue = t => !t.done && t.tsDue && t.tsDue < Date.now();
+
+function render(){
+  // sort: unfinished earliest first, then finished
+  state.tasks.sort((a,b)=>{
+    const aKey = (a.done?1:0)*1e15 + (a.tsDue || 9e14);
+    const bKey = (b.done?1:0)*1e15 + (b.tsDue || 9e14);
+    return aKey - bKey;
+  });
+
+  const list = $('#list'); list.innerHTML='';
+  const data = state.tasks.filter(t =>
+    state.filter==='all' ? true : state.filter==='open' ? !t.done : t.done
+  );
+  if(data.length===0){ list.innerHTML=`<li class="meta" style="justify-content:center;background:transparent;border:none">暂无任务</li>`; return; }
+
+  for(const t of data){
+    const li=document.createElement('li');
+    if(t.done) li.classList.add('done');
+    if(isOverdue(t)) li.classList.add('overdue');
+    li.innerHTML = `
+      <input type="checkbox" ${t.done?'checked':''} aria-label="完成"/>
+      <div>
+        <div class="title">${escapeHtml(t.text)}</div>
+        <div class="meta">${fmt(t.tsDue)}</div>
+      </div>
+      <div>
+        <button class="chip" data-edit>编辑</button>
+        <button class="chip danger" data-del>删除</button>
+      </div>
+    `;
+    li.querySelector('input').onchange = e => { t.done = e.target.checked; save(); render(); };
+    li.querySelector('[data-del]').onclick = ()=>{ state.tasks = state.tasks.filter(x=>x!==t); save(); render(); };
+    li.querySelector('[data-edit]').onclick = ()=>{
+      const nt = prompt('编辑任务：', t.text); if(nt==null) return;
+      const d0 = t.tsDue ? new Date(t.tsDue) : new Date();
+      const nd = prompt('日期（YYYY-MM-DD）', `${d0.getFullYear()}-${pad(d0.getMonth()+1)}-${pad(d0.getDate())}`);
+      if(nd==null) return;
+      const ntm = prompt('时间（HH:MM）', `${pad(d0.getHours())}:${pad(d0.getMinutes())}`); if(ntm==null) return;
+      const ts = toTs(nd, ntm);
+      t.text = nt.trim()||t.text; t.tsDue = ts; save(); render();
+    };
+    list.appendChild(li);
   }
-  const escapeHtml = s => s.replace(/[&<>"']/g, c=>({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' }[c]));
+  $$('.chip[data-filter]').forEach(ch=>ch.classList.toggle('active', ch.dataset.filter===state.filter));
+}
+const pad = n => String(n).padStart(2,'0');
+const toTs = (dateStr,timeStr) => {
+  if(!dateStr && !timeStr) return null;
+  const [y,m,d] = (dateStr||'').split('-').map(Number);
+  const [hh,mm] = (timeStr||'00:00').split(':').map(Number);
+  if(!y||!m||!d) return null;
+  return new Date(y, m-1, d, hh||0, mm||0, 0, 0).getTime();
+}
+const escapeHtml = s => s.replace(/[&<>"']/g, c=>({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' }[c]));
 
-  // ---------- events ----------
-  function addTaskFromInput(){
-    const inp = $('#newTask');
-    const v = inp.value.trim();
-    if(!v) return;
-    state.tasks.unshift({ text:v, tag:'普通', done:false, ts:Date.now() });
-    inp.value=''; save(); render(); flash(inp);
-  }
-  const flash = el => { el.classList.add('ring'); setTimeout(()=>el.classList.remove('ring'), 350); }
+// add
+$('#addBtn').onclick = ()=>{
+  const text = $('#taskText').value.trim();
+  const date = $('#taskDate').value;
+  const time = $('#taskTime').value;
+  if(!text){ $('#taskText').focus(); return; }
+  state.tasks.unshift({ id:crypto.randomUUID?.() || String(Math.random()), text, tsDue: toTs(date,time), done:false });
+  $('#taskText').value=''; $('#taskDate').value=''; $('#taskTime').value='';
+  save(); render();
+};
 
-  $('#addBtn').onclick = addTaskFromInput;
-  $('#newTask').addEventListener('keydown', e => { if(e.key==='Enter') addTaskFromInput(); });
-  $$('.chip[data-filter]').forEach(ch => ch.onclick = () => { state.filter = ch.dataset.filter; render(); });
-  $('#clearDone').onclick = () => { state.tasks = state.tasks.filter(t=>!t.done); save(); render(); };
-
-  // import / export
-  $('#exportBtn').onclick = () => {
-    const blob = new Blob([JSON.stringify(state.tasks,null,2)], {type:'application/json'});
-    const a = document.createElement('a'); a.href = URL.createObjectURL(blob);
-    a.download = 'qingdanplus-tasks.json'; a.click(); URL.revokeObjectURL(a.href);
+// quick date chips
+$$('.chip[data-quick]').forEach(ch=>{
+  ch.onclick=()=>{
+    const now = new Date();
+    if(ch.dataset.quick==='today'){
+      $('#taskDate').value = `${now.getFullYear()}-${pad(now.getMonth()+1)}-${pad(now.getDate())}`;
+      $('#taskTime').value = `${pad(now.getHours())}:${pad(now.getMinutes())}`;
+    }else if(ch.dataset.quick==='tomorrow'){
+      const d=new Date(now.getFullYear(),now.getMonth(),now.getDate()+1);
+      $('#taskDate').value = `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`;
+      $('#taskTime').value = '09:00';
+    }else{
+      const d=new Date(now.getFullYear(),now.getMonth(),now.getDate()+7);
+      $('#taskDate').value = `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`;
+      $('#taskTime').value = '09:00';
+    }
   };
-  $('#importBtn').onclick = () => $('#importFile').click();
-  $('#importFile').onchange = async e => {
-    const file = e.target.files[0]; if(!file) return;
+});
+
+// filters
+$$('.chip[data-filter]').forEach(ch=>{
+  ch.onclick=()=>{ state.filter = ch.dataset.filter; render(); };
+});
+
+// clear done
+$('#clearDone').onclick=()=>{ state.tasks = state.tasks.filter(t=>!t.done); save(); render(); };
+
+// install
+let deferredPrompt=null;
+window.addEventListener('beforeinstallprompt',e=>{e.preventDefault();deferredPrompt=e;});
+$('#installBtn').onclick=async()=>{
+  if(deferredPrompt){ deferredPrompt.prompt(); await deferredPrompt.userChoice; deferredPrompt=null; }
+  else alert('在浏览器分享/菜单中选择“添加到主屏幕”。');
+};
+
+// SW
+if('serviceWorker' in navigator){ window.addEventListener('load', ()=>navigator.serviceWorker.register('./service-worker.js')); }
+
+// migrate old tasks (v1 without dates) – runs once
+(function migrate(){
+  if(localStorage.getItem('qingdanplus.tasks.v1') && state.tasks.length===0){
     try{
-      const data = JSON.parse(await file.text());
-      if(Array.isArray(data)){ state.tasks = data; save(); render(); }
-      else alert('文件格式不正确');
-    }catch{ alert('解析失败'); }
-    e.target.value = '';
-  };
-
-  // ---------- install prompt ----------
-  let deferredPrompt = null;
-  window.addEventListener('beforeinstallprompt', e => { e.preventDefault(); deferredPrompt = e; $('#installBtn').style.display='inline-block'; });
-  $('#installBtn').onclick = async () => {
-    if(!deferredPrompt) return alert('请在浏览器菜单中选择“添加到主屏幕”');
-    deferredPrompt.prompt(); await deferredPrompt.userChoice; deferredPrompt = null; $('#installBtn').style.display='none';
-  };
-
-  // ---------- service worker ----------
-  if('serviceWorker' in navigator){
-    window.addEventListener('load', () => navigator.serviceWorker.register('./service-worker.js'));
+      const old = JSON.parse(localStorage.getItem('qingdanplus.tasks.v1')||'[]');
+      state.tasks = old.map(o=>({id:crypto.randomUUID?.()||String(Math.random()),text:o.text,tsDue:null,done:!!o.done}));
+      save();
+    }catch{}
   }
+})();
 
-  // init
-  render();
-  </script>
+render();
+</script>
 </body>
 </html>
+```
+
+If you want pop-up reminders too: iOS PWAs can’t reliably fire background alarms, but we can add **local notifications while the app is open** (or suggest iOS Calendar export). Say the word and I’ll wire one of those in.
