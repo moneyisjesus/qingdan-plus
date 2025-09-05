@@ -1,19 +1,3 @@
-Got it — you want the simple list **plus** due date & time like before. Here’s a drop-in **`index.html`** that adds:
-
-* Title + **due date** + **time**
-* Quick chips: Today / Tomorrow / Next week
-* Sorts by soonest due; overdue turns red
-* Keeps everything offline in `localStorage`
-* Still installable as a PWA (works with your existing `manifest.json` + `service-worker.js`)
-
-### What to do
-
-1. Replace your current `index.html` with the code below.
-2. Commit to GitHub → wait \~1–2 minutes → refresh the app on your phone.
-
----
-
-```html
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
@@ -225,6 +209,3 @@ render();
 </script>
 </body>
 </html>
-```
-
-If you want pop-up reminders too: iOS PWAs can’t reliably fire background alarms, but we can add **local notifications while the app is open** (or suggest iOS Calendar export). Say the word and I’ll wire one of those in.
