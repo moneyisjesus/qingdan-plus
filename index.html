@@ -1,45 +1,255 @@
-<!doctype html>
-<html lang="en">
+<!DOCTYPE html>
+<html lang="zh-CN">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>清单+</title>
-  <link rel="manifest" href="manifest.json">
-  <meta name="theme-color" content="#0f1221">
-  <link rel="icon" href="logo-192.png" sizes="192x192">
-  <style>
-    body { font-family: Arial, sans-serif; margin: 20px; }
-    h2 { margin-top: 20px; }
-    ul { list-style: none; padding: 0; }
-    li { margin: 5px 0; padding: 8px; border: 1px solid #ccc; border-radius: 6px; }
-  </style>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title>清单+</title>
+
+<!-- PWA hooks (keep your existing files) -->
+<link rel="manifest" href="manifest.json" />
+<meta name="theme-color" content="#0f1221" />
+<link rel="icon" href="logo-192.png" sizes="192x192" />
+<link rel="apple-touch-icon" href="logo-192.png" />
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+
+<style>
+  :root{
+    --bg:#0b0e1a;--surface:#12152a;--muted:#a9afc6;--text:#eef2fb;
+    --brand:#6f66ff;--ok:#22c29e;--danger:#ff6b6b;--line:rgba(255,255,255,.08)
+  }
+  *{box-sizing:border-box}
+  html,body{height:100%}
+  body{
+    margin:0;background:linear-gradient(180deg,#0f1230 0%,#0b0e1a 60%);
+    color:var(--text);font-family:system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif
+  }
+  .app{max-width:960px;margin:0 auto;display:grid;grid-template-columns:240px 1fr;gap:16px;padding:18px}
+  @media (max-width:900px){.app{grid-template-columns:1fr}}
+  /* sidebar */
+  .side{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:12px}
+  .brand{display:flex;align-items:center;gap:10px;margin:4px 6px 12px}
+  .logo{width:32px;height:32px;border-radius:10px;background:#372f92 url('logo-192.png') center/85% no-repeat}
+  .title{font-size:18px;font-weight:700;letter-spacing:.3px}
+  .muted{color:var(--muted);font-size:12px}
+  .nav{display:flex;flex-direction:column;gap:6px;margin-top:8px}
+  .nav button{
+    text-align:left;background:transparent;color:var(--text);border:1px solid var(--line);
+    padding:10px 12px;border-radius:12px;cursor:pointer
+  }
+  .nav button.active{background:rgba(111,102,255,.18);border-color:rgba(111,102,255,.5)}
+  .nav .group{margin-top:10px;padding-top:10px;border-top:1px dashed var(--line)}
+  /* main */
+  .main{background:var(--surface);border:1px solid var(--line);border-radius:16px;overflow:hidden}
+  .toolbar{display:grid;grid-template-columns:1fr 140px 120px auto;gap:10px;padding:14px;border-bottom:1px solid var(--line)}
+  .toolbar input, .toolbar button, .toolbar select{
+    border-radius:12px;border:1px solid var(--line);background:#0f1328;color:var(--text);
+    padding:12px 12px;outline:none
+  }
+  .toolbar button.add{background:var(--brand);border:none;font-weight:700;cursor:pointer}
+  .toolbar button.add:active{transform:translateY(1px)}
+  .toolbar .ghost{background:transparent;color:var(--muted)}
+  .header{display:flex;align-items:center;justify-content:space-between;padding:12px 14px}
+  .header h2{margin:0;font-size:18px}
+  /* list */
+  ul{list-style:none;margin:0;padding:10px}
+  li{
+    display:grid;grid-template-columns:auto 1fr auto;gap:10px;align-items:center;
+    background:#0e1226;border:1px solid var(--line);border-radius:12px;margin:8px 6px;padding:10px 12px
+  }
+  .titlecell{font-size:15px}
+  .metacell{font-size:12px;color:var(--muted)}
+  .overdue .metacell{color:#ffc7c7}
+  .done .titlecell{text-decoration:line-through;opacity:.65}
+  .actions{display:flex;gap:8px}
+  .chip{
+    font-size:12px;background:#0f1328;border:1px solid var(--line);color:var(--muted);
+    padding:6px 10px;border-radius:999px;cursor:pointer
+  }
+  .chip.ok{color:#fff;background:var(--ok);border-color:rgba(34,194,158,.4)}
+  .chip.danger{color:#ffdede;border-color:rgba(255,107,107,.45)}
+  .hint{padding:10px 14px;color:var(--muted);font-size:12px;border-top:1px dashed var(--line)}
+</style>
 </head>
 <body>
-  <h1>清单+</h1>
+<div class="app">
+  <!-- 左侧：智能清单 + 工作日视图 -->
+  <aside class="side">
+    <div class="brand">
+      <div class="logo" aria-hidden="true"></div>
+      <div>
+        <div class="title">清单+</div>
+        <div class="muted">简洁 · 离线 · 中文</div>
+      </div>
+    </div>
+    <div class="nav">
+      <button data-view="today" class="active">今天</button>
+      <button data-view="tomorrow">明天</button>
+      <button data-view="next7">未来7天</button>
+      <div class="group">
+        <div class="muted" style="margin:0 4px 6px">工作日</div>
+        <button data-view="mon">周一</button>
+        <button data-view="tue">周二</button>
+        <button data-view="wed">周三</button>
+        <button data-view="thu">周四</button>
+        <button data-view="fri">周五</button>
+      </div>
+      <div class="group">
+        <div class="muted" style="margin:0 4px 6px">其他</div>
+        <button data-view="all">全部</button>
+        <button data-view="done">已完成</button>
+      </div>
+    </div>
+  </aside>
 
-  <h2>Today</h2>
-  <ul id="today"></ul>
+  <!-- 右侧：任务区 -->
+  <main class="main">
+    <div class="toolbar">
+      <input id="taskText" placeholder="输入任务标题…" />
+      <input id="taskDate" type="date" />
+      <input id="taskTime" type="time" />
+      <div style="display:flex;gap:8px">
+        <button id="addBtn" class="add">添加</button>
+        <button id="clearDone" class="ghost">清除已完成</button>
+      </div>
+    </div>
 
-  <h2>Tomorrow</h2>
-  <ul id="tomorrow"></ul>
+    <div class="header">
+      <h2 id="viewTitle">今天</h2>
+      <div class="muted" id="stats"></div>
+    </div>
 
-  <h2>Next Week</h2>
-  <ul id="nextWeek"></ul>
+    <ul id="list"></ul>
+    <div class="hint">提示：任务本地保存；长按（或点“编辑”）可修改；逾期任务会标红。</div>
+  </main>
+</div>
 
-  <h2>Weekdays</h2>
-  <ul id="weekdays">
-    <li>Monday</li>
-    <li>Tuesday</li>
-    <li>Wednesday</li>
-    <li>Thursday</li>
-    <li>Friday</li>
-  </ul>
+<script>
+/* ---------- data + utils ---------- */
+const $ = s => document.querySelector(s), $$ = s => Array.from(document.querySelectorAll(s));
+const storeKey = 'qingdanplus.tasks.v3';
+let state = {
+  tasks: JSON.parse(localStorage.getItem(storeKey) || '[]'), // {id,text,tsDue,done}
+  view: 'today'
+};
+const save = () => localStorage.setItem(storeKey, JSON.stringify(state.tasks));
+const pad = n => String(n).padStart(2,'0');
+const toTs = (dateStr, timeStr) => {
+  if(!dateStr) return null;
+  const [y,m,d] = dateStr.split('-').map(Number);
+  const [hh,mm] = (timeStr||'00:00').split(':').map(Number);
+  return new Date(y, m-1, d, hh||0, mm||0, 0, 0).getTime();
+};
+const fmt = ts => {
+  if(!ts) return '无截止';
+  const d = new Date(ts);
+  return `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())} ${pad(d.getHours())}:${pad(d.getMinutes())}`;
+};
+const startOfDay = (d)=> new Date(d.getFullYear(), d.getMonth(), d.getDate()).getTime();
+const isSameDay = (a,b)=> startOfDay(new Date(a)) === startOfDay(new Date(b));
+const addDays = (ts, n)=> { const d=new Date(ts); d.setDate(d.getDate()+n); return d.getTime(); };
+const weekDay = (ts)=> new Date(ts).getDay(); // 0..6 (Sun..Sat)
 
-  <script>
-    // Example preloaded tasks
-    document.getElementById("today").innerHTML = "<li>Buy groceries</li><li>Finish homework</li>";
-    document.getElementById("tomorrow").innerHTML = "<li>Gym at 7am</li>";
-    document.getElementById("nextWeek").innerHTML = "<li>Meeting with client</li>";
-  </script>
+/* ---------- filters (views) ---------- */
+function filterByView(tasks, view){
+  const now = new Date(); const today0 = startOfDay(now);
+  if(view==='today')   return tasks.filter(t => t.tsDue ? isSameDay(t.tsDue, today0) : false);
+  if(view==='tomorrow')return tasks.filter(t => t.tsDue ? isSameDay(t.tsDue, addDays(today0,1)) : false);
+  if(view==='next7')   return tasks.filter(t => t.tsDue && t.tsDue >= addDays(today0,1) && t.tsDue < addDays(today0,8));
+  if(view==='mon')     return tasks.filter(t => t.tsDue && weekDay(t.tsDue)===1);
+  if(view==='tue')     return tasks.filter(t => t.tsDue && weekDay(t.tsDue)===2);
+  if(view==='wed')     return tasks.filter(t => t.tsDue && weekDay(t.tsDue)===3);
+  if(view==='thu')     return tasks.filter(t => t.tsDue && weekDay(t.tsDue)===4);
+  if(view==='fri')     return tasks.filter(t => t.tsDue && weekDay(t.tsDue)===5);
+  if(view==='done')    return tasks.filter(t => t.done);
+  return tasks; // all
+}
+
+/* ---------- render ---------- */
+function render(){
+  // sort: not-done by nearest due first; then no-due; then done
+  state.tasks.sort((a,b)=>{
+    const A = (a.done?2: (a.tsDue?0:1)) * 1e15 + (a.tsDue ?? 9e14);
+    const B = (b.done?2: (b.tsDue?0:1)) * 1e15 + (b.tsDue ?? 9e14);
+    return A - B;
+  });
+  const data = filterByView(state.tasks, state.view);
+
+  // title + stats
+  const mapTitle = {today:'今天',tomorrow:'明天',next7:'未来7天',mon:'周一',tue:'周二',wed:'周三',thu:'周四',fri:'周五',all:'全部',done:'已完成'};
+  $('#viewTitle').textContent = mapTitle[state.view] || '清单';
+  const totalOpen = state.tasks.filter(t=>!t.done).length;
+  $('#stats').textContent = `未完成 ${totalOpen} 项 · 全部 ${state.tasks.length} 项`;
+
+  // list
+  const ul = $('#list'); ul.innerHTML='';
+  if(data.length===0){
+    ul.innerHTML = `<li style="justify-content:center;background:transparent;border:none" class="muted">此视图暂无任务</li>`;
+    return;
+  }
+  for(const t of data){
+    const li = document.createElement('li');
+    if(t.done) li.classList.add('done');
+    if(!t.done && t.tsDue && t.tsDue < Date.now()) li.classList.add('overdue');
+    li.innerHTML = `
+      <input type="checkbox" ${t.done?'checked':''} aria-label="完成"/>
+      <div>
+        <div class="titlecell">${escapeHtml(t.text)}</div>
+        <div class="metacell">${fmt(t.tsDue)}</div>
+      </div>
+      <div class="actions">
+        <button class="chip" data-edit>编辑</button>
+        <button class="chip danger" data-del>删除</button>
+      </div>`;
+    li.querySelector('input').onchange = e => { t.done = e.target.checked; save(); render(); };
+    li.querySelector('[data-del]').onclick = ()=>{ state.tasks = state.tasks.filter(x=>x!==t); save(); render(); };
+    li.querySelector('[data-edit]').onclick = ()=> editTask(t);
+    ul.appendChild(li);
+  }
+
+  // sidebar active
+  $$('.nav button').forEach(b=>b.classList.toggle('active', b.dataset.view===state.view));
+}
+const escapeHtml = s => s.replace(/[&<>"']/g, c=>({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' }[c]));
+
+/* ---------- actions ---------- */
+$('#addBtn').onclick = ()=>{
+  const text = $('#taskText').value.trim();
+  const d = $('#taskDate').value;
+  const tm = $('#taskTime').value;
+  if(!text){ $('#taskText').focus(); return; }
+  state.tasks.unshift({ id:crypto.randomUUID?.()||String(Math.random()), text, tsDue: toTs(d,tm), done:false });
+  $('#taskText').value=''; $('#taskDate').value=''; $('#taskTime').value='';
+  save(); render();
+};
+$('#clearDone').onclick = ()=>{ state.tasks = state.tasks.filter(t=>!t.done); save(); render(); };
+
+$$('.nav button').forEach(b => b.onclick = ()=>{ state.view = b.dataset.view; render(); });
+
+function editTask(t){
+  const nt = prompt('编辑任务标题：', t.text);
+  if(nt==null) return;
+  // prefill date/time
+  let d=''; let tm='';
+  if(t.tsDue){
+    const dt = new Date(t.tsDue);
+    d = `${dt.getFullYear()}-${pad(dt.getMonth()+1)}-${pad(dt.getDate())}`;
+    tm = `${pad(dt.getHours())}:${pad(dt.getMinutes())}`;
+  }
+  const nd = prompt('日期（YYYY-MM-DD），留空=无截止：', d);
+  if(nd===null) return;
+  const ntm = nd ? prompt('时间（HH:MM），可留空：', tm) : '';
+  t.text = nt.trim() || t.text;
+  t.tsDue = nd ? toTs(nd, ntm || '00:00') : null;
+  save(); render();
+}
+
+/* ---------- service worker (keep; no A2HS prompt code) ---------- */
+if('serviceWorker' in navigator){
+  window.addEventListener('load', ()=> navigator.serviceWorker.register('./service-worker.js'));
+}
+
+render();
+</script>
 </body>
 </html>
