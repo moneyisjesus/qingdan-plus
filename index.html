@@ -1,14 +1,28 @@
-<!doctype html>
-<html lang="en">
+<!DOCTYPE html>
+<html lang="zh-CN">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>qingdan-plus</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>清单Plus</title>
   <link rel="manifest" href="manifest.json">
-  <meta name="theme-color" content="#0f1221">
 </head>
 <body>
-  <h1>✅ qingdan-plus is live</h1>
-  <p>Your PWA is running on GitHub Pages.</p>
+  <h1>📝 我的待办清单</h1>
+  <ul id="tasks"></ul>
+  <input type="text" id="new-task" placeholder="添加新任务...">
+  <button onclick="addTask()">添加</button>
+
+  <script>
+    function addTask() {
+      let input = document.getElementById("new-task");
+      let list = document.getElementById("tasks");
+      if (input.value.trim() !== "") {
+        let li = document.createElement("li");
+        li.textContent = input.value;
+        list.appendChild(li);
+        input.value = "";
+      }
+    }
+  </script>
 </body>
 </html>
