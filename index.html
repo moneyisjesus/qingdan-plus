@@ -3,236 +3,397 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-<title>清单Plus · 我的⼀天</title>
+<title>清单Plus</title>
 <meta name="theme-color" content="#0f1221" />
+<link rel="manifest" href="manifest.json" />
+
 <style>
   :root{
-    --bg:#0f1221; --panel:#141831; --muted:#a7b0d4; --text:#e9edff;
-    --accent:#6d8bff; --accent-2:#9b72ff; --chip:#1a1f3f; --chip-hover:#23294f;
-    --danger:#ff5a6b; --shadow:0 10px 30px rgba(0,0,0,.35); --radius:16px;
+    --bg:#0f1221;
+    --panel:#14182b;
+    --panel-2:#101426;
+    --text:#e9ecf5;
+    --muted:#9aa3b2;
+    --brand:#7c8cff;
+    --accent:#95e1ff;
+    --chip:#1b2140;
+    --ok:#40d589;
+    --danger:#ff6b6b;
+    --shadow:0 10px 25px rgba(0,0,0,.35);
+    --radius:16px;
   }
-  html.light{
-    --bg:#f6f8ff; --panel:#ffffff; --muted:#6b7598; --text:#0f1221;
-    --accent:#4662ff; --accent-2:#6c4bff; --chip:#eef2ff; --chip-hover:#e4e9ff;
-    --shadow:0 10px 30px rgba(22,29,64,.10);
+  :root.light{
+    --bg:#f6f7fb;
+    --panel:#ffffff;
+    --panel-2:#ffffff;
+    --text:#111423;
+    --muted:#606a78;
+    --brand:#5b6cff;
+    --accent:#007aff;
+    --chip:#eef1ff;
+    --ok:#10b981;
+    --danger:#ef4444;
+    --shadow:0 10px 25px rgba(0,0,0,.08);
   }
+
   *{box-sizing:border-box}
-  body{margin:0;background:var(--bg);color:var(--text);
-    font:16px/1.6 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,"PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;}
-  .app{max-width:1100px;margin-inline:auto;padding:14px 10px 98px}
-  .topbar{display:flex;align-items:center;gap:14px;margin:6px 0 14px}
-  .logo{width:44px;height:44px;border-radius:12px;
-    background:radial-gradient(120% 120% at 10% 10%, var(--accent), var(--accent-2));
-    box-shadow:0 6px 16px rgba(77,99,255,.35)}
-  .brand{display:flex;flex-direction:column}
-  .brand .name{font-weight:900;letter-spacing:.2px}
-  .brand .sub{color:var(--muted);margin-top:-2px}
-  .grow{flex:1}
-  .now{display:flex;flex-direction:column;align-items:flex-end;gap:2px}
-  .now .date{font-weight:800;font-size:16px}
-  .now .time{font-weight:900;font-size:22px;letter-spacing:.5px}
-  .moon{display:inline-flex;align-items:center;justify-content:center;width:44px;height:44px;border-radius:12px;
-    background:var(--panel);color:var(--muted);border:1px solid rgba(255,255,255,.06);box-shadow:var(--shadow);cursor:pointer;font-size:20px}
-
-  .grid{display:grid;grid-template-columns:240px 1fr;gap:16px}
-  @media (max-width:900px){.grid{grid-template-columns:1fr}}
-
-  .side{background:var(--panel);border-radius:var(--radius);border:1px solid rgba(255,255,255,.06);box-shadow:var(--shadow);padding:14px;position:sticky;top:10px;height:max-content}
-  .side h4{margin:6px 6px 10px;color:var(--muted);font-weight:700;font-size:12px}
-  .nav{display:flex;flex-direction:column;gap:6px}
-  .nav button{all:unset;display:flex;align-items:center;justify-content:space-between;padding:14px;border-radius:12px;cursor:pointer;color:var(--text)}
-  .nav button:hover{background:var(--chip-hover)}
-  .nav button.active{background:var(--chip);outline:1.5px solid color-mix(in oklab, var(--accent) 60%, transparent)}
-  .count{color:var(--muted);font-weight:700;font-size:13px}
-
-  .board{background:var(--panel);border-radius:var(--radius);border:1px solid rgba(255,255,255,.06);box-shadow:var(--shadow);padding:14px}
-  .list{display:flex;flex-direction:column;gap:12px}
-  .item{display:grid;grid-template-columns:auto 1fr auto;gap:10px;align-items:center;background:rgba(255,255,255,.02);
-    border:1px solid rgba(255,255,255,.06);padding:12px 14px;border-radius:14px}
-  .check{width:22px;height:22px;accent-color:var(--accent);cursor:pointer}
-  .title input{all:unset;color:var(--text);font-weight:700;font-size:16px}
-  .meta{color:var(--muted);font-size:13px;display:flex;gap:10px;align-items:center;margin-top:2px}
-  .badge{padding:2px 8px;border-radius:999px;background:var(--chip);border:1px solid rgba(255,255,255,.06)}
-  .rating{display:flex;gap:3px}
-  .star{width:20px;height:20px;cursor:pointer;background:linear-gradient(90deg,#ffd057,#ffac33);opacity:.35;
-    -webkit-mask:url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 2.5 9.7 8H4l4.6 3.4L6.7 17l5.3-3.3 5.3 3.3-1.9-5.6L19.9 8h-5.7L12 2.5z"/></svg>') center/contain no-repeat}
-  .star.on{opacity:1}
-
-  /* Composer (bottom) */
-  .composer{position:fixed;left:0;right:0;bottom:0;z-index:10;background:linear-gradient(to top,color-mix(in oklab,var(--bg) 100%,transparent),transparent 30%);padding:18px 10px 24px}
-  .composer .wrap{max-width:1100px;margin:0 auto;background:var(--panel);border-radius:20px;border:1px solid rgba(255,255,255,.06);box-shadow:var(--shadow);padding:14px}
-  .row{display:grid;grid-template-columns:1fr 170px 130px 120px;gap:12px;align-items:center}
-  @media (max-width:640px){.row{grid-template-columns:1fr 150px 120px 110px}}
-  .field,
-  input[type="date"],input[type="time"]{
-    background:var(--chip);border:1px solid rgba(255,255,255,.06);border-radius:14px;padding:16px 16px;font-size:17px;color:var(--text);
+  html,body{height:100%}
+  body{
+    margin:0; background:var(--bg); color:var(--text);
+    font:500 16px/1.45 ui-sans-serif,system-ui,-apple-system,"SF Pro Text","Segoe UI",Roboto,Helvetica,Arial,"PingFang SC","Noto Sans CJK SC","Microsoft YaHei",sans-serif;
   }
-  /* calendar / clock icons inside the inputs */
-  input[type="date"], input[type="time"]{
-    padding-left:44px; /* room for icon */
-    background-repeat:no-repeat;
-    background-position:12px center;
-    background-size:22px;
+
+  .wrap{max-width:980px;margin:0 auto;padding:18px 14px 26px}
+
+  /* header */
+  .top{
+    display:grid; grid-template-columns:1fr auto; gap:12px; align-items:center; margin:6px 0 14px;
   }
-  /* calendar icon */
-  input[type="date"]{
-    background-image:url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="%23a7b0d4"><path d="M7 2h2v2h6V2h2v2h2a2 2 0 0 1 2 2v2H3V6a2 2 0 0 1 2-2h2V2zm14 8H3v10a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V10z"/></svg>');
+  .brand{
+    display:flex; align-items:center; gap:12px;
   }
-  /* clock icon */
-  input[type="time"]{
-    background-image:url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="%23a7b0d4"><path d="M12 1a11 11 0 1 0 11 11A11.013 11.013 0 0 0 12 1Zm1 11h5v2h-7V6h2Z"/></svg>');
+  .logo-dot{
+    width:36px; height:36px; border-radius:12px;
+    background:linear-gradient(135deg, #7c8cff 0%, #a677ff 100%);
+    box-shadow:var(--shadow);
   }
-  .add{all:unset;text-align:center;background:linear-gradient(90deg,var(--accent),var(--accent-2));padding:16px 18px;border-radius:14px;color:#fff;font-weight:800;font-size:17px;cursor:pointer}
-  .hint{margin-top:8px;color:var(--muted);font-size:13px;text-align:right}
+  .brand h1{
+    margin:0; font-size:20px; letter-spacing:.5px;
+  }
+  .meta{
+    text-align:right; display:flex; flex-direction:column; gap:2px; align-items:flex-end;
+  }
+  .meta .date{font-weight:700; font-size:13px; color:var(--muted)}
+  .meta .time{font-weight:800; font-size:22px}
+  .toggle{
+    margin-top:4px;
+    display:inline-flex; align-items:center; gap:8px; padding:6px 10px; border-radius:999px;
+    background:var(--panel); box-shadow:var(--shadow); color:var(--muted); cursor:pointer; user-select:none;
+  }
+
+  /* panels */
+  .panel{
+    background:var(--panel); border-radius:var(--radius); box-shadow:var(--shadow);
+  }
+
+  /* filters */
+  .filters{padding:12px}
+  .filter-item{
+    display:flex; justify-content:space-between; align-items:center;
+    padding:14px 12px; border-radius:12px; margin:6px 0; background:var(--panel-2);
+  }
+  .filter-item b{font-weight:700}
+  .badge{
+    min-width:28px; text-align:center; padding:3px 8px; border-radius:999px; background:var(--chip); color:var(--muted);
+  }
+
+  /* list */
+  .list{margin-top:14px}
+  .item{
+    display:flex; align-items:center; gap:10px; padding:14px; border-radius:14px;
+    background:var(--panel); box-shadow:var(--shadow); margin:10px 0;
+  }
+  .item input[type="checkbox"]{width:22px; height:22px; accent-color:var(--ok)}
+  .title{flex:1; font-weight:700}
+  .chips{display:flex; gap:8px; flex-wrap:wrap}
+  .chip{
+    display:inline-flex; align-items:center; gap:6px; padding:6px 10px; border-radius:999px; background:var(--chip); color:var(--muted); font-size:13px;
+  }
+  .chip svg{width:15px;height:15px;opacity:.9}
+  .danger{color:#fff;background:linear-gradient(135deg, #ff7a7a, #ff4d4d)}
+
+  /* composer */
+  .composer{
+    margin-top:16px; padding:14px; border-radius:var(--radius); background:var(--panel); box-shadow:var(--shadow);
+  }
+  .row{display:flex; gap:10px; align-items:center}
+  .input{
+    flex:1; min-height:48px; padding:12px 14px; border:2px solid transparent; outline:0;
+    border-radius:12px; background:var(--panel-2); color:var(--text); font-size:16px;
+  }
+  .input:focus{border-color:var(--brand)}
+  .pickers{display:flex; gap:10px}
+  .pill{
+    display:inline-flex; align-items:center; gap:8px; padding:10px 12px; border-radius:999px;
+    background:var(--chip); color:var(--text); cursor:pointer; user-select:none;
+  }
+  .pill svg{width:18px;height:18px}
+  .hint{margin-top:10px; color:var(--muted); font-size:13px}
+
+  /* footer */
+  footer{margin:24px 0 8px; text-align:center; color:var(--muted); font-size:12px}
+
+  /* mobile first */
+  @media (min-width:760px){
+    .top{grid-template-columns:1fr auto}
+  }
 </style>
 </head>
 <body>
-  <div class="app">
-    <header class="topbar">
-      <div class="logo" aria-hidden="true"></div>
-      <div class="brand">
-        <div class="name">清单Plus</div>
-        <div class="sub">记录 · 提醒 · 专注</div>
-      </div>
-      <div class="grow"></div>
-      <!-- live date & 12h time -->
-      <div class="now">
-        <div class="date" id="nowDate">—</div>
-        <div class="time" id="nowTime">—</div>
-      </div>
-      <button class="moon" id="themeBtn">🌙</button>
-    </header>
 
-    <div class="grid">
-      <aside class="side">
-        <h4>视图</h4>
-        <div class="nav" id="filterNav">
-          <button data-filter="all" class="active"><span>全部</span><span class="count" id="cAll">0</span></button>
-          <button data-filter="today"><span>今天</span><span class="count" id="cToday">0</span></button>
-          <button data-filter="important"><span>重要</span><span class="count" id="cImportant">0</span></button>
-          <button data-filter="done"><span>已完成</span><span class="count" id="cDone">0</span></button>
-          <button data-filter="todo"><span>未完成</span><span class="count" id="cTodo">0</span></button>
-        </div>
-      </aside>
-
-      <main class="board">
-        <div class="list" id="taskList"></div>
-        <p id="emptyTip" class="muted" style="text-align:center;margin:30px 0 10px;">没有任务。到底部添加新任务～</p>
-      </main>
+<div class="wrap">
+  <!-- header -->
+  <div class="top">
+    <div class="brand">
+      <div class="logo-dot"></div>
+      <h1>清单Plus</h1>
+    </div>
+    <div class="meta">
+      <div class="date" id="todayStr">2025-09-06</div>
+      <div class="time" id="nowStr">4:50 PM</div>
+      <div class="toggle" id="modeToggle" title="切换深浅色">
+        <span id="modeIcon">🌙</span><span id="modeText">深色</span>
+      </div>
     </div>
   </div>
 
-  <!-- Composer at bottom -->
+  <!-- left filters (kept minimal like you asked) -->
+  <div class="panel filters" id="filters">
+    <div class="filter-item" data-filter="all"><span>全部</span><span class="badge" id="count-all">0</span></div>
+    <div class="filter-item" data-filter="today"><span>今天</span><span class="badge" id="count-today">0</span></div>
+    <div class="filter-item" data-filter="important"><span><b>重要</b></span><span class="badge" id="count-important">0</span></div>
+    <div class="filter-item" data-filter="done"><span>已完成</span><span class="badge" id="count-done">0</span></div>
+    <div class="filter-item" data-filter="todo"><span>未完成</span><span class="badge" id="count-todo">0</span></div>
+  </div>
+
+  <!-- list -->
+  <div id="list" class="list"></div>
+
+  <!-- composer -->
   <div class="composer">
-    <div class="wrap">
-      <div class="row">
-        <input id="taskInput" class="field" placeholder="输入任务…" />
-        <input id="dateInput" type="date" />
-        <input id="timeInput" type="time" />
-        <button id="addBtn" class="add">添加</button>
+    <div class="row">
+      <input id="taskInput" class="input" type="text" placeholder="输入任务…" autocomplete="off" />
+      <div class="pickers">
+        <div class="pill" id="datePill" role="button" aria-label="选择日期">
+          <!-- calendar icon -->
+          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M7 2a1 1 0 0 1 1 1v1h8V3a1 1 0 1 1 2 0v1h1a3 3 0 0 1 3 3v12a3 3 0 0 1-3 3H5a3 3 0 0 1-3-3V7a3 3 0 0 1 3-3h1V3a1 1 0 0 1 1-1Zm13 9H4v9a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-9ZM5 7a1 1 0 0 0-1 1v1h16V8a1 1 0 0 0-1-1H5Z"/></svg>
+          <span id="dateLabel">今天</span>
+        </div>
+        <div class="pill" id="timePill" role="button" aria-label="选择时间">
+          <!-- clock icon -->
+          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2a10 10 0 1 1 0 20 10 10 0 0 1 0-20Zm0 2a8 8 0 1 0 0 16 8 8 0 0 0 0-16Zm1 3v5.17l3.59 3.58-1.42 1.42L11 12.59V7h2Z"/></svg>
+          <span id="timeLabel">无时间</span>
+        </div>
       </div>
-      <div class="hint">提示：输入后可以按 <strong>Enter</strong> 直接添加</div>
     </div>
+    <div class="hint">提示：输入后可按 <b>Enter</b> 直接添加；点「📅 ⏰」设置日期与时间</div>
+    <!-- hidden real inputs triggered by the pills for best iOS/Android keyboards -->
+    <input id="dateInput" type="date" hidden />
+    <input id="timeInput" type="time" hidden />
   </div>
+
+  <footer>© 2025 清单Plus · 本地保存 · 轻快 · 极简</footer>
+</div>
 
 <script>
-const $=s=>document.querySelector(s),$$=s=>Array.from(document.querySelectorAll(s));
-let tasks=JSON.parse(localStorage.getItem("qingdan-tasks")||"[]"),filter="all";
+/* ========== UTIL ========== */
+const $ = sel => document.querySelector(sel);
+const listEl = $('#list');
+const taskInput = $('#taskInput');
+const datePill = $('#datePill');
+const timePill = $('#timePill');
+const dateInput = $('#dateInput');
+const timeInput = $('#timeInput');
+const dateLabel = $('#dateLabel');
+const timeLabel = $('#timeLabel');
 
-/* Theme */
-$("#themeBtn").onclick=()=>{
-  document.documentElement.classList.toggle("light");
-  localStorage.setItem("theme",document.documentElement.classList.contains("light")?"light":"dark");
-  $("#themeBtn").textContent=document.documentElement.classList.contains("light")?"🌞":"🌙";
+const todayStrEl = $('#todayStr');
+const nowStrEl = $('#nowStr');
+
+const counts = {
+  all: $('#count-all'),
+  today: $('#count-today'),
+  important: $('#count-important'),
+  done: $('#count-done'),
+  todo: $('#count-todo')
 };
-if(localStorage.getItem("theme")==="light"){document.documentElement.classList.add("light");$("#themeBtn").textContent="🌞";}
 
-/* Live date & 12-hour time */
+let filter = 'all';
+let tasks = JSON.parse(localStorage.getItem('qingdan_tasks_v3')||'[]');
+
+/* ========== TIME DISPLAY (12h) ========== */
 function pad(n){return n<10?'0'+n:n}
-function fmtDate(d){return `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`}
-function fmtTime12(d){
-  let h=d.getHours(), m=pad(d.getMinutes());
-  const ampm = h>=12 ? 'PM' : 'AM';
-  h = h % 12; if (h === 0) h = 12;
-  return `${h}:${m} ${ampm}`;
+function format12(date){
+  let h = date.getHours(), m = date.getMinutes();
+  const ampm = h>=12?'PM':'AM';
+  h = h%12; if(h===0) h=12;
+  return `${h}:${pad(m)} ${ampm}`;
 }
-function tickNow(){
-  const d=new Date();
-  $("#nowDate").textContent=fmtDate(d);
-  $("#nowTime").textContent=fmtTime12(d);
+function formatDateISO(d){ // yyyy-mm-dd
+  const y=d.getFullYear(), m=pad(d.getMonth()+1), dd=pad(d.getDate());
+  return `${y}-${m}-${dd}`;
 }
-tickNow(); setInterval(tickNow, 1000*15);
+function formatPretty(dateStr){ // e.g. Sep 6, 2025
+  try{
+    const d = new Date(dateStr+'T00:00:00');
+    return d.toLocaleDateString(undefined,{month:'short',day:'numeric',year:'numeric'});
+  }catch{ return dateStr }
+}
+function tick(){
+  const now=new Date();
+  todayStrEl.textContent = formatDateISO(now);
+  nowStrEl.textContent = format12(now);
+  requestAnimationFrame(()=>setTimeout(tick,1000));
+}
+tick();
 
-/* Helpers */
-function save(){localStorage.setItem("qingdan-tasks",JSON.stringify(tasks))}
-function todayStr(d=new Date()){return d.toISOString().slice(0,10)}
+/* ========== THEME ========== */
+const root = document.documentElement;
+const modeToggle = $('#modeToggle');
+const modeIcon = $('#modeIcon');
+const modeText = $('#modeText');
+function applyMode(m){
+  if(m==='light'){root.classList.add('light'); modeIcon.textContent='☀️'; modeText.textContent='浅色'}
+  else{root.classList.remove('light'); modeIcon.textContent='🌙'; modeText.textContent='深色'}
+}
+applyMode(localStorage.getItem('qingdan_theme')||'dark');
+modeToggle.addEventListener('click',()=>{
+  const isLight = root.classList.toggle('light');
+  localStorage.setItem('qingdan_theme', isLight?'light':'dark');
+  applyMode(isLight?'light':'dark');
+});
 
-/* Render */
+/* ========== FILTERS ========== */
+document.querySelectorAll('.filter-item').forEach(el=>{
+  el.addEventListener('click',()=>{
+    filter = el.dataset.filter;
+    render();
+  });
+});
+
+/* ========== DATE/TIME PILLS (OPEN NATIVE PICKERS) ========== */
+function resetPickersToDefault(){
+  // default: date = today, time = empty
+  const t = new Date();
+  dateInput.value = formatDateISO(t);
+  dateLabel.textContent = '今天';
+  timeInput.value = '';
+  timeLabel.textContent = '无时间';
+}
+resetPickersToDefault();
+
+datePill.addEventListener('click',()=>dateInput.showPicker?.() ?? dateInput.click());
+timePill.addEventListener('click',()=>timeInput.showPicker?.() ?? timeInput.click());
+
+dateInput.addEventListener('change',()=>{
+  const todayISO = formatDateISO(new Date());
+  dateLabel.textContent = (dateInput.value===todayISO)?'今天':formatPretty(dateInput.value);
+});
+timeInput.addEventListener('change',()=>{
+  if(!timeInput.value){ timeLabel.textContent='无时间'; return; }
+  // convert "HH:MM" to 12h
+  const [H,M]=timeInput.value.split(':').map(v=>parseInt(v,10));
+  let h=H%12; if(h===0) h=12;
+  timeLabel.textContent = `${h}:${M.toString().padStart(2,'0')} ${H>=12?'PM':'AM'}`;
+});
+
+/* ========== STORAGE HELPERS ========== */
+function save(){localStorage.setItem('qingdan_tasks_v3', JSON.stringify(tasks))}
+function addTask(text, dueDate, dueTime){
+  tasks.push({
+    id: Date.now(),
+    text: text.trim(),
+    done:false,
+    important:false,
+    dueDate: dueDate || null,   // 'yyyy-mm-dd'
+    dueTime: dueTime || null    // 'HH:MM'
+  });
+  // sort by date/time if present
+  tasks.sort((a,b)=>{
+    const ad = a.dueDate? a.dueDate : '9999-12-31';
+    const bd = b.dueDate? b.dueDate : '9999-12-31';
+    if(ad!==bd) return ad.localeCompare(bd);
+    const at = a.dueTime? a.dueTime : '99:99';
+    const bt = b.dueTime? b.dueTime : '99:99';
+    return at.localeCompare(bt);
+  });
+  save(); render();
+}
+
+/* ========== RENDER ========== */
+function matchFilter(t){
+  if(filter==='all') return true;
+  if(filter==='today'){
+    const todayISO=formatDateISO(new Date());
+    return t.dueDate===todayISO;
+  }
+  if(filter==='important') return t.important;
+  if(filter==='done') return t.done;
+  if(filter==='todo') return !t.done;
+  return true;
+}
+function updateCounts(){
+  counts.all.textContent = tasks.length;
+  const todayISO = formatDateISO(new Date());
+  counts.today.textContent = tasks.filter(t=>t.dueDate===todayISO).length;
+  counts.important.textContent = tasks.filter(t=>t.important).length;
+  counts.done.textContent = tasks.filter(t=>t.done).length;
+  counts.todo.textContent = tasks.filter(t=>!t.done).length;
+}
 function render(){
-  const list=$("#taskList"); list.innerHTML="";
-  const shown=tasks.filter(t=>{
-    if(filter==="today")return t.date===todayStr();
-    if(filter==="important")return t.star>=4&&!t.done;
-    if(filter==="done")return t.done;
-    if(filter==="todo")return!t.done;
-    return true;
-  }).sort((a,b)=>{
-    const ad=a.done?1:0,bd=b.done?1:0; if(ad!==bd)return ad-bd;
-    const at=a.date||'9999-99-99',bt=b.date||'9999-99-99'; if(at!==bt)return at.localeCompare(bt);
-    return (b.star||0)-(a.star||0);
+  listEl.innerHTML='';
+  tasks.filter(matchFilter).forEach(t=>{
+    const li=document.createElement('div');
+    li.className='item';
+
+    const cb=document.createElement('input');
+    cb.type='checkbox';
+    cb.checked=t.done;
+    cb.addEventListener('change',()=>{t.done=cb.checked; save(); render();});
+
+    const title=document.createElement('div');
+    title.className='title';
+    title.textContent=t.text;
+    if(t.done) title.style.textDecoration='line-through';
+
+    const chips=document.createElement('div');
+    chips.className='chips';
+
+    if(t.dueDate){
+      const c=document.createElement('span');
+      c.className='chip';
+      c.innerHTML=`<svg viewBox="0 0 24 24" fill="currentColor"><path d="M7 2a1 1 0 0 1 1 1v1h8V3a1 1 0 1 1 2 0v1h1a3 3 0 0 1 3 3v12a3 3 0 0 1-3 3H5a3 3 0 0 1-3-3V7a3 3 0 0 1 3-3h1V3a1 1 0 0 1 1-1Zm13 9H4v9a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-9ZM5 7a1 1 0 0 0-1 1v1h16V8a1 1 0 0 0-1-1H5Z"/></svg>
+      ${formatPretty(t.dueDate)}`;
+      chips.appendChild(c);
+    }
+    if(t.dueTime){
+      const c=document.createElement('span');
+      c.className='chip';
+      const [H,M]=t.dueTime.split(':').map(v=>parseInt(v,10));
+      let h=H%12; if(h===0) h=12;
+      c.innerHTML=`<svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2a10 10 0 1 1 0 20 10 10 0 0 1 0-20Zm0 2a8 8 0 1 0 0 16 8 8 0 0 0 0-16Zm1 3v5.17l3.59 3.58-1.42 1.42L11 12.59V7h2Z"/></svg>
+      ${h}:${M.toString().padStart(2,'0')} ${H>=12?'PM':'AM'}`;
+      chips.appendChild(c);
+    }
+
+    const del=document.createElement('button');
+    del.className='chip danger';
+    del.textContent='删除';
+    del.addEventListener('click',()=>{tasks=tasks.filter(x=>x.id!==t.id); save(); render();});
+
+    li.append(cb,title,chips,del);
+    listEl.appendChild(li);
   });
-
-  shown.forEach(t=>{
-    const el=document.createElement("div");
-    el.className="item"+(t.done?" done":"");
-    el.innerHTML=`<input type=checkbox class=check ${t.done?"checked":""}>
-      <div class=title>
-        <input value="${t.title}" />
-        <div class=meta>
-          ${t.date?`<span class=badge>📅 ${t.date}</span>`:""}
-          ${t.time?`<span class=badge>⏰ ${t.time}</span>`:""}
-          ${t.star?`<span class=badge>⭐ ${t.star}</span>`:""}
-        </div>
-      </div>
-      <div class=actions>
-        <div class=rating></div>
-        <button class=btn-ghost style="color:var(--danger)">删除</button>
-      </div>`;
-    el.querySelector(".check").onchange=e=>{t.done=e.target.checked;save();render()};
-    el.querySelector(".title input").onchange=e=>{t.title=e.target.value;save()};
-    el.querySelector(".btn-ghost").onclick=()=>{tasks=tasks.filter(x=>x!==t);save();render()};
-    const r=el.querySelector(".rating");
-    for(let i=1;i<=5;i++){const s=document.createElement("i");s.className="star"+(i<=t.star?" on":"");
-      s.onclick=()=>{t.star=i;save();render()}; r.appendChild(s);}
-    list.appendChild(el);
-  });
-
-  $("#emptyTip").style.display=shown.length?"none":"block";
-  $("#cAll").textContent=tasks.length;
-  $("#cToday").textContent=tasks.filter(t=>t.date===todayStr()).length;
-  $("#cImportant").textContent=tasks.filter(t=>t.star>=4&&!t.done).length;
-  $("#cDone").textContent=tasks.filter(t=>t.done).length;
-  $("#cTodo").textContent=tasks.filter(t=>!t.done).length;
+  updateCounts();
 }
-
-/* Filters */
-$("#filterNav").onclick=e=>{
-  const b=e.target.closest("button[data-filter]"); if(!b) return;
-  filter=b.dataset.filter; $$("#filterNav button").forEach(x=>x.classList.remove("active")); b.classList.add("active"); render();
-}
-
-/* Add (Enter support + click) */
-function addTask(){
-  const title=$("#taskInput").value.trim(); if(!title) return;
-  tasks.push({id:Date.now(),title,date:$("#dateInput").value,time:$("#timeInput").value,star:0,done:false});
-  save(); $("#taskInput").value=""; render();
-}
-$("#addBtn").onclick=addTask;
-$("#taskInput").addEventListener("keydown",e=>{ if(e.key==="Enter"){ addTask(); }});
-
-/* Init */
-if(!$("#dateInput").value) $("#dateInput").value=todayStr();
 render();
+
+/* ========== ADD BY ENTER ========== */
+taskInput.addEventListener('keydown',(e)=>{
+  if(e.key==='Enter'){
+    e.preventDefault();
+    const text=taskInput.value.trim();
+    if(!text) return;
+    addTask(text, dateInput.value||null, timeInput.value||null);
+    taskInput.value='';
+    resetPickersToDefault();
+  }
+});
+
+/* ========== FIRST TIME HELP (optional) ========== */
+if(!localStorage.getItem('qingdan_boot')){
+  localStorage.setItem('qingdan_boot','1');
+}
 </script>
 </body>
 </html>
