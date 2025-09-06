@@ -1,414 +1,475 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="zh-CN">
 <head>
 <meta charset="utf-8" />
-<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no"/>
-<title>清单Plus</title>
-<meta name="theme-color" content="#121421" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title>清单Plus · 我的⼀天</title>
+<meta name="theme-color" content="#0f1221" />
 <style>
-:root{
-  --bg:#0f1220;--panel:#171a2b;--muted:#1f2440;--line:rgba(255,255,255,.08);
-  --text:#eaf0ff;--sub:#9aa3c7;--brand:#5a82ff;--accent:#22cda7;--danger:#ff5d5d;--warn:#ffb545;
-}
-[data-theme="light"]{
-  --bg:#f6f7ff;--panel:#ffffff;--muted:#eef1fb;--line:rgba(0,0,0,.08);
-  --text:#101426;--sub:#657095;--brand:#345dff;--accent:#17b892;--danger:#d43a3a;--warn:#e39b2c;
-}
-*{box-sizing:border-box;font-family:-apple-system,Segoe UI,Roboto,"PingFang SC","Microsoft YaHei",sans-serif}
-body{margin:0;background:var(--bg);color:var(--text);min-height:100dvh;display:flex;flex-direction:column}
-button,input,select{font:inherit;color:inherit}
-a{color:var(--brand);text-decoration:none}
+  :root{
+    --bg:#0f1221;
+    --panel:#141831;
+    --muted:#a7b0d4;
+    --text:#e9edff;
+    --accent:#6d8bff;
+    --accent-2:#9b72ff;
+    --chip:#1a1f3f;
+    --chip-hover:#23294f;
+    --ok:#32d27d;
+    --warn:#ffbd2f;
+    --danger:#ff5a6b;
+    --shadow: 0 10px 30px rgba(0,0,0,.35);
+    --radius:16px;
+  }
+  html.light{
+    --bg:#f6f8ff;
+    --panel:#ffffff;
+    --muted:#6b7598;
+    --text:#0f1221;
+    --accent:#4662ff;
+    --accent-2:#6c4bff;
+    --chip:#eef2ff;
+    --chip-hover:#e4e9ff;
+    --shadow: 0 10px 30px rgba(22,29,64,.10);
+  }
+  *{box-sizing:border-box}
+  body{
+    margin:0; background:var(--bg); color:var(--text);
+    font: 15px/1.5 ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,"PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;
+  }
+  /* Shell */
+  .app{
+    max-width:1100px; margin-inline:auto; padding:14px 10px 88px;
+  }
+  .topbar{
+    display:flex; align-items:center; gap:12px; margin:6px 0 14px;
+  }
+  .brand{
+    display:flex; align-items:center; gap:10px; font-weight:800; letter-spacing:.3px;
+  }
+  .logo{
+    width:34px; height:34px; border-radius:10px;
+    background: radial-gradient(120% 120% at 10% 10%, var(--accent), var(--accent-2));
+    box-shadow: 0 6px 16px rgba(77,99,255,.35);
+  }
+  .grow{flex:1}
+  .moon{
+    display:inline-flex; align-items:center; justify-content:center;
+    width:40px; height:40px; border-radius:12px; background:var(--panel);
+    color:var(--muted); border:1px solid rgba(255,255,255,.06);
+    box-shadow: var(--shadow); cursor:pointer; transition:.2s transform;
+  }
+  .moon:active{ transform: scale(.98); }
 
-/* header */
-header{display:flex;align-items:center;gap:10px;padding:12px 14px;background:var(--panel);position:sticky;top:0;z-index:10}
-.logo{width:28px;height:28px;border-radius:8px;background:linear-gradient(135deg,var(--brand),#82a0ff)}
-.title{font-weight:800;font-size:18px}
-.space{flex:1}
-.iconbtn{width:36px;height:36px;display:grid;place-items:center;border:0;border-radius:10px;background:var(--muted);cursor:pointer}
-.iconbtn:active{transform:scale(.98)}
+  /* Grid */
+  .grid{
+    display:grid; grid-template-columns: 240px 1fr; gap:16px;
+  }
+  @media (max-width:900px){
+    .grid{ grid-template-columns: 1fr; }
+  }
 
-/* layout */
-main{flex:1;display:flex;gap:12px;overflow:hidden;padding:10px}
-@media (max-width:880px){main{flex-direction:column}}
-.sidebar{width:124px;background:var(--panel);padding:10px;border-radius:12px;overflow:auto}
-@media (max-width:880px){.sidebar{width:auto;display:flex;gap:8px;overflow:auto}}
-.sidebar h4{margin:6px 6px 4px;font-size:12px;color:var(--sub)}
-.navbtn{padding:8px 10px;border-radius:10px;background:transparent;border:1px solid var(--line);text-align:left;cursor:pointer;font-size:14px}
-.navbtn.on{background:var(--muted);border-color:transparent;font-weight:700}
-.counter{float:right;color:var(--sub);margin-left:8px}
+  /* Sidebar */
+  .side{
+    background:var(--panel); border-radius:var(--radius);
+    border:1px solid rgba(255,255,255,.06); box-shadow:var(--shadow);
+    padding:14px;
+    position:sticky; top:10px; height:max-content;
+  }
+  .side h4{margin:6px 6px 10px; color:var(--muted); font-weight:700; font-size:12px; letter-spacing:.6px}
+  .nav{ display:flex; flex-direction:column; gap:6px; }
+  .nav button{
+    all:unset; display:flex; align-items:center; justify-content:space-between;
+    padding:12px 12px; border-radius:12px; cursor:pointer;
+    background:transparent; color:var(--text); border:1px solid transparent;
+  }
+  .nav button:hover{ background:var(--chip-hover); }
+  .nav button.active{
+    background:var(--chip); border-color:rgba(255,255,255,.08);
+    outline: 1.5px solid color-mix(in oklab, var(--accent) 60%, transparent);
+  }
+  .count{ color:var(--muted); font-weight:700; font-size:12px; }
 
-.content{flex:1;display:flex;flex-direction:column;gap:10px;min-width:0}
+  /* Board */
+  .board{
+    background:var(--panel); border-radius:var(--radius);
+    border:1px solid rgba(255,255,255,.06); box-shadow:var(--shadow);
+    padding:14px;
+  }
+  .chips{ display:flex; gap:8px; flex-wrap:wrap; margin:4px 0 12px; }
+  .chip{
+    padding:8px 12px; border-radius:999px; background:var(--chip); color:var(--text);
+    border:1px solid rgba(255,255,255,.06); cursor:pointer; transition:.2s;
+    font-weight:700; font-size:12px;
+  }
+  .chip:hover{ background:var(--chip-hover) }
+  .chip.active{
+    background:linear-gradient(90deg, var(--accent), var(--accent-2));
+    border-color:transparent;
+  }
 
-/* stats & quick chips */
-.stats{display:flex;gap:8px;flex-wrap:wrap}
-.stat{padding:6px 10px;border-radius:999px;background:var(--muted);font-size:12px}
-.stat.warn{background:rgba(255,181,69,.15);color:var(--warn)}
-.stat.ok{background:rgba(34,205,167,.15);color:var(--accent)}
+  /* Tasks list */
+  .list{ display:flex; flex-direction:column; gap:10px; }
+  .item{
+    display:grid; grid-template-columns:auto 1fr auto; gap:10px; align-items:center;
+    background:rgba(255,255,255,.02); border:1px solid rgba(255,255,255,.06);
+    padding:10px 12px; border-radius:14px;
+  }
+  .item.done{ opacity:.55; }
+  .check{ width:20px; height:20px; accent-color: var(--accent); cursor:pointer; }
+  .title{
+    display:flex; flex-direction:column; gap:3px;
+  }
+  .title input{
+    all:unset; color:var(--text); font-weight:700; letter-spacing:.2px;
+  }
+  .meta{
+    color:var(--muted); font-size:12px; display:flex; gap:10px; align-items:center;
+  }
+  .badge{ padding:2px 8px; border-radius:999px; background:var(--chip); border:1px solid rgba(255,255,255,.06) }
+  .actions{ display:flex; gap:8px; align-items:center; }
+  .btn-ghost{
+    all:unset; padding:8px 10px; border-radius:10px; cursor:pointer; color:var(--muted);
+    border:1px solid rgba(255,255,255,.06); background:transparent;
+  }
+  .btn-ghost:hover{ color:var(--text); background:var(--chip-hover) }
+  .rating{ display:flex; gap:2px; }
+  .star{
+    width:18px; height:18px; cursor:pointer; display:inline-block;
+    -webkit-mask: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><path d="M12 2.5 9.7 8H4l4.6 3.4L6.7 17l5.3-3.3 5.3 3.3-1.9-5.6L19.9 8h-5.7L12 2.5z" fill="%23000"/></svg>') center/contain no-repeat;
+    background: linear-gradient(90deg, #ffd057, #ffac33);
+    opacity:.35;
+  }
+  .star.on{ opacity:1 }
 
-.chips{display:flex;gap:8px;flex-wrap:wrap}
-.chip{padding:6px 12px;border-radius:999px;background:var(--muted);cursor:pointer;font-size:13px;white-space:nowrap}
-.chip.on{background:var(--brand);color:#fff}
+  /* Composer (moved to bottom) */
+  .composer{
+    position: fixed; left:0; right:0; bottom:0; z-index:10;
+    background:linear-gradient(to top, color-mix(in oklab, var(--bg) 100%, transparent), transparent 30%);
+    padding:16px 10px 18px;
+  }
+  .composer .wrap{
+    max-width:1100px; margin:0 auto; background:var(--panel); border-radius:18px;
+    border:1px solid rgba(255,255,255,.06); box-shadow:var(--shadow);
+    padding:12px;
+  }
+  .row{
+    display:grid; grid-template-columns: 1fr auto auto auto 100px; gap:10px; align-items:center;
+  }
+  @media (max-width:900px){
+    .row{ grid-template-columns: 1fr 120px 100px 90px 84px; }
+  }
+  @media (max-width:560px){
+    .row{ grid-template-columns: 1fr 120px 90px 90px; }
+    .repeat{ grid-column: 1 / -2; }
+  }
+  .field{
+    background:var(--chip); border:1px solid rgba(255,255,255,.06); border-radius:12px;
+    padding:10px 12px; color:var(--text); width:100%;
+  }
+  input[type="date"], input[type="time"], select{
+    background:var(--chip); border:1px solid rgba(255,255,255,.06); border-radius:12px;
+    padding:10px 12px; color:var(--text); width:100%;
+  }
+  .add{
+    all:unset; text-align:center; background:linear-gradient(90deg, var(--accent), var(--accent-2));
+    padding:12px 14px; border-radius:12px; color:#fff; font-weight:800; cursor:pointer;
+  }
 
-/* task composer */
-.composer{display:grid;gap:8px;background:var(--panel);padding:10px;border-radius:12px;
-  grid-template-columns:1fr minmax(110px,140px) minmax(90px,110px) minmax(110px,130px) auto}
-@media (max-width:680px){
- .composer{grid-template-columns:1fr 1fr 1fr auto}
- .hide-sm{display:none}
-}
-.composer input, .composer select{padding:10px;border-radius:10px;border:1px solid var(--line);background:var(--muted)}
-.addBtn{padding:0 16px;border:0;border-radius:10px;background:var(--brand);color:#fff;font-weight:800}
-
-/* task list */
-.tasks{flex:1;overflow:auto;display:flex;flex-direction:column;gap:8px;min-height:160px}
-.task{background:var(--panel);padding:10px;border-radius:12px;display:flex;justify-content:space-between;gap:6px;align-items:center}
-.task.done .title{text-decoration:line-through;opacity:.65}
-.title{font-weight:700}
-.meta{font-size:12px;color:var(--sub)}
-.actions{display:flex;gap:6px}
-.btn-mini{padding:6px 10px;border:0;border-radius:8px;font-size:12px;cursor:pointer}
-.complete{background:var(--accent);color:#fff}
-.delete{background:var(--danger);color:#fff}
-.important{background:var(--warn);color:#222}
-.tag{padding:2px 8px;border-radius:999px;background:var(--muted);font-size:11px;margin-left:6px}
-
-/* settings modal */
-.modalMask{position:fixed;inset:0;background:rgba(0,0,0,.45);display:none;align-items:flex-end;justify-content:center;z-index:20}
-.modal{width:100%;max-width:520px;background:var(--panel);border-radius:16px 16px 0 0;padding:14px 14px 18px}
-.modal h3{margin:2px 0 12px}
-.settingRow{display:flex;justify-content:space-between;align-items:center;padding:10px;border-radius:10px;background:var(--muted);margin-bottom:8px}
-.switch{position:relative;width:48px;height:28px;background:#7d86a8;border-radius:999px;cursor:pointer}
-.switch i{position:absolute;top:3px;left:3px;width:22px;height:22px;background:#fff;border-radius:50%;transition:.2s}
-.switch.on{background:var(--brand)}
-.switch.on i{left:23px}
-.rowBtns{display:flex;gap:8px}
-.rowBtns button{border:0;padding:8px 10px;border-radius:8px;background:var(--brand);color:#fff}
-.closeLine{display:flex;justify-content:center;margin-top:6px}
-.closeDot{width:46px;height:4px;border-radius:4px;background:var(--line)}
+  /* helpers */
+  .hidden{ display:none !important; }
+  .muted{ color:var(--muted); }
 </style>
 </head>
 <body>
-  <header>
-    <div class="logo" aria-hidden="true"></div>
-    <div class="title">清单Plus</div>
-    <div class="space"></div>
-    <button class="iconbtn" id="themeBtn" title="深浅模式">🌙</button>
-    <button class="iconbtn" id="settingsBtn" title="设置">⚙️</button>
-  </header>
+  <div class="app">
+    <header class="topbar">
+      <div class="brand">
+        <div class="logo"></div>
+        <div style="display:flex;flex-direction:column">
+          <div style="font-weight:900; letter-spacing:.2px">清单Plus</div>
+          <small class="muted" style="margin-top:-2px">记录 · 提醒 · 专注</small>
+        </div>
+      </div>
+      <div class="grow"></div>
+      <button class="moon" id="themeBtn" aria-label="切换主题" title="切换主题">🌙</button>
+    </header>
 
-  <main>
-    <!-- left -->
-    <aside class="sidebar" id="nav">
-      <div style="display:flex;flex-direction:column;gap:6px;">
+    <div class="grid">
+      <!-- LEFT: Filters (kept only required ones) -->
+      <aside class="side">
         <h4>视图</h4>
-        <button class="navbtn on" data-filter="all">全部 <span class="counter" id="count-all">0</span></button>
-        <button class="navbtn" data-filter="today">今天 <span class="counter" id="count-today">0</span></button>
-        <button class="navbtn" data-filter="important">重要 <span class="counter" id="count-important">0</span></button>
-        <button class="navbtn" data-filter="done">已完成</button>
-        <button class="navbtn" data-filter="undone">未完成</button>
-        <h4>分类</h4>
-        <button class="navbtn" data-cat="学习">学习</button>
-        <button class="navbtn" data-cat="工作">工作</button>
-        <button class="navbtn" data-cat="生活">生活</button>
-      </div>
-    </aside>
-
-    <!-- right -->
-    <section class="content">
-      <!-- quick stats -->
-      <div class="stats">
-        <div class="stat" id="stat-today">今日：0</div>
-        <div class="stat warn" id="stat-overdue">超期：0</div>
-        <div class="stat ok" id="stat-done">已完成：0</div>
-      </div>
-
-      <!-- quick chips -->
-      <div class="chips" id="quickChips">
-        <div class="chip" data-chip="today">今天</div>
-        <div class="chip" data-chip="tomorrow">明天</div>
-        <div class="chip" data-chip="week">本周</div>
-        <div class="chip" data-chip-weekday="1">周一</div>
-        <div class="chip" data-chip-weekday="2">周二</div>
-        <div class="chip" data-chip-weekday="3">周三</div>
-        <div class="chip" data-chip-weekday="4">周四</div>
-        <div class="chip" data-chip-weekday="5">周五</div>
-        <div class="chip" data-chip-weekday="6">周六</div>
-        <div class="chip" data-chip-weekday="0">周日</div>
-      </div>
-
-      <!-- composer -->
-      <div class="composer">
-        <input id="taskInput" type="text" placeholder="输入任务（如：完成作业 / 买菜）"/>
-        <input id="dateInput" type="date" class="hide-sm"/>
-        <input id="timeInput" type="time"/>
-        <select id="catInput">
-          <option value="学习">学习</option>
-          <option value="工作">工作</option>
-          <option value="生活">生活</option>
-        </select>
-        <button class="addBtn" id="addBtn">添加</button>
-      </div>
-
-      <!-- repeat -->
-      <div class="chips" id="repeatChips">
-        <div class="chip on" data-repeat="none">不重复</div>
-        <div class="chip" data-repeat="daily">每天</div>
-        <div class="chip" data-repeat="weekly">每周</div>
-        <div class="chip" data-repeat="monthly">每月</div>
-        <div class="chip" data-repeat="yearly">每年</div>
-      </div>
-
-      <!-- tasks -->
-      <div class="tasks" id="taskList"></div>
-    </section>
-  </main>
-
-  <!-- Settings Modal -->
-  <div class="modalMask" id="modalMask" role="dialog" aria-modal="true" aria-label="设置">
-    <div class="modal">
-      <h3>应用设置</h3>
-
-      <div class="settingRow">
-        <div>
-          <div style="font-weight:700">深浅模式</div>
-          <div class="meta">自动保存主题到本地</div>
+        <div class="nav" id="filterNav">
+          <button data-filter="all" class="active"><span>全部</span><span class="count" id="cAll">0</span></button>
+          <button data-filter="today"><span>今天</span><span class="count" id="cToday">0</span></button>
+          <button data-filter="important"><span>重要</span><span class="count" id="cImportant">0</span></button>
+          <button data-filter="done"><span>已完成</span><span class="count" id="cDone">0</span></button>
+          <button data-filter="todo"><span>未完成</span><span class="count" id="cTodo">0</span></button>
         </div>
-        <div class="switch" id="themeSwitch"><i></i></div>
-      </div>
+      </aside>
 
-      <div class="settingRow">
-        <div>
-          <div style="font-weight:700">默认分类</div>
-          <div class="meta">新增任务的默认分类</div>
+      <!-- RIGHT: Task board -->
+      <main class="board">
+        <!-- quick chips -->
+        <div class="chips" id="quickChips">
+          <button class="chip" data-chip="today">今天</button>
+          <button class="chip" data-chip="tomorrow">明天</button>
+          <button class="chip" data-chip="mon">周一</button>
+          <button class="chip" data-chip="tue">周二</button>
+          <button class="chip" data-chip="wed">周三</button>
+          <button class="chip" data-chip="thu">周四</button>
+          <button class="chip" data-chip="fri">周五</button>
+          <button class="chip" data-chip="sat">周六</button>
+          <button class="chip" data-chip="sun">周日</button>
+          <button class="chip" data-chip="week">本周</button>
+          <button class="chip" data-chip="month">本月</button>
+          <span class="chip muted" style="cursor:default">点击快速设置日期</span>
         </div>
-        <select id="defaultCat">
-          <option value="学习">学习</option>
-          <option value="工作">工作</option>
-          <option value="生活">生活</option>
-        </select>
-      </div>
 
-      <div class="settingRow">
-        <div>
-          <div style="font-weight:700">默认重复</div>
-          <div class="meta">新增任务默认的重复规则</div>
-        </div>
-        <select id="defaultRepeat">
+        <!-- List -->
+        <div class="list" id="taskList"></div>
+
+        <!-- Empty state -->
+        <p id="emptyTip" class="muted" style="text-align:center;margin:30px 0 10px;">没有任务。到底部添加新任务～</p>
+      </main>
+    </div>
+  </div>
+
+  <!-- Composer at bottom -->
+  <div class="composer">
+    <div class="wrap">
+      <div class="row">
+        <input id="taskInput" class="field" placeholder="输入任务（例如：完成作业 / 买菜 / 复习）" />
+        <input id="dateInput" type="date" />
+        <input id="timeInput" type="time" />
+        <select id="repeatInput" class="repeat">
           <option value="none">不重复</option>
           <option value="daily">每天</option>
           <option value="weekly">每周</option>
           <option value="monthly">每月</option>
           <option value="yearly">每年</option>
         </select>
+        <button id="addBtn" class="add">添加</button>
       </div>
-
-      <div class="settingRow">
-        <div>
-          <div style="font-weight:700">数据</div>
-          <div class="meta">导出 / 导入 / 清空（不可撤销）</div>
-        </div>
-        <div class="rowBtns">
-          <button id="btnExport">导出</button>
-          <button id="btnImport">导入</button>
-          <button id="btnClear" style="background:var(--danger)">清空</button>
-        </div>
-      </div>
-
-      <div class="closeLine"><div class="closeDot"></div></div>
     </div>
   </div>
 
 <script>
-const $=s=>document.querySelector(s);
-const $$=s=>document.querySelectorAll(s);
+/* -------------- State -------------- */
+const $ = sel => document.querySelector(sel);
+const $$ = sel => Array.from(document.querySelectorAll(sel));
 
-let tasks=JSON.parse(localStorage.getItem("qd.tasks")||"[]");
-let appCfg=JSON.parse(localStorage.getItem("qd.cfg")||'{"theme":"dark","defaultCat":"学习","defaultRepeat":"none"}');
+const STORAGE_KEY = "qingdan-plus-tasks-v3";
+let tasks = load();
+let currentFilter = 'all';
 
-let filter="all", activeCat=null, repeat=appCfg.defaultRepeat;
+function uid(){ return (Date.now().toString(36)+Math.random().toString(36).slice(2,7)); }
+function todayStr(d=new Date()){ return d.toISOString().slice(0,10); }
+function addDays(d, n){ const x=new Date(d); x.setDate(x.getDate()+n); return x; }
 
-/* ===== helpers ===== */
-const todayStr=()=>new Date().toISOString().slice(0,10);
-const isSameWeek=(d)=>{const x=new Date(d),t=new Date(),s=new Date(t);s.setDate(t.getDate()-t.getDay());s.setHours(0,0,0,0);const e=new Date(s);e.setDate(s.getDate()+7);return x>=s&&x<e};
-const weekday=(d)=>new Date(d).getDay();
-
-/* ===== storage ===== */
-function saveCfg(){localStorage.setItem("qd.cfg",JSON.stringify(appCfg))}
-function save(){localStorage.setItem("qd.tasks",JSON.stringify(tasks));render();}
-
-/* ===== UI state ===== */
-function applyTheme(){
-  const isLight = appCfg.theme==="light";
-  document.body.setAttribute("data-theme", isLight?"light":"dark");
-  $("#themeBtn").textContent=isLight?"☀️":"🌙";
-  $("#themeSwitch").classList.toggle("on", isLight);
-}
-applyTheme();
-
-/* ===== adding ===== */
-function addTask(){
-  const title=$("#taskInput").value.trim();
-  if(!title){ $("#taskInput").focus(); return; }
-  const date=$("#dateInput").value || todayStr();
-  const time=$("#timeInput").value || "09:00";
-  const cat=$("#catInput").value;
-  tasks.push({
-    id:Date.now(), title, date, time, cat,
-    repeat, done:false, important:false
-  });
-  $("#taskInput").value="";
-  save();
-}
-$("#addBtn").onclick=addTask;
-$("#taskInput").addEventListener('keydown',e=>{if(e.key==="Enter") addTask()});
-
-/* ===== render ===== */
-function render(){
-  // filter
-  let list=tasks.filter(t=>{
-    if(activeCat && t.cat!==activeCat) return false;
-    if(filter==="today") return t.date===todayStr();
-    if(filter==="important") return t.important;
-    if(filter==="done") return t.done;
-    if(filter==="undone") return !t.done;
-    return true;
-  });
-
-  // sort by date+time
-  list.sort((a,b)=> (a.date+a.time).localeCompare(b.date+b.time));
-
-  // build items
-  const wrap=$("#taskList");
-  wrap.innerHTML="";
-  list.forEach(t=>{
-    const div=document.createElement("div");
-    div.className="task"+(t.done?" done":"");
-    div.innerHTML=`
-      <div style="min-width:0">
-        <div class="title">${escapeHTML(t.title)}
-          ${t.important?'<span class="tag" style="background:rgba(255,181,69,.2);color:var(--warn)">重要</span>':''}
-          ${overdue(t)?'<span class="tag" style="background:rgba(255,93,93,.2);color:var(--danger)">超期</span>':''}
-        </div>
-        <div class="meta">${t.date} ${t.time} · ${t.cat} · ${labelRepeat(t.repeat)}</div>
-      </div>
-      <div class="actions">
-        <button class="btn-mini important">${t.important?"取消重要":"标为重要"}</button>
-        <button class="btn-mini complete">${t.done?"撤销":"完成"}</button>
-        <button class="btn-mini delete">删除</button>
-      </div>`;
-    div.querySelector(".complete").onclick=()=>{t.done=!t.done;save();}
-    div.querySelector(".delete").onclick=()=>{tasks=tasks.filter(x=>x.id!==t.id);save();}
-    div.querySelector(".important").onclick=()=>{t.important=!t.important;save();}
-    wrap.appendChild(div);
-  });
-
-  // counters + stats
-  $("#count-all").textContent=tasks.length;
-  $("#count-today").textContent=tasks.filter(t=>t.date===todayStr()).length;
-  $("#count-important").textContent=tasks.filter(t=>t.important).length;
-
-  const todayCnt=tasks.filter(t=>t.date===todayStr() && !t.done).length;
-  const overdueCnt=tasks.filter(t=>overdue(t) && !t.done).length;
-  const doneCnt=tasks.filter(t=>t.done).length;
-  $("#stat-today").textContent=`今日：${todayCnt}`;
-  $("#stat-overdue").textContent=`超期：${overdueCnt}`;
-  $("#stat-done").textContent=`已完成：${doneCnt}`;
-}
-function labelRepeat(r){return r==="none"?"不重复":r==="daily"?"每天":r==="weekly"?"每周":r==="monthly"?"每月":"每年"}
-function overdue(t){
-  const now=new Date();const dt=new Date(`${t.date}T${t.time||"23:59"}:00`);
-  return !t.done && dt<now;
-}
-function escapeHTML(s){return s.replace(/[&<>"']/g,m=>({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]))}
-
-/* ===== filters ===== */
-$$(".navbtn").forEach(btn=>{
-  btn.onclick=()=>{
-    $$(".navbtn").forEach(b=>b.classList.remove("on"));
-    btn.classList.add("on");
-    filter=btn.dataset.filter||"all";
-    activeCat=btn.dataset.cat||null;
-    render();
-  };
+/* -------------- Theme -------------- */
+const themeBtn = $('#themeBtn');
+themeBtn.addEventListener('click', () => {
+  document.documentElement.classList.toggle('light');
+  localStorage.setItem('theme', document.documentElement.classList.contains('light')?'light':'dark');
+  themeBtn.textContent = document.documentElement.classList.contains('light') ? '🌞' : '🌙';
 });
-$("#quickChips").addEventListener("click",(e)=>{
-  const chip=e.target.closest(".chip"); if(!chip) return;
-  $$("#quickChips .chip").forEach(c=>c.classList.remove("on"));
-  chip.classList.add("on");
-  const ds=chip.dataset;
-  if(ds.chip==="today"){filter="today";activeCat=null;[...$("#nav").querySelectorAll(".navbtn")].forEach(b=>b.classList.remove("on"));}
-  else if(ds.chip==="tomorrow"){filter="all";activeCat=null;dateSet(new Date(Date.now()+86400000));}
-  else if(ds.chip==="week"){filter="all";activeCat=null;/* visual only */ }
-  else if(ds.chipWeekday!==undefined){
-    filter="all"; activeCat=null;
-    // jump composer date to next selected weekday
-    const want=+ds.chipWeekday, d=new Date(); let diff=(want-d.getDay()+7)%7; if(diff===0) diff=7;
-    d.setDate(d.getDate()+diff); dateSet(d);
+(function initTheme(){
+  const t = localStorage.getItem('theme');
+  if (t==='light') { document.documentElement.classList.add('light'); themeBtn.textContent='🌞';}
+})();
+
+/* -------------- Load/Save -------------- */
+function load(){
+  try{ return JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]'); }
+  catch(e){ return []; }
+}
+function save(){ localStorage.setItem(STORAGE_KEY, JSON.stringify(tasks)); }
+
+/* -------------- Render -------------- */
+function render(){
+  const list = $('#taskList');
+  list.innerHTML = '';
+
+  const visible = tasks.filter(t => {
+    if (currentFilter==='today') return t.date === todayStr();
+    if (currentFilter==='important') return t.star >= 4 && !t.done;
+    if (currentFilter==='done') return t.done;
+    if (currentFilter==='todo') return !t.done;
+    return true; // all
+  }).sort((a,b) => {
+    // order: not done -> soonest date -> highest star
+    const ad = a.done ? 1 : 0, bd = b.done ? 1 : 0;
+    if (ad!==bd) return ad - bd;
+    const at=a.date||'9999-99-99', bt=b.date||'9999-99-99';
+    if (at!==bt) return at.localeCompare(bt);
+    return (b.star||0)-(a.star||0);
+  });
+
+  visible.forEach(t => list.appendChild(row(t)));
+
+  $('#emptyTip').classList.toggle('hidden', !!visible.length);
+  updateCounts();
+}
+function row(task){
+  const el = document.createElement('div');
+  el.className = 'item'+(task.done?' done':'');
+  el.dataset.id = task.id;
+
+  const done = document.createElement('input');
+  done.type='checkbox'; done.className='check'; done.checked=task.done;
+  done.addEventListener('change', ()=>{
+    task.done = done.checked; save(); render();
+  });
+
+  const titleBox = document.createElement('div');
+  titleBox.className='title';
+  const title = document.createElement('input');
+  title.value = task.title;
+  title.placeholder='未命名任务…';
+  title.addEventListener('change', ()=>{ task.title = title.value.trim(); save(); render(); });
+
+  const meta = document.createElement('div');
+  meta.className='meta';
+  if (task.date) meta.appendChild(badge('📅 '+task.date));
+  if (task.time) meta.appendChild(badge('⏰ '+task.time));
+  if (task.repeat && task.repeat!=='none'){
+    const repMap = {daily:'每天',weekly:'每周',monthly:'每月',yearly:'每年'};
+    meta.appendChild(badge('🔁 '+(repMap[task.repeat]||'重复')));
   }
+  if (task.star>0) meta.appendChild(badge('⭐ '+task.star));
+
+  titleBox.append(title, meta);
+
+  const actions = document.createElement('div');
+  actions.className='actions';
+
+  // rating
+  const rating = document.createElement('div'); rating.className='rating';
+  for(let i=1;i<=5;i++){
+    const s = document.createElement('i'); s.className='star'+(i<=task.star?' on':''); s.title=i+' 星';
+    s.addEventListener('click', ()=>{ task.star=i; save(); render(); });
+    rating.appendChild(s);
+  }
+  actions.appendChild(rating);
+
+  // edit date/time quickly
+  const editBtn = document.createElement('button');
+  editBtn.className='btn-ghost'; editBtn.textContent='编辑';
+  editBtn.addEventListener('click', () => quickEdit(task));
+  actions.appendChild(editBtn);
+
+  const del = document.createElement('button');
+  del.className='btn-ghost'; del.style.color='var(--danger)'; del.textContent='删除';
+  del.addEventListener('click', ()=>{
+    tasks = tasks.filter(x=>x.id!==task.id); save(); render();
+  });
+  actions.appendChild(del);
+
+  el.append(done, titleBox, actions);
+  return el;
+}
+function badge(text){ const b=document.createElement('span'); b.className='badge'; b.textContent=text; return b; }
+
+function updateCounts(){
+  $('#cAll').textContent = tasks.length;
+  $('#cToday').textContent = tasks.filter(t=>t.date===todayStr()).length;
+  $('#cImportant').textContent = tasks.filter(t=>t.star>=4 && !t.done).length;
+  $('#cDone').textContent = tasks.filter(t=>t.done).length;
+  $('#cTodo').textContent = tasks.filter(t=>!t.done).length;
+}
+
+/* -------------- Filters -------------- */
+$('#filterNav').addEventListener('click', e=>{
+  const btn = e.target.closest('button[data-filter]'); if(!btn) return;
+  currentFilter = btn.dataset.filter;
+  $$('#filterNav button').forEach(b=>b.classList.toggle('active', b===btn));
   render();
 });
-function dateSet(d){
-  $("#dateInput").value=d.toISOString().slice(0,10);
-}
 
-/* repeat chips */
-$("#repeatChips").addEventListener("click",(e)=>{
-  const c=e.target.closest(".chip");if(!c) return;
-  $$("#repeatChips .chip").forEach(x=>x.classList.remove("on"));
-  c.classList.add("on");
-  repeat=c.dataset.repeat;
+/* -------------- Quick chips -------------- */
+const chips = $('#quickChips');
+chips.addEventListener('click', (e)=>{
+  const btn = e.target.closest('.chip[data-chip]'); if(!btn) return;
+  const now = new Date();
+  const map = {
+    today: todayStr(now),
+    tomorrow: todayStr(addDays(now,1)),
+    mon: dateOfWeek(1), tue: dateOfWeek(2), wed: dateOfWeek(3),
+    thu: dateOfWeek(4), fri: dateOfWeek(5), sat: dateOfWeek(6), sun: dateOfWeek(0),
+    week: todayStr(now), month: todayStr(now)
+  };
+  const ds = map[btn.dataset.chip];
+  if (ds){ $('#dateInput').value = ds; flash(btn); }
+});
+function dateOfWeek(w){ // 0=Sun..6
+  const d=new Date(); const diff = w - d.getDay();
+  return todayStr(addDays(d, diff>=0?diff:diff+7));
+}
+function flash(el){ el.classList.add('active'); setTimeout(()=>el.classList.remove('active'), 500); }
+
+/* -------------- Composer -------------- */
+$('#addBtn').addEventListener('click', addTask);
+$('#taskInput').addEventListener('keydown', e=>{
+  if(e.key==='Enter'){ addTask(); }
 });
 
-/* ===== settings ===== */
-const modal=$("#modalMask");
-$("#settingsBtn").onclick=()=>{openSettings();}
-modal.addEventListener("click",(e)=>{ if(e.target===modal) modal.style.display="none"; });
+function addTask(){
+  const title = $('#taskInput').value.trim();
+  if(!title){ $('#taskInput').focus(); return; }
+  const date = $('#dateInput').value || '';
+  const time = $('#timeInput').value || '';
+  const repeat = $('#repeatInput').value;
 
-function openSettings(){
-  $("#defaultCat").value=appCfg.defaultCat;
-  $("#defaultRepeat").value=appCfg.defaultRepeat;
-  const isLight=appCfg.theme==="light";
-  $("#themeSwitch").classList.toggle("on",isLight);
-  modal.style.display="flex";
+  const t = {
+    id: uid(),
+    title, date, time, repeat,
+    star: 0, done:false,
+    createdAt: Date.now()
+  };
+  tasks.push(t);
+  save();
+  $('#taskInput').value='';
+  render();
+  // smart repeat creation (next instance) happens on completion not on add
 }
 
-$("#themeBtn").onclick=()=>{
-  appCfg.theme = (appCfg.theme==="light"?"dark":"light");
-  saveCfg(); applyTheme();
-};
-$("#themeSwitch").onclick=()=>{
-  appCfg.theme = $("#themeSwitch").classList.toggle("on") ? "light" : "dark";
-  saveCfg(); applyTheme();
-};
-$("#defaultCat").onchange=e=>{appCfg.defaultCat=e.target.value; $("#catInput").value=e.target.value; saveCfg();}
-$("#defaultRepeat").onchange=e=>{appCfg.defaultRepeat=e.target.value; repeat=e.target.value; saveCfg();}
+/* -------------- Quick edit -------------- */
+function quickEdit(task){
+  const nd = prompt('设置日期 (YYYY-MM-DD)：', task.date||todayStr());
+  if (nd===null) return;
+  const nt = prompt('设置时间 (HH:MM)：', task.time||'');
+  if (nt===null) return;
+  task.date = (nd||'').slice(0,10);
+  task.time = (nt||'').slice(0,5);
+  save(); render();
+}
 
-/* data ops in settings */
-$("#btnExport").onclick=()=>{
-  const blob=new Blob([JSON.stringify(tasks)],{type:"application/json"});
-  const url=URL.createObjectURL(blob);
-  const a=document.createElement("a"); a.href=url; a.download="qingdan-data.json"; a.click();
-  URL.revokeObjectURL(url);
-};
-$("#btnImport").onclick=()=>{
-  const inp=document.createElement("input"); inp.type="file"; inp.accept="application/json";
-  inp.onchange=ev=>{
-    const f=ev.target.files[0]; if(!f) return;
-    const fr=new FileReader();
-    fr.onload=()=>{ try{ tasks=JSON.parse(fr.result||"[]"); save(); modal.style.display="none"; }catch(e){ alert("导入失败：文件格式不正确"); } };
-    fr.readAsText(f);
-  };
-  inp.click();
-};
-$("#btnClear").onclick=()=>{ if(confirm("确定要清空所有数据吗？此操作不可撤销")){ tasks=[]; save(); modal.style.display="none"; } };
+/* -------------- Repeat handling on complete -------------- */
+function handleRepeat(task){
+  if(task.repeat==='none') return;
+  const cur = task.date ? new Date(task.date+'T00:00:00') : new Date();
+  let next = new Date(cur);
+  if(task.repeat==='daily') next.setDate(cur.getDate()+1);
+  if(task.repeat==='weekly') next.setDate(cur.getDate()+7);
+  if(task.repeat==='monthly') next.setMonth(cur.getMonth()+1);
+  if(task.repeat==='yearly') next.setFullYear(cur.getFullYear()+1);
+  tasks.push({
+    id: uid(), title: task.title, date: todayStr(next), time: task.time||'',
+    repeat: task.repeat, star: task.star, done:false, createdAt: Date.now()
+  });
+}
 
-/* defaults */
-$("#catInput").value=appCfg.defaultCat;
-$(`#repeatChips .chip[data-repeat="${appCfg.defaultRepeat}"]`)?.classList.add("on");
+/* Intercept checkbox completion to spawn next repeated task */
+document.addEventListener('change', (e)=>{
+  if(!e.target.classList.contains('check')) return;
+  const id = e.target.closest('.item')?.dataset.id;
+  const t = tasks.find(x=>x.id===id);
+  if (t && e.target.checked) handleRepeat(t);
+  save(); render();
+});
 
-/* init */
-if(!$("#dateInput").value) $("#dateInput").value=todayStr();
-if(!$("#timeInput").value) $("#timeInput").value="09:00";
+/* -------------- Init -------------- */
 render();
 </script>
 </body>
