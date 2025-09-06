@@ -7,38 +7,29 @@
 <meta name="theme-color" content="#0b1020" />
 <style>
   :root {
-    --bg: #0b1020;
-    --panel: #121833;
-    --text: #e8ecff;
-    --muted: #9aa4c7;
-    --brand: #7aa2ff;
-    --accent: #5de4c7;
-    --danger: #ff6b6b;
-    --chip: #1b2245;
-    --chip-on: #263061;
-    --star-off: #3b4372;
-    --star-on: #f5c84b;
+    --bg: #0b1020; --panel: #121833; --muted:#1b2245;
+    --text: #e8ecff; --sub:#9aa4c7;
+    --brand:#7aa2ff; --accent:#5de4c7; --danger:#ff6b6b;
+    --chip:#1b2245; --chip-on:#263061;
+    --star-off:#3b4372; --star-on:#f5c84b;
+    --line: color-mix(in oklab, var(--text) 10%, transparent);
     --shadow: 0 10px 30px rgba(0,0,0,.4);
     --blur: saturate(140%) blur(6px);
   }
-  [data-theme="light"] {
-    --bg:#f7f8ff;
-    --panel:#ffffff;
-    --text:#0e1333;
-    --muted:#5a6285;
-    --brand:#2e59ff;
-    --accent:#17b892;
-    --danger:#d24b4b;
-    --chip:#eef1ff;
-    --chip-on:#dee5ff;
-    --star-off:#c7cee9;
-    --star-on:#f2b236;
+  [data-theme="light"]{
+    --bg:#f7f8ff; --panel:#ffffff; --muted:#eef1ff;
+    --text:#0e1333; --sub:#5a6285;
+    --brand:#2e59ff; --accent:#17b892; --danger:#d24b4b;
+    --chip:#eef1ff; --chip-on:#dee5ff;
+    --star-off:#c7cee9; --star-on:#f2b236;
+    --line: color-mix(in oklab, var(--text) 12%, transparent);
     --shadow: 0 10px 26px rgba(22,35,78,.16);
-    --blur: none;
+    --blur:none;
   }
   *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
   html,body{height:100%;background:var(--bg);color:var(--text);margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,'Noto Sans','PingFang SC','Microsoft YaHei',sans-serif}
   .app{max-width:460px;margin-inline:auto;min-height:100dvh;padding:10px 10px calc(env(safe-area-inset-bottom,0) + 16px)}
+
   /* Top bar */
   .top{
     position:sticky;top:0;z-index:10;background:color-mix(in oklab, var(--bg) 86%, transparent);
@@ -47,323 +38,309 @@
   }
   .logo-dot{width:12px;height:12px;border-radius:4px;background:var(--brand);box-shadow:0 0 0 3px color-mix(in oklab,var(--brand) 20%, transparent)}
   .brand{font-weight:800;letter-spacing:.2px}
-  .ghost{margin-left:auto;display:flex;gap:8px}
-  .btn{
-    border:0;background:var(--chip);color:var(--text);padding:9px 12px;border-radius:11px;font-weight:600;
-    display:inline-flex;align-items:center;gap:8px;box-shadow:var(--shadow);cursor:pointer
+  .space{flex:1}
+  .iconbtn{
+    border:1px solid var(--line);background:var(--muted);color:var(--text);
+    width:40px;height:40px;border-radius:12px;display:grid;place-items:center;box-shadow:var(--shadow);cursor:pointer
   }
-  .btn:active{transform:scale(.98)}
-  .btn-primary{background:linear-gradient(135deg,var(--brand),#8ba6ff)}
-  .btn-outline{background:transparent;border:1px solid color-mix(in oklab,var(--text) 12%, transparent)}
-  .icon{width:18px;height:18px;display:inline-block;vertical-align:-3px;fill:currentColor}
+  .icon{width:20px;height:20px;fill:currentColor}
 
-  /* Input row */
-  .input-card{
-    background:var(--panel);border-radius:16px;padding:12px 12px 10px;box-shadow:var(--shadow);margin-bottom:10px
+  /* Input card */
+  .card{
+    background:var(--panel);border-radius:16px;padding:12px;box-shadow:var(--shadow);margin-bottom:10px
   }
-  .row{display:flex;gap:8px;align-items:center}
-  input[type="text"]{
-    flex:1;border:0;outline:0;background:transparent;color:var(--text);
-    font-size:16px;padding:12px 10px;border-radius:12px
+  .input-row{
+    display:flex;gap:8px;align-items:center;background:var(--muted);
+    border:1px solid var(--line);border-radius:12px;padding:6px 6px 6px 10px;
   }
-  .hints{color:var(--muted);font-size:12px;padding:0 6px 6px}
-  /* Day tabs */
-  .tabs{display:flex;gap:8px;overflow:auto;padding:2px 2px 6px}
+  .input-row input{
+    flex:1;border:0;outline:0;background:transparent;color:var(--text);font-size:16px;padding:10px 6px
+  }
+  .add-btn{
+    border:0;background:linear-gradient(135deg,var(--brand),#8ba6ff);color:#fff;
+    padding:10px 14px;border-radius:10px;font-weight:800;cursor:pointer
+  }
+  .hints{color:var(--sub);font-size:12px;padding:6px 2px 0}
+
+  /* Better Stars */
+  .starbar{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-top:10px}
+  .stars{display:flex;gap:6px;align-items:center}
+  .star{
+    width:28px;height:28px;color:var(--star-off);cursor:pointer;transition:transform .08s ease;
+    filter: drop-shadow(0 2px 6px rgba(0,0,0,.15));
+  }
+  .star:hover{transform:scale(1.08)}
+  .star.on{color:var(--star-on)}
+  .star.hint{color:color-mix(in oklab,var(--star-on) 70%, var(--star-off))}
+  #starValue{
+    min-width:70px;text-align:center;font-weight:800;
+    padding:6px 10px;border-radius:999px;background:var(--chip);
+    border:1px solid var(--line);color:var(--text)
+  }
+
+  /* Chips */
+  .chips{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
   .chip{
-    background:var(--chip);color:var(--text);border:1px solid color-mix(in oklab,var(--text) 8%,transparent);
+    background:var(--chip);color:var(--text);border:1px solid var(--line);
     padding:8px 12px;border-radius:999px;font-weight:700;white-space:nowrap
   }
   .chip.on{background:var(--chip-on);border-color:color-mix(in oklab,var(--brand) 50%, transparent);color:var(--brand)}
-  /* Priority & repeat */
-  .bar{display:flex;gap:10px;align-items:center;flex-wrap:wrap;padding:4px 6px 10px}
-  .stars{display:flex;gap:4px}
-  .star{width:22px;height:22px;color:var(--star-off);cursor:pointer}
-  .star.on{color:var(--star-on)}
-  .repeats{display:flex;gap:6px;overflow:auto}
-  .pill{padding:7px 10px;border-radius:999px;background:var(--chip);border:1px solid color-mix(in oklab,var(--text) 8%,transparent);font-size:13px}
+
+  .bar{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-top:8px}
+  .pill{padding:7px 10px;border-radius:999px;background:var(--chip);border:1px solid var(--line);font-size:13px}
   .pill.on{background:var(--chip-on);border-color:color-mix(in oklab,var(--accent) 50%, transparent);color:var(--accent)}
+
   /* List */
-  .list{display:flex;flex-direction:column;gap:8px;margin-top:6px}
-  .card{
+  .list{display:flex;flex-direction:column;gap:8px;margin-top:10px}
+  .item{
     background:var(--panel);border-radius:14px;padding:12px;display:flex;gap:10px;align-items:flex-start;box-shadow:var(--shadow)
   }
-  .badge{font-size:12px;color:var(--muted);display:flex;gap:6px;flex-wrap:wrap}
+  .title{font-weight:800;margin-bottom:6px}
+  .muted{color:var(--sub)}
+  .tags{display:flex;gap:6px;flex-wrap:wrap;font-size:12px}
   .tag{background:var(--chip);padding:4px 8px;border-radius:999px}
-  .title{font-weight:700;margin-bottom:6px}
   .right{margin-left:auto;display:flex;gap:8px}
-  .muted{color:var(--muted)}
-  .empty{color:var(--muted);text-align:center;padding:28px 8px}
-  .footer-space{height:10px}
+  .btn-mini{
+    border:1px solid var(--line);background:var(--muted);color:var(--text);
+    padding:8px 10px;border-radius:10px;cursor:pointer
+  }
+  .btn-danger{background:linear-gradient(135deg,var(--danger),#ff9c9c);border:0;color:#fff}
+  .empty{color:var(--sub);text-align:center;padding:28px 8px}
 </style>
 </head>
 <body>
 <div class="app" id="app">
 
+  <!-- Top bar -->
   <div class="top">
     <div class="logo-dot" aria-hidden="true"></div>
     <div>
       <div class="brand">清单Plus</div>
       <div class="muted" style="font-size:12px">记录 · 提醒 · 专注</div>
     </div>
-    <div class="ghost">
-      <button class="btn btn-outline" id="themeBtn" aria-label="切换主题">
-        <svg class="icon" viewBox="0 0 24 24"><path d="M12 3a1 1 0 0 1 1 1v1a1 1 0 1 1-2 0V4a1 1 0 0 1 1-1Zm0 15a4 4 0 1 0 0-8 4 4 0 0 0 0 8Zm8-4a1 1 0 0 1 1 1h1a1 1 0 1 1 0 2h-1a1 1 0 0 1-2 0 1 1 0 1 1 2-3Zm-8 6a1 1 0 0 1 1 1v1a1 1 0 1 1-2 0v-1a1 1 0 0 1 1-1ZM3 12a1 1 0 0 1 1-1H5a1 1 0 1 1 0 2H4a1 1 0 0 1-1-1Zm14.95-6.536a1 1 0 0 1 1.414 1.415l-.707.707a1 1 0 1 1-1.414-1.415l.707-.707ZM4.343 17.657a1 1 0 0 1 1.414 0l.707.707a1 1 0 0 1-1.414 1.415l-.707-.708a1 1 0 0 1 0-1.414Zm0-12.728a1 1 0 0 1 1.414-1.415l.707.707A1 1 0 1 1 5.05 6.636l-.707-.707Zm12.728 12.728a1 1 0 0 1 0 1.414l-.707.708a1 1 0 0 1-1.414-1.415l.707-.707a1 1 0 0 1 1.414 0Z"/></svg>
-        主题
-      </button>
-      <button class="btn btn-primary" id="addBtn">
-        <svg class="icon" viewBox="0 0 24 24"><path d="M11 5a1 1 0 1 1 2 0v6h6a1 1 0 1 1 0 2h-6v6a1 1 0 1 1-2 0v-6H5a1 1 0 1 1 0-2h6V5Z"/></svg>
-        添加
-      </button>
-    </div>
+    <div class="space"></div>
+    <!-- moon toggle -->
+    <button class="iconbtn" id="themeBtn" aria-label="切换主题">
+      <!-- moon/sun swapped in JS -->
+      <svg class="icon" id="themeIcon" viewBox="0 0 24 24"><path d="M21 12.79A9 9 0 0 1 11.21 3 7 7 0 1 0 21 12.79z"/></svg>
+    </button>
   </div>
 
-  <!-- Input -->
-  <div class="input-card">
-    <div class="row">
+  <!-- Input card (Add button on the right of text input) -->
+  <div class="card">
+    <div class="input-row">
       <input id="taskInput" type="text" placeholder="输入任务… 例：买菜 周三 3⭐ 每周" />
+      <button class="add-btn" id="addBtn">添加</button>
     </div>
-    <div class="bar">
+
+    <!-- Stars with live counter -->
+    <div class="starbar">
       <div class="stars" id="stars">
-        <!-- 5 stars -->
         <svg class="star" data-val="1" viewBox="0 0 24 24"><path d="m12 3 2.8 5.7 6.2.9-4.5 4.4 1.1 6.2L12 17.8 6.4 20.2l1.1-6.2L3 9.6l6.2-.9L12 3Z"/></svg>
         <svg class="star" data-val="2" viewBox="0 0 24 24"><path d="m12 3 2.8 5.7 6.2.9-4.5 4.4 1.1 6.2L12 17.8 6.4 20.2l1.1-6.2L3 9.6l6.2-.9L12 3Z"/></svg>
         <svg class="star" data-val="3" viewBox="0 0 24 24"><path d="m12 3 2.8 5.7 6.2.9-4.5 4.4 1.1 6.2L12 17.8 6.4 20.2l1.1-6.2L3 9.6l6.2-.9L12 3Z"/></svg>
         <svg class="star" data-val="4" viewBox="0 0 24 24"><path d="m12 3 2.8 5.7 6.2.9-4.5 4.4 1.1 6.2L12 17.8 6.4 20.2l1.1-6.2L3 9.6l6.2-.9L12 3Z"/></svg>
         <svg class="star" data-val="5" viewBox="0 0 24 24"><path d="m12 3 2.8 5.7 6.2.9-4.5 4.4 1.1 6.2L12 17.8 6.4 20.2l1.1-6.2L3 9.6l6.2-.9L12 3Z"/></svg>
       </div>
-      <div class="repeats" id="repeatRow">
-        <button class="pill on" data-rep="none">不重复</button>
-        <button class="pill" data-rep="daily">每天</button>
-        <button class="pill" data-rep="weekly">每周</button>
-        <button class="pill" data-rep="monthly">每月</button>
-        <button class="pill" data-rep="yearly">每年</button>
-        <button class="pill" data-rep="custom">自定义</button>
-      </div>
+      <div id="starValue">0 ⭐</div>
     </div>
-    <div class="tabs" id="dayTabs">
-      <!-- Monday→Sunday -->
+
+    <!-- Week chips (Mon→Sun) -->
+    <div class="chips" id="dayTabs"></div>
+
+    <!-- Repeat chips -->
+    <div class="bar" id="repeatRow">
+      <button class="pill on" data-rep="none">不重复</button>
+      <button class="pill" data-rep="daily">每天</button>
+      <button class="pill" data-rep="weekly">每周</button>
+      <button class="pill" data-rep="monthly">每月</button>
+      <button class="pill" data-rep="yearly">每年</button>
+      <button class="pill" data-rep="custom">自定义</button>
     </div>
-    <div class="hints">技巧：输入“喝水 周一 3⭐ 每天”或“还书 周末 5⭐ 每月”。</div>
+
+    <div class="hints">技巧：输入“喝水 周一 3⭐ 每周”或“还书 周末 5⭐ 每月”。</div>
   </div>
 
-  <!-- Task list -->
+  <!-- List -->
   <div class="list" id="list"></div>
-  <div class="footer-space"></div>
+  <div class="empty" id="empty" style="display:none">暂无任务，先添加一个吧～</div>
 </div>
 
 <script>
-/* ========= State ========= */
-const $ = sel => document.querySelector(sel);
-const app = $('#app');
-const storageKey = 'qdplus.tasks.v1';
-const themeKey = 'qdplus.theme';
+/* ====== State ====== */
+const $ = s => document.querySelector(s);
+const $$ = s => document.querySelectorAll(s);
+const storageKey = 'qdplus.tasks.v3';
 let tasks = JSON.parse(localStorage.getItem(storageKey) || '[]');
-let currentDay = new Date().getDay(); // 0 Sun → 6 Sat
-currentDay = (currentDay === 0 ? 7 : currentDay); // 1..7
-let draft = { day: currentDay, priority: 0, repeat:'none' };
 
-/* ========= Theme ========= */
-const applyTheme = t => {
-  document.documentElement.setAttribute('data-theme', t);
-  localStorage.setItem(themeKey, t);
-};
-applyTheme(localStorage.getItem(themeKey) || 'dark');
-$('#themeBtn').onclick = () =>
-  applyTheme((localStorage.getItem(themeKey) || 'dark') === 'dark' ? 'light' : 'dark');
+const themeBtn = $('#themeBtn');
+const themeIcon = $('#themeIcon');
+const savedTheme = localStorage.getItem('qdplus.theme') || 'dark';
+applyTheme(savedTheme);
 
-/* ========= Day Tabs ========= */
+function applyTheme(mode){
+  document.documentElement.setAttribute('data-theme', mode);
+  localStorage.setItem('qdplus.theme', mode);
+  // moon/sun icon
+  themeIcon.innerHTML = mode==='light'
+    ? '<path d="M6.76 4.84l-1.8-1.79-1.41 1.41 1.79 1.8 1.42-1.42Zm10.45 0 1.79-1.79 1.41 1.41-1.8 1.79-1.4-1.41ZM12 4a1 1 0 0 1 1 1v2a1 1 0 1 1-2 0V5a1 1 0 0 1 1-1Zm8 7a1 1 0 0 1 1 1h2a1 1 0 1 1 0 2h-2a1 1 0 0 1-1-1 1 1 0 0 1 1-1ZM4 12a1 1 0 0 1 1-1H3a1 1 0 1 1 0 2h2a1 1 0 0 1-1-1Zm8 7a1 1 0 0 1 1 1v2a1 1 0 1 1-2 0v-2a1 1 0 0 1 1-1Zm7.24.16 1.8 1.79-1.41 1.41-1.79-1.8 1.4-1.4ZM6.76 19.16l-1.8 1.79-1.41-1.41 1.79-1.8 1.42 1.42Z"/><circle cx="12" cy="12" r="5"></circle>'
+    : '<path d="M21 12.79A9 9 0 0 1 11.21 3 7 7 0 1 0 21 12.79z"/>';
+}
+themeBtn.onclick = ()=> applyTheme((localStorage.getItem('qdplus.theme')||'dark')==='dark'?'light':'dark');
+
+/* ====== Day chips ====== */
 const dayNames = ['周一','周二','周三','周四','周五','周六','周日'];
+let draft = { day: ((d=>d===0?7:d)(new Date().getDay())), priority:0, repeat:'none' }; // day:1..7
 const dayTabs = $('#dayTabs');
-dayNames.forEach((n, i) => {
-  const d = i+1;
-  const b = document.createElement('button');
-  b.className = 'chip' + (d===draft.day ? ' on':'');
-  b.dataset.day = d;
-  b.textContent = n;
-  b.onclick = () => {
-    draft.day = d;
-    [...dayTabs.children].forEach(c=>c.classList.toggle('on', c===b));
-    render();
-  };
+dayNames.forEach((n,i)=>{
+  const b=document.createElement('button');
+  b.className='chip'+(i+1===draft.day?' on':''); b.dataset.day=i+1; b.textContent=n;
+  b.onclick=()=>{ draft.day=i+1; [...dayTabs.children].forEach(x=>x.classList.toggle('on',x===b)); render(); };
   dayTabs.appendChild(b);
 });
 
-/* ========= Stars ========= */
-const stars = $('#stars');
-stars.addEventListener('click', e=>{
-  const s = e.target.closest('.star');
-  if(!s) return;
-  draft.priority = +s.dataset.val;
-  [...stars.children].forEach(x=>x.classList.toggle('on', +x.dataset.val <= draft.priority));
+/* ====== Stars with live counter ====== */
+const starsEl = document.getElementById('stars');
+const starValueEl = document.getElementById('starValue');
+function applyStarUI(val){
+  [...starsEl.children].forEach(s=>{
+    const v=+s.dataset.val;
+    s.classList.toggle('on', v<=val);
+    s.classList.remove('hint');
+  });
+  starValueEl.textContent = `${val} ⭐`;
+}
+applyStarUI(0);
+starsEl.addEventListener('pointerover',e=>{
+  const s=e.target.closest('.star'); if(!s) return;
+  const h=+s.dataset.val;
+  [...starsEl.children].forEach(x=>x.classList.toggle('hint', +x.dataset.val<=h));
+  starValueEl.textContent = `${h} ⭐`;
+});
+starsEl.addEventListener('pointerout',()=>applyStarUI(draft.priority||0));
+starsEl.addEventListener('click',e=>{
+  const s=e.target.closest('.star'); if(!s) return;
+  draft.priority=+s.dataset.val; applyStarUI(draft.priority);
 });
 
-/* ========= Repeat ========= */
+/* ====== Repeat chips ====== */
 const repeatRow = $('#repeatRow');
 repeatRow.addEventListener('click', e=>{
-  const p = e.target.closest('.pill'); if(!p) return;
-  draft.repeat = p.dataset.rep;
+  const p=e.target.closest('.pill'); if(!p) return;
+  draft.repeat=p.dataset.rep;
   [...repeatRow.children].forEach(x=>x.classList.toggle('on', x===p));
 });
 
-/* ========= Natural language parsing ========= */
-const parseQuick = (txt) => {
-  txt = txt.trim();
-  let title = txt;
+/* ====== NLP parser ====== */
+function parseQuick(txt){
+  txt=txt.trim(); let title=txt;
 
-  // day keywords
-  dayNames.forEach((n,i)=>{
-    if (txt.includes(n)) { draft.day = i+1; title = title.replaceAll(n,'').trim(); }
-  });
-  if (/周末/.test(txt)) { draft.day = 6; title = title.replaceAll('周末','').trim(); }
+  // day words
+  dayNames.forEach((n,i)=>{ if(txt.includes(n)){ draft.day=i+1; title=title.replaceAll(n,'').trim(); }});
+  if(/周末/.test(txt)){ draft.day=6; title=title.replace('周末','').trim(); }
 
-  // stars 3⭐ or 3星
-  const m = txt.match(/([1-5])\s*(⭐|星)/);
-  if (m){ draft.priority = +m[1]; title = title.replace(m[0],'').trim(); }
+  // stars 1-5
+  const m=txt.match(/([1-5])\s*(⭐|星)/); if(m){ draft.priority=+m[1]; title=title.replace(m[0],'').trim(); applyStarUI(draft.priority); }
 
   // repeat
-  if (/每天/.test(txt)) { draft.repeat='daily'; title = title.replace('每天','').trim(); }
-  if (/每周/.test(txt)) { draft.repeat='weekly'; title = title.replace('每周','').trim(); }
-  if (/每月/.test(txt)) { draft.repeat='monthly'; title = title.replace('每月','').trim(); }
-  if (/每年/.test(txt)) { draft.repeat='yearly'; title = title.replace('每年','').trim(); }
-
-  // reset pills/stars UI
+  if(/每天/.test(txt)){ draft.repeat='daily'; title=title.replace('每天','').trim(); }
+  if(/每周/.test(txt)){ draft.repeat='weekly'; title=title.replace('每周','').trim(); }
+  if(/每月/.test(txt)){ draft.repeat='monthly'; title=title.replace('每月','').trim(); }
+  if(/每年/.test(txt)){ draft.repeat='yearly'; title=title.replace('每年','').trim(); }
   [...repeatRow.children].forEach(x=>x.classList.toggle('on', x.dataset.rep===draft.repeat));
-  [...stars.children].forEach(x=>x.classList.toggle('on', +x.dataset.val <= draft.priority));
 
   return title || txt;
-};
+}
 
-/* ========= Add task ========= */
+/* ====== Add task (button is at right of input) ====== */
 const input = $('#taskInput');
-const add = (title) => {
-  if (!title) return;
+$('#addBtn').onclick = ()=> add(parseQuick(input.value));
+input.addEventListener('keydown',e=>{ if(e.key==='Enter'){ add(parseQuick(input.value)); } });
+
+function add(title){
+  if(!title) return input.focus();
   const t = {
     id: crypto.randomUUID(),
     title: title.slice(0,120),
     day: draft.day,
-    priority: draft.priority,
-    repeat: draft.repeat,
+    priority: draft.priority||0,
+    repeat: draft.repeat||'none',
     done:false,
     created: Date.now()
   };
   tasks.unshift(t);
   localStorage.setItem(storageKey, JSON.stringify(tasks));
-  input.value = '';
+  input.value=''; draft.priority=0; applyStarUI(0);
+  draft.repeat='none'; [...repeatRow.children].forEach(x=>x.classList.toggle('on', x.dataset.rep==='none'));
   render();
-};
-$('#addBtn').onclick = () => add(parseQuick(input.value));
-input.addEventListener('keydown', e=>{
-  if(e.key==='Enter'){ add(parseQuick(input.value)); }
-});
-
-/* ========= Helpers ========= */
-const dayText = d => dayNames[d-1];
-const repeatText = r => ({
-  none: '不重复', daily:'每天', weekly:'每周', monthly:'每月', yearly:'每年', custom:'自定义'
-}[r] || '不重复');
-
-/* ========= Render ========= */
-const list = $('#list');
-function render(){
-  const d = draft.day;
-  const filtered = tasks.filter(t => t.day===d);
-  list.innerHTML = '';
-  if (filtered.length===0){
-    const em = document.createElement('div');
-    em.className='empty';
-    em.textContent = '暂无任务，点击右上角“添加”或在输入框按回车。';
-    list.appendChild(em);
-    return;
-  }
-  filtered
-    .sort((a,b)=> (b.priority-a.priority) || (a.done-b.done) || (b.created-a.created))
-    .forEach(t=>{
-      const card = document.createElement('div');
-      card.className='card';
-
-      const left = document.createElement('div');
-      left.style.flex='1';
-      const title = document.createElement('div');
-      title.className='title';
-      title.textContent = t.title;
-      if(t.done){ title.style.textDecoration='line-through'; title.style.opacity=.55; }
-      left.appendChild(title);
-
-      const badge = document.createElement('div');
-      badge.className='badge';
-      // stars
-      const stars = document.createElement('div');
-      for(let i=1;i<=5;i++){
-        const s = document.createElement('span');
-        s.textContent = '★';
-        s.style.color = i<=t.priority ? 'var(--star-on)' : 'var(--star-off)';
-        s.style.marginRight='2px';
-        stars.appendChild(s);
-      }
-      badge.appendChild(stars);
-      // repeat
-      const tag = document.createElement('span');
-      tag.className='tag';
-      tag.textContent = repeatText(t.repeat);
-      badge.appendChild(tag);
-      // day
-      const tag2 = document.createElement('span');
-      tag2.className='tag'; tag2.textContent = dayText(t.day);
-      badge.appendChild(tag2);
-
-      left.appendChild(badge);
-
-      const right = document.createElement('div');
-      right.className='right';
-
-      const toggle = document.createElement('button');
-      toggle.className='btn btn-outline';
-      toggle.textContent = t.done ? '已完成' : '完成';
-      toggle.onclick = ()=>{
-        t.done = !t.done;
-        localStorage.setItem(storageKey, JSON.stringify(tasks));
-        render();
-      };
-      right.appendChild(toggle);
-
-      const del = document.createElement('button');
-      del.className='btn';
-      del.style.background='linear-gradient(135deg,var(--danger),#ff9c9c)';
-      del.textContent='删除';
-      del.onclick = ()=>{
-        tasks = tasks.filter(x=>x.id!==t.id);
-        localStorage.setItem(storageKey, JSON.stringify(tasks));
-        render();
-      };
-      right.appendChild(del);
-
-      card.append(left, right);
-      list.appendChild(card);
-    });
 }
+
+/* ====== Render ====== */
+const list = $('#list'), empty = $('#empty');
+const dayText = d => dayNames[d-1];
+const repeatText = r => ({none:'不重复',daily:'每天',weekly:'每周',monthly:'每月',yearly:'每年',custom:'自定义'}[r]||'不重复');
+
+function render(){
+  const data = tasks.filter(t=>t.day===draft.day)
+    .sort((a,b)=> (b.priority-a.priority) || (a.done-b.done) || (b.created-a.created));
+  list.innerHTML='';
+  if(data.length===0){ empty.style.display='block'; return; } else empty.style.display='none';
+
+  for(const t of data){
+    const row=document.createElement('div'); row.className='item'; row.dataset.id=t.id;
+
+    const left=document.createElement('div'); left.style.flex='1';
+    const title=document.createElement('div'); title.className='title'; title.textContent=t.title;
+    if(t.done){ title.style.textDecoration='line-through'; title.style.opacity='.55'; }
+    left.appendChild(title);
+
+    const tags=document.createElement('div'); tags.className='tags';
+    // stars
+    const starTag=document.createElement('span'); starTag.className='tag';
+    starTag.textContent = (t.priority||0)+'⭐';
+    tags.appendChild(starTag);
+    // repeat
+    const repTag=document.createElement('span'); repTag.className='tag'; repTag.textContent=repeatText(t.repeat);
+    tags.appendChild(repTag);
+    // day
+    const dayTag=document.createElement('span'); dayTag.className='tag'; dayTag.textContent=dayText(t.day);
+    tags.appendChild(dayTag);
+
+    left.appendChild(tags);
+
+    const right=document.createElement('div'); right.className='right';
+    const doneBtn=document.createElement('button'); doneBtn.className='btn-mini'; doneBtn.textContent=t.done?'已完成':'完成';
+    doneBtn.onclick=()=>{ t.done=!t.done; save(); };
+    const delBtn=document.createElement('button'); delBtn.className='btn-mini btn-danger'; delBtn.textContent='删除';
+    delBtn.onclick=()=>{ tasks=tasks.filter(x=>x.id!==t.id); save(); };
+    right.append(doneBtn, delBtn);
+
+    row.append(left, right);
+    list.appendChild(row);
+  }
+}
+function save(){ localStorage.setItem(storageKey, JSON.stringify(tasks)); render(); }
 render();
 
-/* ========= Minimal inline Service Worker =========
-   (kept inline because you asked for a single file) */
-if ('serviceWorker' in navigator) {
-  const swCode = `
-    const CACHE='qdplus-inline-v1';
+/* ====== Inline Service Worker (single-file) ====== */
+if('serviceWorker' in navigator){
+  const sw = `
+    const CACHE='qdplus-onefile-v1';
     const ASSETS=['./','./index.html'];
     self.addEventListener('install',e=>{e.waitUntil(caches.open(CACHE).then(c=>c.addAll(ASSETS)));self.skipWaiting()});
     self.addEventListener('activate',e=>{e.waitUntil(self.clients.claim())});
     self.addEventListener('fetch',e=>{
-      const req=e.request;
-      if(req.method!=='GET'){return}
+      if(e.request.method!=='GET') return;
       e.respondWith(
-        caches.match(req).then(r=>r||fetch(req).then(res=>{
-          const copy=res.clone(); caches.open(CACHE).then(c=>c.put(req,copy)); return res;
+        caches.match(e.request).then(r=>r||fetch(e.request).then(res=>{
+          const copy=res.clone(); caches.open(CACHE).then(c=>c.put(e.request,copy)); return res;
         }).catch(()=>caches.match('./index.html')))
       );
     });
   `;
-  const blob = new Blob([swCode], {type:'text/javascript'});
-  const swUrl = URL.createObjectURL(blob);
-  navigator.serviceWorker.register(swUrl, {scope:'./'}).catch(()=>{});
+  const blob=new Blob([sw],{type:'text/javascript'});
+  const url=URL.createObjectURL(blob);
+  navigator.serviceWorker.register(url,{scope:'./'}).catch(()=>{});
 }
 </script>
 </body>
