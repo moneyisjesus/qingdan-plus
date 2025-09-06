@@ -1,68 +1,351 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="zh-CN">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>清单Plus</title>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>清单Plus · 我的任务</title>
 
-  <!-- App icons -->
-  <link rel="icon" href="logo-192.png" sizes="192x192" />
-  <link rel="apple-touch-icon" href="logo-512.png" />
-
-  <!-- Manifest -->
+  <!-- PWA -->
   <link rel="manifest" href="manifest.json" />
+  <meta name="theme-color" content="#0f172a" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <link rel="icon" sizes="192x192" href="logo-192.png" />
+  <link rel="icon" sizes="512x512" href="logo-512.png" />
+  <link rel="apple-touch-icon" href="logo-192.png" />
 
-  <!-- Basic styles -->
+  <!-- Minimal reset & theme -->
   <style>
-    body {
-      font-family: Arial, sans-serif;
-      margin: 0;
-      padding: 0;
-      text-align: center;
-      background: #f9f9f9;
-      color: #333;
+    :root{
+      --bg:#0b1220; --panel:#131c2b; --panel-2:#0f172a; --muted:#8aa0b1;
+      --text:#e7eef5; --brand:#7c9cff; --ok:#52d6a5; --warn:#f7b955; --danger:#ff7a7a;
+      --chip:#1a2435; --chip-hover:#223048; --br:14px; --br-sm:10px;
+      --shadow:0 8px 28px rgba(0,0,0,.35);
     }
-    header {
-      background: #4CAF50;
-      color: white;
-      padding: 1rem;
-      font-size: 1.5rem;
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      margin:0; background:radial-gradient(1200px 800px at 70% -200px,#17233a10,transparent) , var(--bg);
+      color:var(--text); font:16px/1.4 -apple-system,BlinkMacSystemFont,Segoe UI,Roboto,Helvetica,Arial,"PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;
     }
-    main {
-      padding: 1rem;
+    .app{display:grid; grid-template-columns:280px 1fr; height:100vh;}
+    .side{
+      background:linear-gradient(180deg,#0f1626 0%, #0c1321 100%);
+      border-right:1px solid #1b2538; padding:18px 14px; overflow:auto;
     }
-    footer {
-      margin-top: 2rem;
-      padding: 1rem;
-      font-size: 0.9rem;
-      color: #777;
+    .brand{display:flex; align-items:center; gap:10px; margin-bottom:18px}
+    .brand .logo{inline-size:36px; block-size:36px; border-radius:9px; background:#2a3757; display:grid; place-items:center; color:#fff; font-weight:700}
+    .brand .title{font-size:18px; font-weight:700}
+    .nav h5{margin:18px 10px 8px; color:var(--muted); font-weight:600}
+    .nav button{
+      width:100%; text-align:left; padding:10px 12px; background:transparent; border:0; color:var(--text);
+      border-radius:10px; display:flex; justify-content:space-between; align-items:center; transition:.15s;
     }
+    .nav button:hover{background:#1a2235}
+    .nav button.active{background:#24324d}
+    .count{color:var(--muted); font-size:12px}
+    .main{padding:22px 26px 26px; overflow:auto;}
+    .toolbar{display:flex; align-items:center; gap:10px; margin-bottom:16px}
+    .input{
+      flex:1; display:flex; gap:8px; background:var(--panel); border:1px solid #1b263a; border-radius:12px; padding:8px;
+    }
+    .input input{
+      flex:1; background:transparent; border:0; outline:none; color:var(--text); font-size:16px;
+    }
+    .btn{background:#2a3b63; color:#fff; border:0; padding:10px 14px; border-radius:10px; cursor:pointer}
+    .btn:hover{background:#354c80}
+    .chips{display:flex; gap:8px; flex-wrap:wrap}
+    .chip{
+      background:var(--chip); border:1px solid #1d2a40; color:#cfe0ef; padding:8px 12px; border-radius:999px; cursor:pointer; transition:.15s
+    }
+    .chip:hover{background:var(--chip-hover)}
+    .filters{display:flex; gap:8px; margin-left:auto}
+    .select, .time, .repeat{background:var(--panel); border:1px solid #1b263a; color:var(--text); border-radius:10px; padding:8px 12px}
+    .list{display:grid; gap:10px; margin-top:12px}
+    .task{
+      background:var(--panel-2); border:1px solid #1c2740; border-radius:12px; padding:12px; display:grid; grid-template-columns:28px 1fr auto; gap:10px; align-items:center
+    }
+    .task.done{opacity:.55}
+    .task input[type="checkbox"]{inline-size:18px; block-size:18px}
+    .meta{display:flex; gap:8px; flex-wrap:wrap; color:var(--muted); font-size:12px}
+    .tag{background:#1c2841; border:1px solid #243556; padding:2px 8px; border-radius:999px}
+    .row{display:flex; align-items:center; gap:10px}
+    .sec-title{font-size:20px; font-weight:800; margin:6px 0 14px}
+    .muted{color:var(--muted)}
+    .empty{color:#5f7386; text-align:center; padding:72px 10px}
+    .footer{margin-top:20px; color:#69809a; font-size:12px; text-align:center}
+    @media (max-width:860px){ .app{grid-template-columns:1fr} .side{display:none} }
   </style>
 </head>
 <body>
-  <header>
-    清单Plus
-  </header>
+  <div class="app" id="app">
+    <!-- Sidebar -->
+    <aside class="side">
+      <div class="brand">
+        <div class="logo">清+</div>
+        <div>
+          <div class="title">清单Plus</div>
+          <div class="muted" style="font-size:12px">记录 · 提醒 · 专注</div>
+        </div>
+      </div>
 
-  <main>
-    <h2>一个简洁优雅的中文待办清单应用</h2>
-    <p>随时随地记录和管理您的任务。</p>
-  </main>
+      <nav class="nav">
+        <h5>列表</h5>
+        <button data-view="today" class="active">我的一天 <span class="count" id="count-today">0</span></button>
+        <button data-view="important">重要 <span class="count" id="count-important">0</span></button>
+        <button data-view="planned">计划 <span class="count" id="count-planned">0</span></button>
+        <button data-view="all">任务 <span class="count" id="count-all">0</span></button>
+      </nav>
 
-  <footer>
-    &copy; 2025 清单Plus. All rights reserved.
-  </footer>
+      <div class="footer">v1.0 · 离线可用 · PWA</div>
+    </aside>
 
-  <!-- Service Worker registration -->
+    <!-- Main -->
+    <main class="main">
+      <div class="row">
+        <div class="sec-title" id="sectionTitle">我的一天</div>
+      </div>
+
+      <div class="toolbar">
+        <div class="input">
+          <input id="taskInput" placeholder="添加任务…" />
+        </div>
+        <select id="dateSelect" class="select">
+          <option value="">日期</option>
+          <option value="today">今天</option>
+          <option value="tomorrow">明天</option>
+          <option value="nextmonday">下周一</option>
+        </select>
+        <input id="timeInput" class="time" type="time" />
+        <select id="repeatSelect" class="repeat">
+          <option value="none">不重复</option>
+          <option value="daily">每天</option>
+          <option value="weekday">工作日</option>
+          <option value="weekly">每周</option>
+          <option value="monthly">每月</option>
+          <option value="yearly">每年</option>
+        </select>
+        <button id="addBtn" class="btn">添加</button>
+      </div>
+
+      <div class="chips">
+        <span class="chip" data-chip="today">今天</span>
+        <span class="chip" data-chip="tomorrow">明天</span>
+        <span class="chip" data-chip="nextmonday">下周一</span>
+        <span class="chip" data-chip="9">上午9:00</span>
+        <span class="chip" data-chip="15">下午3:00</span>
+      </div>
+
+      <div id="empty" class="empty" style="display:none">还没有任务，开始添加你的第一条吧～</div>
+      <div id="list" class="list"></div>
+    </main>
+  </div>
+
   <script>
-    if ("serviceWorker" in navigator) {
-      window.addEventListener("load", () => {
-        navigator.serviceWorker
-          .register("/service-worker.js")
-          .then(reg => console.log("✅ Service Worker registered:", reg))
-          .catch(err => console.log("❌ Service Worker failed:", err));
+    /***********************
+     * Utilities
+     ***********************/
+    const $ = sel => document.querySelector(sel);
+    const $$ = sel => document.querySelectorAll(sel);
+
+    const store = {
+      key:'qdplus_tasks',
+      all(){ try { return JSON.parse(localStorage.getItem(this.key) || '[]'); } catch { return [] } },
+      save(list){ localStorage.setItem(this.key, JSON.stringify(list)); }
+    };
+
+    const fmtDate = d => `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+    const parseTime = t => {
+      if(!t) return null;
+      const [h,m] = t.split(':').map(Number); return {h,m};
+    };
+    const nextWeekday = (date, weekday/*1=Mon ... 7=Sun*/) => {
+      const d = new Date(date); const cur = d.getDay() || 7; // 1..7
+      const add = (weekday - cur + 7) % 7 || 7; d.setDate(d.getDate()+add); return d;
+    };
+
+    /***********************
+     * State
+     ***********************/
+    let VIEW = 'today';  // today | important | planned | all
+    const els = {
+      list: $('#list'),
+      empty: $('#empty'),
+      title: $('#sectionTitle'),
+      input: $('#taskInput'),
+      add: $('#addBtn'),
+      date: $('#dateSelect'),
+      time: $('#timeInput'),
+      repeat: $('#repeatSelect')
+    };
+
+    /***********************
+     * Service Worker
+     ***********************/
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', async () => {
+        // try service-worker.js first, then fallback to pwabuilder-sw.js
+        try {
+          await navigator.serviceWorker.register('/service-worker.js');
+          console.log('SW registered: service-worker.js');
+        } catch {
+          try {
+            await navigator.serviceWorker.register('/pwabuilder-sw.js');
+            console.log('SW registered: pwabuilder-sw.js');
+          } catch (e) {
+            console.warn('Service Worker registration failed', e);
+          }
+        }
       });
     }
+
+    /***********************
+     * Rendering
+     ***********************/
+    function counts(list){
+      const todayStr = fmtDate(new Date());
+      const isPlanned = t => !!t.date;
+      const isToday = t => t.date === todayStr;
+      const imp = t => !!t.important;
+
+      $('#count-all').textContent = list.length;
+      $('#count-important').textContent = list.filter(imp).length;
+      $('#count-planned').textContent = list.filter(isPlanned).length;
+      $('#count-today').textContent = list.filter(isToday).length;
+    }
+
+    function filtered(list){
+      const todayStr = fmtDate(new Date());
+      switch (VIEW){
+        case 'today': return list.filter(t => t.date === todayStr);
+        case 'important': return list.filter(t => t.important);
+        case 'planned': return list.filter(t => !!t.date);
+        default: return list;
+      }
+    }
+
+    function render(){
+      const list = store.all();
+      counts(list);
+
+      const data = filtered(list);
+      els.list.innerHTML = '';
+      els.empty.style.display = data.length ? 'none' : 'block';
+
+      data.forEach(t => {
+        const item = document.createElement('div');
+        item.className = 'task' + (t.done ? ' done' : '');
+        item.innerHTML = `
+          <input type="checkbox" ${t.done?'checked':''} />
+          <div>
+            <div style="display:flex; align-items:center; gap:8px">
+              <strong>${escapeHtml(t.title)}</strong>
+              ${t.important ? '<span class="tag" style="border-color:#f39c12;color:#f8d38a">重要</span>' : ''}
+            </div>
+            <div class="meta">
+              ${t.date ? `<span class="tag">日期：${t.date}</span>`:''}
+              ${t.time ? `<span class="tag">时间：${t.time}</span>`:''}
+              ${t.repeat && t.repeat!=='none' ? `<span class="tag">重复：${repeatLabel(t.repeat)}</span>`:''}
+            </div>
+          </div>
+          <div class="row">
+            <button class="chip" data-act="imp">${t.important?'取消重要':'设为重要'}</button>
+            <button class="chip" data-act="del" style="color:#ffb3b3;border-color:#3a2030;background:#26131c">删除</button>
+          </div>
+        `;
+
+        // events
+        item.querySelector('input[type=checkbox]').addEventListener('change', e=>{
+          t.done = e.target.checked; store.save(list); render();
+        });
+        item.querySelector('[data-act=imp]').addEventListener('click', ()=>{
+          t.important = !t.important; store.save(list); render();
+        });
+        item.querySelector('[data-act=del]').addEventListener('click', ()=>{
+          const idx = list.findIndex(x => x.id === t.id);
+          if (idx>-1){ list.splice(idx,1); store.save(list); render(); }
+        });
+
+        els.list.appendChild(item);
+      });
+
+      // section title
+      const titles = {today:'我的一天', important:'重要', planned:'计划', all:'任务'};
+      els.title.textContent = titles[VIEW] || '我的一天';
+    }
+
+    function escapeHtml(s){return (s||'').replace(/[&<>"']/g, m=>({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' }[m]))}
+    function repeatLabel(v){
+      return { daily:'每天', weekday:'工作日', weekly:'每周', monthly:'每月', yearly:'每年' }[v] || '不重复';
+    }
+
+    /***********************
+     * Add task
+     ***********************/
+    function pickDateFromQuick(value){
+      const now = new Date();
+      if (value === 'today') return fmtDate(now);
+      if (value === 'tomorrow'){ const d = new Date(now); d.setDate(d.getDate()+1); return fmtDate(d); }
+      if (value === 'nextmonday'){ return fmtDate(nextWeekday(now,1)); }
+      return '';
+    }
+
+    function addTask(){
+      const title = els.input.value.trim();
+      if (!title) return els.input.focus();
+
+      let date = '';
+      const quick = els.date.value; // today | tomorrow | nextmonday | ''
+      if (quick) date = pickDateFromQuick(quick);
+
+      const time = els.time.value || '';
+      const repeat = els.repeat.value || 'none';
+
+      const list = store.all();
+      list.push({
+        id: crypto.randomUUID ? crypto.randomUUID() : String(Date.now())+Math.random().toString(16).slice(2),
+        title, date, time, repeat,
+        important:false, done:false, createdAt: Date.now()
+      });
+      store.save(list);
+
+      // clean
+      els.input.value = '';
+      els.time.value = '';
+      els.date.value = '';
+      els.repeat.value = 'none';
+
+      render();
+    }
+
+    /***********************
+     * Events
+     ***********************/
+    els.add.addEventListener('click', addTask);
+    els.input.addEventListener('keydown', e => { if(e.key==='Enter') addTask(); });
+
+    // sidebar
+    $$('.nav button').forEach(btn=>{
+      btn.addEventListener('click', ()=>{
+        $$('.nav button').forEach(b=>b.classList.remove('active'));
+        btn.classList.add('active');
+        VIEW = btn.dataset.view;
+        render();
+      });
+    });
+
+    // quick chips
+    $$('.chip').forEach(ch=>{
+      ch.addEventListener('click', ()=>{
+        const v = ch.dataset.chip;
+        if (v==='9'){ els.time.value = '09:00'; return; }
+        if (v==='15'){ els.time.value = '15:00'; return; }
+        els.date.value = v; // today / tomorrow / nextmonday
+      });
+    });
+
+    // initial load
+    render();
   </script>
 </body>
 </html>
