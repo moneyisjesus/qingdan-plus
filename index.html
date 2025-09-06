@@ -1,606 +1,68 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="zh-CN">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>清单Plus</title>
-  <meta name="theme-color" content="#0f1221" />
-  <!-- Manifest will be injected below with a Blob URL -->
-  <link id="dynamic-manifest" rel="manifest" href="">
+
+  <!-- App icons -->
+  <link rel="icon" href="logo-192.png" sizes="192x192" />
+  <link rel="apple-touch-icon" href="logo-512.png" />
+
+  <!-- Manifest -->
+  <link rel="manifest" href="manifest.json" />
+
+  <!-- Basic styles -->
   <style>
-    :root{
-      --bg:#0b0e19; --bg2:#121629; --panel:#181c35; --text:#e8ebff; --muted:#9aa0c3;
-      --primary:#6755ff; --accent:#7d60ff; --ok:#4ad295; --danger:#ff6b6b;
-      --chip:#242a4d; --border:#252a4a;
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      text-align: center;
+      background: #f9f9f9;
+      color: #333;
     }
-    .light{
-      --bg:#f6f7fb; --bg2:#fff; --panel:#fff; --text:#1b1e2b; --muted:#6b718e;
-      --primary:#4f46e5; --accent:#6c5ce7; --ok:#10b981; --danger:#ef4444;
-      --chip:#f2f3fb; --border:#e9eaf4;
+    header {
+      background: #4CAF50;
+      color: white;
+      padding: 1rem;
+      font-size: 1.5rem;
     }
-    *{box-sizing:border-box}
-    html,body{height:100%}
-    body{
-      margin:0; display:grid; grid-template-columns:280px 1fr; grid-template-rows:100%;
-      background:linear-gradient(160deg,var(--bg),var(--bg2)); color:var(--text);
-      font:14px/1.5 system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,"Noto Sans SC","PingFang SC",sans-serif;
+    main {
+      padding: 1rem;
     }
-    .sidebar{background:var(--panel); border-right:1px solid var(--border); display:flex; flex-direction:column}
-    .brand{display:flex; gap:12px; padding:16px 16px 10px}
-    .brand img{width:36px; height:36px; border-radius:10px}
-    .brand h1{font-size:16px; margin:0}
-    .brand small{color:var(--muted)}
-    .lists{padding:8px; overflow:auto}
-    .list-item{width:100%; display:flex; align-items:center; gap:10px; padding:10px 12px; border-radius:10px; border:1px solid transparent; color:var(--text); background:transparent; cursor:pointer}
-    .list-item:hover{background:var(--chip)}
-    .list-item.active{background:var(--chip); border-color:var(--border)}
-    .list-item em{margin-left:auto; color:var(--muted); font-style:normal}
-    .dot{width:8px; height:8px; border-radius:50%; display:inline-block}
-    .dot.sun{background:gold}
-    .dot.star{background:#ffb02e}
-    .dot.plan{background:#55d3ff}
-    .dot.inbox{background:#9aa0c3}
-    .lists-divider{height:1px; background:var(--border); margin:8px}
-    .sidebar-footer{margin-top:auto; padding:12px; border-top:1px solid var(--border)}
-    .sidebar-footer .ghost{width:100%; background:transparent; color:var(--text); border:1px dashed var(--border); border-radius:10px; padding:8px}
-    .tools{margin-top:10px; display:flex; gap:8px}
-    .tools button,.import{background:var(--chip); border:1px solid var(--border); padding:6px 10px; border-radius:8px; color:var(--text); cursor:pointer}
-    .import{display:inline-flex; align-items:center}
-    .main{display:flex; flex-direction:column; height:100%}
-    .topbar{display:flex; align-items:center; justify-content:space-between; padding:16px; border-bottom:1px solid var(--border); background:var(--panel)}
-    .topbar h2{margin:0 0 4px}
-    .topbar small{color:var(--muted)}
-    .top-actions button{background:var(--chip); border:1px solid var(--border); color:var(--text); border-radius:10px; padding:6px 10px; margin-left:8px}
-    .composer{padding:16px; border-bottom:1px solid var(--border)}
-    .composer .row{display:flex; gap:10px; flex-wrap:wrap; align-items:center}
-    .title{flex:1; padding:10px 12px; border-radius:10px; border:1px solid var(--border); background:var(--bg2); color:var(--text)}
-    .primary{background:var(--primary); color:#fff; border:none; border-radius:10px; padding:10px 16px; cursor:pointer}
-    .options{margin-top:10px; justify-content:space-between}
-    .chipset{display:flex; gap:8px; flex-wrap:wrap}
-    .chip{background:var(--chip); border:1px solid var(--border); border-radius:18px; padding:6px 10px; color:var(--text); cursor:pointer}
-    .pickers label{margin-left:10px; color:var(--muted)}
-    .pickers input,.pickers select{margin-left:6px; padding:6px 8px; border-radius:8px; border:1px solid var(--border); background:var(--bg2); color:var(--text)}
-    .custom-repeat{margin-left:10px}
-    .hidden{display:none}
-    .task-list{padding:8px 16px 100px; overflow:auto}
-    .task{display:grid; grid-template-columns:auto 1fr auto; gap:10px; align-items:flex-start; padding:10px 12px; border:1px solid var(--border); background:var(--panel); border-radius:12px; margin:8px 0}
-    .task:hover{outline:1px solid var(--border)}
-    .task input[type=checkbox]{width:18px; height:18px; cursor:pointer}
-    .task .meta{color:var(--muted); font-size:12px}
-    .task .title{background:transparent; border:none; padding:0; color:var(--text)}
-    .task .actions{display:flex; gap:6px}
-    .task .badge{background:var(--chip); border:1px solid var(--border); padding:2px 6px; border-radius:6px; color:var(--muted)}
-    .detail{position:fixed; right:0; top:0; width:360px; max-width:100%; height:100%; background:var(--panel); border-left:1px solid var(--border); display:flex; flex-direction:column; z-index:10; transition:transform .2s ease}
-    .detail-head{display:flex; gap:8px; padding:12px; border-bottom:1px solid var(--border)}
-    .detail-head input{flex:1; background:var(--bg2); color:var(--text); border:1px solid var(--border); border-radius:8px; padding:8px}
-    .detail-head button{background:var(--chip); border:1px solid var(--border); color:var(--text); border-radius:8px; padding:6px 8px}
-    .detail-body{padding:12px; overflow:auto; display:flex; flex-direction:column; gap:12px}
-    .detail-row{display:flex; gap:10px; align-items:center}
-    .detail-row.grid{display:grid; grid-template-columns:1fr 1fr; gap:10px}
-    .detail-row textarea{width:100%; min-height:120px; background:var(--bg2); color:var(--text); border:1px solid var(--border); border-radius:8px; padding:8px}
-    .detail-row button{background:var(--chip); border:1px solid var(--border); color:var(--text); border-radius:8px; padding:8px 10px}
-    .detail-row.danger button{background:transparent; border-color:var(--danger); color:var(--danger)}
-    .detail.hidden{transform:translateX(100%); pointer-events:none}
-    @media (max-width: 900px){
-      body{grid-template-columns:1fr}
-      .sidebar{position:fixed; z-index:20; transform:translateX(-110%); transition:transform .2s ease}
-      .sidebar.show{transform:none}
+    footer {
+      margin-top: 2rem;
+      padding: 1rem;
+      font-size: 0.9rem;
+      color: #777;
     }
   </style>
 </head>
 <body>
-  <aside class="sidebar">
-    <header class="brand">
-      <img id="logoImg" alt="logo" />
-      <div>
-        <h1>清单Plus</h1>
-        <small>记录 · 提醒 · 专注</small>
-      </div>
-    </header>
+  <header>
+    清单Plus
+  </header>
 
-    <nav class="lists" id="lists">
-      <button class="list-item active" data-list-id="myday">
-        <span class="dot sun"></span><span>我的一天</span><em id="badge-myday">0</em>
-      </button>
-      <button class="list-item" data-list-id="important">
-        <span class="dot star"></span><span>重要</span><em id="badge-important">0</em>
-      </button>
-      <button class="list-item" data-list-id="planned">
-        <span class="dot plan"></span><span>计划</span><em id="badge-planned">0</em>
-      </button>
-      <button class="list-item" data-list-id="inbox">
-        <span class="dot inbox"></span><span>任务</span><em id="badge-inbox">0</em>
-      </button>
-
-      <div class="lists-divider"></div>
-      <div id="userLists"></div>
-    </nav>
-
-    <footer class="sidebar-footer">
-      <button id="btnNewList" class="ghost">＋ 新建清单</button>
-      <div class="tools">
-        <button id="btnExport" title="导出数据">导出</button>
-        <label class="import">
-          导入<input id="fileImport" type="file" accept="application/json" hidden />
-        </label>
-        <button id="btnSettings" title="设置">设置</button>
-      </div>
-    </footer>
-  </aside>
-
-  <main class="main">
-    <header class="topbar">
-      <div>
-        <h2 id="viewTitle">我的一天</h2>
-        <small id="todayText"></small>
-      </div>
-      <div class="top-actions">
-        <button id="btnNotify" title="启用通知">🔔</button>
-        <button id="btnTheme" title="切换主题">🌓</button>
-      </div>
-    </header>
-
-    <section class="composer">
-      <div class="row">
-        <input id="inputTitle" class="title" placeholder="添加任务…" />
-        <button id="btnAdd" class="primary">添加</button>
-      </div>
-
-      <div class="row options">
-        <div class="chipset">
-          <button class="chip" data-quick="today">今天</button>
-          <button class="chip" data-quick="tomorrow">明天</button>
-          <button class="chip" data-quick="nextweek">下周一</button>
-          <button class="chip" data-quick="am">上午9:00</button>
-          <button class="chip" data-quick="pm">下午3:00</button>
-        </div>
-        <div class="pickers">
-          <label>日期
-            <input id="dueDate" type="date" />
-          </label>
-          <label>时间
-            <input id="dueTime" type="time" />
-          </label>
-          <label>重复
-            <select id="repeat">
-              <option value="none">不重复</option>
-              <option value="daily">每天</option>
-              <option value="weekdays">工作日</option>
-              <option value="weekly">每周</option>
-              <option value="monthly">每月</option>
-              <option value="yearly">每年</option>
-              <option value="custom">自定义…</option>
-            </select>
-          </label>
-          <span id="customRepeatBox" class="custom-repeat hidden">
-            每 <input id="customEvery" type="number" min="1" value="2" />
-            <select id="customUnit">
-              <option value="days">天</option>
-              <option value="weeks">周</option>
-              <option value="months">月</option>
-              <option value="years">年</option>
-            </select>
-          </span>
-        </div>
-      </div>
-    </section>
-
-    <section id="taskList" class="task-list"></section>
+  <main>
+    <h2>一个简洁优雅的中文待办清单应用</h2>
+    <p>随时随地记录和管理您的任务。</p>
   </main>
 
-  <aside id="detail" class="detail hidden" aria-hidden="true">
-    <div class="detail-head">
-      <input id="detailTitle" />
-      <button id="detailImportant" title="重要">⭐</button>
-      <button id="detailClose">✕</button>
-    </div>
-    <div class="detail-body">
-      <div class="detail-row">
-        <label>加到“我的一天” <input id="detailMyDay" type="checkbox" /></label>
-      </div>
-      <div class="detail-row grid">
-        <label>提醒日期<input id="detailDate" type="date" /></label>
-        <label>&nbsp;<input id="detailTime" type="time" /></label>
-      </div>
-      <div class="detail-row">
-        <label>重复
-          <select id="detailRepeat">
-            <option value="none">不重复</option>
-            <option value="daily">每天</option>
-            <option value="weekdays">工作日</option>
-            <option value="weekly">每周</option>
-            <option value="monthly">每月</option>
-            <option value="yearly">每年</option>
-            <option value="custom">自定义…</option>
-          </select>
-        </label>
-        <span id="detailCustomBox" class="custom-repeat hidden">
-          每 <input id="detailEvery" type="number" min="1" value="2" />
-          <select id="detailUnit">
-            <option value="days">天</option>
-            <option value="weeks">周</option>
-            <option value="months">月</option>
-            <option value="years">年</option>
-          </select>
-        </span>
-      </div>
-      <div class="detail-row">
-        <button id="btnSnooze10">贪睡 10 分钟</button>
-        <button id="btnSnooze30">贪睡 30 分钟</button>
-        <button id="btnSnooze60">贪睡 60 分钟</button>
-      </div>
-      <div class="detail-row">
-        <textarea id="detailNote" placeholder="备注…"></textarea>
-      </div>
-      <div class="detail-row danger">
-        <button id="btnDelete">删除任务</button>
-      </div>
-    </div>
-  </aside>
+  <footer>
+    &copy; 2025 清单Plus. All rights reserved.
+  </footer>
 
+  <!-- Service Worker registration -->
   <script>
-  /************ inline icon + manifest + service worker bootstrap ************/
-  (function makeIconsAndManifest(){
-    // create simple rounded-square PNG for 192/512 as data URLs (keeps everything inline)
-    function makePng(size, bg="#6755ff", fg="#ffffff"){
-      const c=document.createElement("canvas"); c.width=c.height=size;
-      const ctx=c.getContext("2d");
-      const r=size*0.18;
-      ctx.fillStyle=bg;
-      ctx.beginPath();
-      ctx.moveTo(r,0); ctx.lineTo(size-r,0);
-      ctx.quadraticCurveTo(size,0,size,r);
-      ctx.lineTo(size,size-r); ctx.quadraticCurveTo(size,size,size-r,size);
-      ctx.lineTo(r,size); ctx.quadraticCurveTo(0,size,0,size-r);
-      ctx.lineTo(0,r); ctx.quadraticCurveTo(0,0,r,0); ctx.closePath(); ctx.fill();
-      // little white smile gear-ish icon
-      ctx.fillStyle=fg;
-      ctx.beginPath();
-      const cx=size/2, cy=size/2, rr=size*0.22;
-      ctx.arc(cx,cy,rr,0,Math.PI*2);
-      ctx.fill();
-      ctx.fillStyle=bg;
-      ctx.beginPath(); ctx.arc(cx,cy,rr*0.65,0,Math.PI*2); ctx.fill();
-      ctx.fillStyle=fg; // smile
-      ctx.lineWidth=size*0.06; ctx.lineCap="round";
-      ctx.beginPath(); ctx.moveTo(cx-rr*0.6, cy+rr*0.2); ctx.quadraticCurveTo(cx, cy+rr*0.5, cx+rr*0.6, cy+rr*0.2); ctx.stroke();
-      return c.toDataURL("image/png");
+    if ("serviceWorker" in navigator) {
+      window.addEventListener("load", () => {
+        navigator.serviceWorker
+          .register("/service-worker.js")
+          .then(reg => console.log("✅ Service Worker registered:", reg))
+          .catch(err => console.log("❌ Service Worker failed:", err));
+      });
     }
-    const icon192 = makePng(192);
-    const icon512 = makePng(512);
-    document.getElementById("logoImg").src = icon192;
-
-    const manifest = {
-      name: "清单Plus",
-      short_name: "清单+",
-      description: "一个简洁优雅的中文待办/提醒应用。",
-      lang: "zh-CN",
-      dir: "auto",
-      start_url: "index.html",
-      display: "standalone",
-      theme_color: "#0f1221",
-      background_color: "#0f1221",
-      icons: [
-        { src: icon192, sizes: "192x192", type: "image/png", purpose: "any maskable" },
-        { src: icon512, sizes: "512x512", type: "image/png", purpose: "any maskable" }
-      ]
-    };
-    const manifestURL = URL.createObjectURL(new Blob([JSON.stringify(manifest)], {type:"application/json"}));
-    document.getElementById("dynamic-manifest").setAttribute("href", manifestURL);
-
-    // inline service worker from blob
-    const swCode = `
-      const CACHE="qingdanplus-inline-v1";
-      const ASSETS=["./","./index.html"];
-      self.addEventListener("install",e=>{
-        e.waitUntil(caches.open(CACHE).then(c=>c.addAll(ASSETS)));
-        self.skipWaiting();
-      });
-      self.addEventListener("activate",e=>{
-        e.waitUntil(caches.keys().then(keys=>Promise.all(keys.map(k=>k!==CACHE?caches.delete(k):null))));
-        self.clients.claim();
-      });
-      self.addEventListener("fetch",e=>{
-        e.respondWith(caches.match(e.request).then(r=>r||fetch(e.request)));
-      });
-    `;
-    const swURL = URL.createObjectURL(new Blob([swCode], {type:"text/javascript"}));
-    if('serviceWorker' in navigator){ navigator.serviceWorker.register(swURL); }
-  })();
-  /************************ end bootstrap ************************/
-
-  /* ====== State & storage ====== */
-  const state = {
-    theme: "dark",
-    currentList: "myday",
-    lists: {
-      myday: { id: "myday", name: "我的一天", system: true, tasks: [] },
-      important: { id: "important", name: "重要", system: true, tasks: [] },
-      planned: { id: "planned", name: "计划", system: true, tasks: [] },
-      inbox: { id: "inbox", name: "任务", system: true, tasks: [] }
-    }
-  };
-  const save = () => localStorage.setItem("qingdanplus", JSON.stringify(state));
-  const load = () => {
-    const raw = localStorage.getItem("qingdanplus");
-    if (!raw) return;
-    try { Object.assign(state, JSON.parse(raw)); } catch {}
-  };
-
-  /* ====== Utils ====== */
-  const $ = s => document.querySelector(s);
-  const $$ = s => Array.from(document.querySelectorAll(s));
-  const fmtDate = d => d ? new Date(d).toLocaleDateString("zh-CN",{year:'numeric',month:'short',day:'numeric',weekday:'short'}) : "";
-  const pad2 = n => (n<10?"0":"") + n;
-  const todayStr = () => {
-    const d = new Date();
-    return d.getFullYear()+"-"+pad2(d.getMonth()+1)+"-"+pad2(d.getDate());
-  };
-  const nextWeekMonday = () => {
-    const d = new Date();
-    const day = d.getDay() || 7;
-    const add = 8 - day;
-    d.setDate(d.getDate()+add);
-    return d;
-  };
-  const isWeekday = d => ![0,6].includes(new Date(d).getDay());
-
-  function nextOccurrence(task){
-    if(task.repeat==="none") return null;
-    let dt = task.due ? new Date(task.due) : new Date();
-    switch(task.repeat){
-      case "daily": dt.setDate(dt.getDate()+1); break;
-      case "weekdays":
-        do { dt.setDate(dt.getDate()+1); } while (!isWeekday(dt));
-        break;
-      case "weekly": dt.setDate(dt.getDate()+7); break;
-      case "monthly": dt.setMonth(dt.getMonth()+1); break;
-      case "yearly": dt.setFullYear(dt.getFullYear()+1); break;
-      case "custom":
-        const { every=2, unit="days" } = task.custom || {};
-        const map = { days: "Date", weeks: "Date", months: "Month", years: "FullYear" };
-        const prop = map[unit];
-        const delta = unit==="weeks" ? every*7 : every;
-        if(prop==="Date") dt.setDate(dt.getDate()+delta);
-        if(prop==="Month") dt.setMonth(dt.getMonth()+delta);
-        if(prop==="FullYear") dt.setFullYear(dt.getFullYear()+delta);
-        break;
-    }
-    return dt;
-  }
-
-  /* ====== Renderers ====== */
-  function renderSide(){
-    const holder = $("#userLists");
-    holder.innerHTML = "";
-    Object.values(state.lists).filter(l=>!l.system).forEach(l=>{
-      const btn = document.createElement("button");
-      btn.className="list-item";
-      btn.dataset.listId = l.id;
-      btn.innerHTML = `<span class="dot inbox"></span><span>${l.name}</span><em>${l.tasks.filter(t=>!t.done).length}</em>`;
-      holder.appendChild(btn);
-    });
-    $$(".list-item").forEach(b=>b.classList.toggle("active", b.dataset.listId===state.currentList));
-    $("#badge-myday").textContent = state.lists.myday.tasks.filter(t=>!t.done).length;
-    $("#badge-important").textContent = state.lists.important.tasks.filter(t=>!t.done).length;
-    $("#badge-planned").textContent = state.lists.planned.tasks.filter(t=>!t.done).length;
-    $("#badge-inbox").textContent = state.lists.inbox.tasks.filter(t=>!t.done).length;
-  }
-
-  function currentViewTasks(){
-    const id = state.currentList;
-    if(id==="myday") return Object.values(state.lists).flatMap(l=>l.tasks).filter(t=>t.myday && !t.done);
-    if(id==="important") return Object.values(state.lists).flatMap(l=>l.tasks).filter(t=>t.important && !t.done);
-    if(id==="planned") return Object.values(state.lists).flatMap(l=>l.tasks).filter(t=>t.due && !t.done);
-    return state.lists[id].tasks;
-  }
-
-  function renderMain(){
-    $("#viewTitle").textContent = state.lists[state.currentList].name;
-    $("#todayText").textContent = new Date().toLocaleDateString("zh-CN",{weekday:"long",year:"numeric",month:"long",day:"numeric"});
-    const holder = $("#taskList");
-    holder.innerHTML = "";
-    currentViewTasks().forEach(task=>{
-      const row = document.createElement("div");
-      row.className="task";
-      row.dataset.id = task.id;
-      row.innerHTML = `
-        <input type="checkbox" ${task.done?"checked":""}/>
-        <div>
-          <input class="title" value="${task.title.replace(/"/g,"&quot;")}" />
-          <div class="meta">
-            ${task.due?`📅 ${fmtDate(task.due)}`:""}
-            ${task.repeat!=="none"?`<span class="badge">循环</span>`:""}
-            ${task.myday?`<span class="badge">我的一天</span>`:""}
-            ${task.important?`<span class="badge">重要</span>`:""}
-          </div>
-        </div>
-        <div class="actions">
-          <button class="open">详情</button>
-        </div>
-      `;
-      row.querySelector("input[type=checkbox]").addEventListener("change", e=>{
-        task.done = e.target.checked;
-        if(task.done){
-          const next = nextOccurrence(task);
-          if(next){ task.done=false; task.due=next.toISOString(); }
-        }
-        save(); renderSide(); renderMain();
-      });
-      row.querySelector(".title").addEventListener("change", e=>{
-        task.title = e.target.value.trim() || task.title;
-        save(); renderMain();
-      });
-      row.querySelector(".open").addEventListener("click", ()=>openDetail(task));
-      holder.appendChild(row);
-    });
-  }
-
-  /* ====== Bindings ====== */
-  function bindBasics(){
-    $("#lists").addEventListener("click", e=>{
-      const btn = e.target.closest(".list-item");
-      if(!btn) return;
-      state.currentList = btn.dataset.listId;
-      save(); renderSide(); renderMain();
-    });
-
-    $$(".chip").forEach(c=>c.addEventListener("click", ()=>{
-      const v = c.dataset.quick;
-      const d = new Date();
-      if(v==="today") $("#dueDate").value = todayStr();
-      if(v==="tomorrow"){ d.setDate(d.getDate()+1); $("#dueDate").value = d.toISOString().slice(0,10); }
-      if(v==="nextweek"){ const n = nextWeekMonday(); $("#dueDate").value = n.toISOString().slice(0,10); }
-      if(v==="am"){ $("#dueTime").value="09:00"; }
-      if(v==="pm"){ $("#dueTime").value="15:00"; }
-    }));
-
-    const repeatSel = $("#repeat"), customBox=$("#customRepeatBox");
-    repeatSel.addEventListener("change", ()=>{ customBox.classList.toggle("hidden", repeatSel.value!=="custom"); });
-
-    $("#btnAdd").addEventListener("click", addTask);
-    $("#inputTitle").addEventListener("keydown", e=>{ if(e.key==="Enter") addTask(); });
-
-    $("#btnNotify").addEventListener("click", async()=>{
-      if(!("Notification" in window)){ alert("此设备不支持通知"); return; }
-      const perm = await Notification.requestPermission();
-      alert(perm==="granted" ? "已允许通知" : "未授权通知");
-    });
-    $("#btnTheme").addEventListener("click", ()=>{
-      document.body.classList.toggle("light");
-      state.theme = document.body.classList.contains("light") ? "light":"dark";
-      save();
-    });
-
-    $("#btnNewList").addEventListener("click", ()=>{
-      const name = prompt("清单名称");
-      if(!name) return;
-      const id = "list_"+Date.now();
-      state.lists[id] = { id, name, system:false, tasks: [] };
-      state.currentList = id; save(); renderSide(); renderMain();
-    });
-
-    $("#btnExport").addEventListener("click", ()=>{
-      const blob = new Blob([JSON.stringify(state,null,2)], {type:"application/json"});
-      const a = document.createElement("a");
-      a.href = URL.createObjectURL(blob);
-      a.download = "qingdanplus-backup.json";
-      a.click();
-    });
-    $("#fileImport").addEventListener("change", e=>{
-      const file = e.target.files[0]; if(!file) return;
-      const rd = new FileReader();
-      rd.onload = () => { 
-        try{ Object.assign(state, JSON.parse(rd.result)); save(); renderSide(); renderMain(); alert("导入成功"); }
-        catch{ alert("导入失败"); }
-      };
-      rd.readAsText(file);
-    });
-
-    $("#todayText").textContent = new Date().toLocaleDateString("zh-CN",{weekday:"长",year:"numeric",month:"long",day:"numeric"});
-  }
-
-  function addTask(){
-    const title = $("#inputTitle").value.trim();
-    if(!title) return;
-    const date = $("#dueDate").value || null;
-    const time = $("#dueTime").value || null;
-    const repeat = $("#repeat").value;
-    const custom = repeat==="custom" ? { every: parseInt($("#customEvery").value||"2",10), unit: $("#customUnit").value } : null;
-    let dueISO = null;
-    if(date){
-      const iso = date + "T" + (time||"09:00") + ":00";
-      dueISO = new Date(iso).toISOString();
-    }
-    const id = "t"+Date.now();
-    const task = { id, title, done:false, due:dueISO, repeat, custom, myday:(state.currentList==="myday"), important:false, list:state.currentList==="myday"||state.currentList==="important"||state.currentList==="planned"?"inbox":state.currentList, note:"" };
-    state.lists[task.list].tasks.unshift(task);
-    $("#inputTitle").value=""; $("#dueDate").value=""; $("#dueTime").value=""; $("#repeat").value="none"; $("#customRepeatBox").classList.add("hidden");
-    save(); renderSide(); renderMain();
-    scheduleNotification(task);
-  }
-
-  async function scheduleNotification(task){
-    if(!task.due || !("Notification" in window) || Notification.permission!=="granted") return;
-    const when = new Date(task.due).getTime() - Date.now();
-    if(when <= 0) return;
-    setTimeout(()=>{
-      new Notification("提醒："+task.title, { body: fmtDate(task.due), icon: document.getElementById("logoImg").src });
-    }, Math.min(when, 2147483000));
-  }
-
-  let currentTask=null;
-  function openDetail(task){
-    currentTask = task;
-    $("#detail").classList.remove("hidden");
-    $("#detailTitle").value = task.title;
-    $("#detailImportant").classList.toggle("active", task.important);
-    $("#detailMyDay").checked = !!task.myday;
-    $("#detailDate").value = task.due ? task.due.slice(0,10) : "";
-    $("#detailTime").value = task.due ? task.due.slice(11,16) : "";
-    $("#detailRepeat").value = task.repeat || "none";
-    $("#detailNote").value = task.note || "";
-    $("#detailCustomBox").classList.toggle("hidden", task.repeat!=="custom");
-    if(task.custom){ $("#detailEvery").value = task.custom.every; $("#detailUnit").value = task.custom.unit; }
-  }
-  function closeDetail(){ $("#detail").classList.add("hidden"); currentTask=null; }
-
-  $("#detailClose").addEventListener("click", closeDetail);
-  $("#detailImportant").addEventListener("click", ()=>{
-    if(!currentTask) return;
-    currentTask.important = !currentTask.important;
-    save(); renderSide(); renderMain(); openDetail(currentTask);
-  });
-  $("#detailMyDay").addEventListener("change", e=>{
-    if(!currentTask) return;
-    currentTask.myday = e.target.checked; save(); renderSide(); renderMain();
-  });
-  $("#detailTitle").addEventListener("change", e=>{
-    if(!currentTask) return;
-    currentTask.title = e.target.value.trim()||currentTask.title; save(); renderMain();
-  });
-  $("#detailDate").addEventListener("change", syncDetailDue);
-  $("#detailTime").addEventListener("change", syncDetailDue);
-  function syncDetailDue(){
-    if(!currentTask) return;
-    const d = $("#detailDate").value; const t = $("#detailTime").value || "09:00";
-    currentTask.due = d ? new Date(d+"T"+t+":00").toISOString() : null;
-    save(); renderMain(); if(currentTask.due) scheduleNotification(currentTask);
-  }
-  $("#detailRepeat").addEventListener("change", e=>{
-    if(!currentTask) return;
-    const v = e.target.value;
-    currentTask.repeat = v;
-    $("#detailCustomBox").classList.toggle("hidden", v!=="custom");
-    save(); renderMain();
-  });
-  $("#detailEvery").addEventListener("change", ()=>{ if(currentTask && currentTask.repeat==="custom"){ currentTask.custom = currentTask.custom||{}; currentTask.custom.every = parseInt($("#detailEvery").value||"2",10); save(); }});
-  $("#detailUnit").addEventListener("change", ()=>{ if(currentTask && currentTask.repeat==="custom"){ currentTask.custom = currentTask.custom||{}; currentTask.custom.unit = $("#detailUnit").value; save(); }});
-  $("#detailNote").addEventListener("change", e=>{ if(currentTask){ currentTask.note = e.target.value; save(); }});
-  $("#btnDelete").addEventListener("click", ()=>{
-    if(!currentTask) return;
-    const list = state.lists[currentTask.list];
-    list.tasks = list.tasks.filter(t=>t.id!==currentTask.id);
-    save(); closeDetail(); renderSide(); renderMain();
-  });
-  $("#btnSnooze10").addEventListener("click", ()=>snooze(10));
-  $("#btnSnooze30").addEventListener("click", ()=>snooze(30));
-  $("#btnSnooze60").addEventListener("click", ()=>snooze(60));
-  function snooze(min){
-    if(!currentTask) return;
-    const base = currentTask.due ? new Date(currentTask.due) : new Date();
-    base.setMinutes(base.getMinutes()+min);
-    currentTask.due = base.toISOString();
-    save(); renderMain(); scheduleNotification(currentTask);
-    alert(`已延后 ${min} 分钟`);
-  }
-
-  (function init(){
-    load();
-    if(state.theme==="light") document.body.classList.add("light");
-    bindBasics();
-    renderSide(); renderMain();
-  })();
   </script>
 </body>
 </html>
