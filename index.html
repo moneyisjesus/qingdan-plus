@@ -2,450 +2,354 @@
 <html lang="zh-CN">
 <head>
 <meta charset="utf-8" />
-<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
-<title>清单Plus — 让每天都+1%</title>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title>我的一天</title>
 <meta name="theme-color" content="#0b1220" />
 <style>
   :root{
-    --bg:#0b1220; --card:#111a2b; --ink:#e9eefc; --ink-dim:#afbdd6;
-    --primary:#6ea8ff; --ok:#28d17c; --warn:#ffce56; --danger:#ff5d6c;
-    --chip:#18223a; --line:#203051; --accent:#8ab4ff;
-    --shadow:0 8px 24px rgba(0,0,0,.28);
+    --bg:#0b1220;--card:#121a2a;--muted:#7c8aa5;--txt:#eaf1ff;--accent:#4e9bff;--ok:#39d98a;--danger:#ff6b6b;--ring:rgba(78,155,255,.25);
   }
-  [data-theme="light"]{
-    --bg:#f6f7fb; --card:#ffffff; --ink:#101320; --ink-dim:#5a657c;
-    --primary:#3b82f6; --ok:#16a34a; --warn:#eab308; --danger:#ef4444;
-    --chip:#eef2ff; --line:#e9edf5; --accent:#2563eb;
-    --shadow:0 8px 24px rgba(0,0,0,.08);
+  .light{
+    --bg:#f6f7fb;--card:#ffffff;--muted:#667085;--txt:#0b1220;--accent:#316de8;--ok:#12b76a;--danger:#ef4444;--ring:rgba(49,109,232,.2);
   }
-  *{box-sizing:border-box}
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
   html,body{height:100%}
-  body{
-    margin:0;background:var(--bg);color:var(--ink);
-    font:16px/1.5 system-ui,-apple-system,Segoe UI,Roboto,"PingFang SC","Microsoft YaHei",sans-serif;
-    -webkit-tap-highlight-color:transparent;
-  }
-  .wrap{padding:10px 14px 26vh;max-width:720px;margin:auto}
-  .bar{position:sticky;top:0;z-index:20;display:flex;align-items:center;justify-content:space-between;padding:14px 16px;background:linear-gradient(180deg,var(--bg) 85%,transparent)}
-  .brand{display:flex;align-items:center;gap:10px;font-weight:900;letter-spacing:.2px}
-  .logo{width:28px;height:28px;border-radius:8px;background:linear-gradient(135deg,#a78bfa,#60a5fa);box-shadow:0 6px 16px rgba(97,123,255,.35)}
-  .now{text-align:right;line-height:1.1}
-  .now .date{font-size:12px;color:var(--ink-dim)}
-  .now .time{font-weight:900;font-size:20px}
-  .btnIcon{width:40px;height:40px;margin-left:10px;border-radius:12px;display:grid;place-items:center;background:var(--card);border:1px solid var(--line);cursor:pointer;transition:.2s}
-  .btnIcon:active{transform:scale(.96)}
-  .btnIcon svg{width:22px;height:22px}
-  .card{background:var(--card);border:1px solid var(--line);box-shadow:var(--shadow);border-radius:18px;padding:14px;margin:10px 0}
-
-  /* gamify header */
-  .gamify{display:grid;grid-template-columns:1fr auto;gap:10px;align-items:center}
-  .streak{font-weight:800}
-  .lvl{font-weight:800;color:var(--primary)}
-  .barBox{height:8px;background:var(--line);border-radius:999px;overflow:hidden}
-  .bar{height:8px;background:linear-gradient(90deg,var(--primary),var(--accent));width:0%}
-  .goal{display:flex;align-items:center;gap:10px}
-  .ring{--p:0; width:44px;height:44px;border-radius:50%;background:
-    conic-gradient(var(--ok) calc(var(--p)*1%), #2b3b5d 0);
-    display:grid;place-items:center;font-size:12px;font-weight:800;color:#fff}
-  .small{color:var(--ink-dim);font-size:12px}
-
-  /* search + focus mode */
-  .toolsRow{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
-  .input{flex:1;min-width:0;border:1px solid var(--line);background:var(--chip);color:var(--ink);border-radius:12px;padding:10px 12px}
-  .pill{padding:8px 10px;border:1px solid var(--line);border-radius:12px;background:var(--chip);color:var(--ink);font-size:13px}
-
-  /* composer */
-  .composer{position:sticky;bottom:12px;padding-bottom:10px}
-  .row{display:grid;grid-template-columns:1fr auto;gap:8px}
-  .textField{position:relative;display:flex;align-items:center;gap:8px;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:12px}
-  .textField input[type="text"]{flex:1;border:0;outline:0;background:transparent;color:var(--ink);font-size:16px;min-width:0}
-  .enterBtn{display:none;white-space:nowrap;font-weight:800;padding:10px 14px;border-radius:12px;border:1px solid var(--line);background:var(--chip);color:var(--ink)}
-  .textField.typing + .enterBtn{display:block}
-  .chips{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
-  .chip{display:inline-flex;align-items:center;gap:8px;background:var(--chip);color:var(--ink);border:1px solid var(--line);border-radius:12px;padding:10px 12px}
-  .chip input,.chip select{border:0;outline:0;background:transparent;color:var(--ink);font:inherit}
-  .select{appearance:none;padding-right:18px}
-
-  /* filters */
-  .filters{display:none;gap:8px;flex-wrap:wrap;margin:6px 0 10px}
-  .filters .f{padding:8px 10px;border:1px solid var(--line);border-radius:10px;background:var(--chip);color:var(--ink);font-size:13px}
-  .filters .f.active{outline:2px solid var(--primary);color:var(--primary)}
-
+  body{margin:0;background:var(--bg);color:var(--txt);font:16px/1.5 system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,'Noto Sans SC','PingFang SC',sans-serif}
+  .wrap{max-width:780px;margin:0 auto;padding:16px 16px 80px}
+  /* header */
+  .top{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:8px 0 12px}
+  .title{font-size:24px;font-weight:800;letter-spacing:.5px}
+  .clock{display:flex;flex-direction:column;align-items:flex-end}
+  .clock .date{font-size:14px;color:var(--muted)}
+  .clock .time{font-size:20px;font-weight:800}
+  .iconbtn{display:inline-flex;align-items:center;justify-content:center;width:40px;height:40px;border-radius:12px;background:var(--card);box-shadow:0 0 0 1px rgba(255,255,255,.04);color:var(--txt)}
+  .row{display:flex;align-items:center;gap:10px}
+  /* card */
+  .card{background:var(--card);border-radius:16px;padding:14px 12px;box-shadow:0 0 0 1px rgba(255,255,255,.04)}
+  .label{font-size:13px;color:var(--muted);margin-bottom:6px}
+  .input{display:flex;align-items:center;background:#0000;border:1.5px solid rgba(126,141,173,.25);border-radius:14px;padding:12px}
+  .input:focus-within{border-color:var(--accent);box-shadow:0 0 0 6px var(--ring)}
+  .input input{flex:1;background:transparent;border:0;outline:none;color:var(--txt);font-size:16px}
+  .chip{display:inline-flex;align-items:center;gap:6px;background:#0000;border:1.5px solid rgba(126,141,173,.25);border-radius:12px;padding:10px 12px;font-size:14px;color:var(--txt)}
+  .chip:focus-visible{outline:none;border-color:var(--accent);box-shadow:0 0 0 6px var(--ring)}
+  .chip .icon{opacity:.75}
+  .chips{display:flex;gap:10px;flex-wrap:wrap;margin-top:10px}
+  .right{margin-left:auto}
+  .btn{display:inline-flex;align-items:center;justify-content:center;padding:12px 14px;border-radius:12px;background:var(--accent);color:#fff;border:0;font-size:15px}
+  .btn:disabled{opacity:.5}
+  .subtle{background:transparent;border:1.5px solid rgba(126,141,173,.25);color:var(--txt)}
+  /* quick snooze */
+  .snooze{display:flex;gap:8px;margin-top:10px}
+  .snooze button{flex:1;padding:10px 0;border-radius:12px;border:1.5px solid rgba(126,141,173,.25);background:#0000;color:var(--txt)}
+  .snooze button:active{transform:scale(.98)}
   /* list */
-  .task{display:flex;align-items:flex-start;gap:10px;padding:12px;border-radius:16px;border:1px solid var(--line);background:var(--card)}
-  .task + .task{margin-top:10px}
-  .check{width:22px;height:22px;border-radius:6px;border:2px solid var(--ink-dim);flex:0 0 22px;margin-top:2px;cursor:pointer}
-  .check.done{background:var(--ok);border-color:var(--ok)}
-  .body{flex:1;min-width:0}
-  .title{font-weight:800}
-  .meta{display:flex;gap:6px;align-items:center;color:var(--ink-dim);font-size:12px;margin-top:6px;flex-wrap:wrap}
-  .tag{display:inline-flex;align-items:center;gap:6px;padding:6px 8px;border:1px solid var(--line);border-radius:10px;background:var(--chip)}
-  .imp{color:var(--warn)}
-  .act{display:flex;gap:6px}
-  .btn{border:1px solid var(--line);background:var(--chip);color:var(--ink);border-radius:10px;padding:8px 10px;font-size:13px}
-  .del{color:var(--danger)}
-  .ghost{opacity:.75}
-  .empty{color:var(--ink-dim);text-align:center;padding:26px 6px}
-
-  /* toast */
-  .toast{position:fixed;left:50%;bottom:18px;transform:translateX(-50%) translateY(120%);background:#111a;backdrop-filter:blur(6px);color:#fff;padding:10px 14px;border-radius:12px;transition:.25s;z-index:50}
-  .toast.show{transform:translateX(-50%) translateY(0)}
-
-  /* confetti (simple) */
-  .pop{position:fixed;inset:0;pointer-events:none;overflow:hidden}
-  .conf{position:absolute;width:6px;height:10px;border-radius:2px;opacity:.9}
+  .list{margin-top:16px;display:flex;flex-direction:column;gap:10px}
+  .task{background:var(--card);border-radius:16px;padding:12px;display:grid;grid-template-columns:auto 1fr auto;gap:10px;align-items:center;box-shadow:0 0 0 1px rgba(255,255,255,.04)}
+  .task .name{font-weight:600}
+  .meta{display:flex;gap:8px;flex-wrap:wrap}
+  .count{margin-left:6px;padding:2px 8px;border-radius:999px;font-size:12px;background:rgba(126,141,173,.16);color:var(--muted)}
+  .ok{color:var(--ok)}
+  .danger{color:var(--danger)}
+  .muted{color:var(--muted)}
+  /* bell panel */
+  .sheet{position:fixed;inset:auto 0 0 0;translate:0 100%;transition:translate .25s ease;background:var(--card);border-radius:16px 16px 0 0;box-shadow:0 -12px 30px rgba(0,0,0,.35);padding:16px 16px 24px;max-width:780px;margin:0 auto}
+  .sheet.open{translate:0 0}
+  .sheet h3{margin:0 0 12px 0}
+  .sheet .row{justify-content:space-between}
+  .switch{position:relative;width:46px;height:28px;border-radius:999px;background:rgba(126,141,173,.3)}
+  .switch input{opacity:0;width:0;height:0}
+  .knob{position:absolute;top:3px;left:3px;width:22px;height:22px;border-radius:50%;background:#fff;transition:left .2s}
+  .switch input:checked + .knob{left:21px;background:var(--accent)}
+  .helper{font-size:12px;color:var(--muted);margin-top:6px}
+  .empty{padding:18px;text-align:center;color:var(--muted);border:1.5px dashed rgba(126,141,173,.35);border-radius:14px}
+  .hide{display:none}
 </style>
 </head>
-<body data-theme="dark">
-  <header class="bar">
-    <div class="brand"><div class="logo" aria-hidden="true"></div>清单Plus</div>
-    <div style="display:flex;align-items:center;">
-      <div class="now">
-        <div class="date" id="nowDate">----</div>
-        <div class="time" id="nowTime">--:--</div>
-      </div>
-      <button class="btnIcon" id="notifBtn" title="启用提醒" aria-label="启用提醒">🔔</button>
-      <button class="btnIcon" id="themeBtn" aria-label="切换主题">
-        <svg id="themeIcon" viewBox="0 0 24 24" fill="currentColor"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79Z"/></svg>
-      </button>
-    </div>
-  </header>
+<body>
+  <div class="wrap">
 
-  <main class="wrap">
-    <!-- gamify + goal -->
-    <section class="card gamify" id="gameBox" style="display:none;">
-      <div>
-        <div class="streak">🔥 连胜 <span id="streak">0</span> 天</div>
-        <div class="small">完成任务可得积分并保持连胜</div>
+    <!-- HEADER -->
+    <div class="top">
+      <div class="title">我的一天</div>
+      <div class="clock">
+        <div class="date" id="todayDate">—</div>
+        <div class="time" id="nowTime">—</div>
       </div>
-      <div>
-        <div class="lvl">Lv.<span id="level">1</span> · <span id="points">0</span> 分</div>
-        <div class="barBox" style="width:160px;margin-top:6px"><div id="xp" class="bar"></div></div>
-        <div class="goal" style="margin-top:8px">
-          <div class="ring" id="ring" style="--p:0"><span id="ringTxt">0%</span></div>
-          <div class="small">今日目标 <b id="goalNum">3</b> 项 · 已完成 <b id="doneToday">0</b></div>
-        </div>
-      </div>
-    </section>
-
-    <!-- tools: search + focus -->
-    <section class="card toolsRow">
-      <input id="search" class="input" placeholder="搜索任务…" />
-      <button class="pill" id="focusBtn">专注3项</button>
-      <button class="pill" id="templatesBtn">快速模板</button>
-      <button class="pill" id="exportBtn">导出</button>
-      <label class="pill"><input hidden type="file" id="importFile" accept="application/json"> 导入</label>
-    </section>
-
-    <!-- filters -->
-    <div class="filters" id="filters">
-      <button class="f active" data-filter="all">全部 <span id="c-all">0</span></button>
-      <button class="f" data-filter="today">今天 <span id="c-today">0</span></button>
-      <button class="f" data-filter="imp">重要 <span id="c-imp">0</span></button>
-      <button class="f" data-filter="done">已完成 <span id="c-done">0</span></button>
-      <button class="f" data-filter="todo">未完成 <span id="c-todo">0</span></button>
+      <button class="iconbtn" id="bellBtn" aria-label="提醒设置">🔔</button>
+      <button class="iconbtn" id="themeBtn" aria-label="深浅模式">🌙</button>
     </div>
 
-    <!-- list -->
-    <section id="list" class="card">
-      <div id="empty" class="empty">没有任务，开始添加你的第一个任务吧。</div>
-    </section>
-  </main>
-
-  <!-- composer -->
-  <section class="composer wrap">
-    <div class="card">
-      <div class="row">
-        <div class="textField" id="tf">
-          <input id="title" type="text" placeholder="输入任务…（如：明天 9:00 跑步 每日 ！）" autocomplete="off" />
-        </div>
-        <button id="enter" class="enterBtn">回车添加</button>
+    <!-- INPUT CARD -->
+    <div class="card" id="composer">
+      <div class="label">输入任务</div>
+      <div class="input">
+        <input id="taskText" placeholder="例如：明天 7:30 跑步，每天提醒" autocomplete="off" />
+        <button id="enterBtn" class="btn subtle right" disabled>添加</button>
       </div>
-      <div class="chips">
-        <label class="chip">📅 <input id="date" type="date" /></label>
-        <label class="chip">⏰ <input id="time" type="time" /></label>
-        <label class="chip">🔁
-          <select id="repeat" class="select">
-            <option value="none">不重复</option><option value="daily">每日</option>
-            <option value="weekly">每周</option><option value="monthly">每月</option>
-            <option value="yearly">每年</option><option value="custom">自定义…</option>
+
+      <div class="chips" style="margin-top:12px">
+        <label class="chip">
+          <span class="icon">📅</span>
+          <input type="date" id="taskDate" />
+        </label>
+        <label class="chip">
+          <span class="icon">⏰</span>
+          <input type="time" id="taskTime" />
+        </label>
+
+        <label class="chip">
+          <span class="icon">🔁</span>
+          <select id="repeat">
+            <option value="none">不重复</option>
+            <option value="daily">每日</option>
+            <option value="weekly">每周</option>
+            <option value="monthly">每月</option>
+            <option value="yearly">每年</option>
+            <option value="custom">自定义</option>
           </select>
         </label>
-        <label class="chip"><input id="important" type="checkbox" /> ⭐ 重要</label>
-      </div>
-      <div class="small" style="margin-top:6px">提示：文本中包含“今天/明天/下周二/每周/每日/每月/7pm/21:00/！”会自动识别。</div>
-    </div>
-  </section>
 
-  <!-- toast & confetti -->
-  <div class="toast" id="toast"></div>
-  <div class="pop" id="pop"></div>
+        <label class="chip">
+          <span class="icon">⭐</span>
+          <input id="important" type="checkbox" /> 重要
+        </label>
+      </div>
+
+      <!-- 快速稍后 -->
+      <div class="snooze">
+        <button data-min="5">稍后 5 分钟</button>
+        <button data-min="10">稍后 10 分钟</button>
+        <button data-min="30">稍后 30 分钟</button>
+      </div>
+
+      <div class="helper">提示：输入后可按 <b>Enter</b> 直接添加；日期与时间随时可修改。</div>
+    </div>
+
+    <!-- LIST -->
+    <div class="list" id="list"></div>
+    <div id="emptyState" class="empty">没有任务，开始添加你的第一个任务吧。</div>
+
+    <!-- REMINDER SHEET -->
+    <div id="sheet" class="sheet" aria-hidden="true">
+      <h3>提醒设置</h3>
+      <div class="row">
+        <div>
+          <div>允许通知</div>
+          <div class="helper">启用后到点将推送提醒（浏览器/系统支持时）。</div>
+        </div>
+        <label class="switch">
+          <input id="notifToggle" type="checkbox">
+          <span class="knob"></span>
+        </label>
+      </div>
+      <div class="row" style="margin-top:12px">
+        <button id="testNotif" class="btn subtle">测试提醒</button>
+        <button id="closeSheet" class="btn">完成</button>
+      </div>
+      <div class="helper">iOS Safari 需要添加到主屏幕(PWA)并允许通知后才会推送；否则会使用对话框提醒。</div>
+    </div>
+
+  </div>
 
 <script>
 (() => {
-  const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
-  const fmtDate=d=>`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
-  const fmtNow12=()=>{const d=new Date(); let h=d.getHours(),m=String(d.getMinutes()).padStart(2,'0'),ap=h>=12?'PM':'AM'; h=h%12||12; return `${h}:${m} ${ap}`};
-  const pad=n=>String(n).padStart(2,'0');
+  const $ = s => document.querySelector(s);
+  const listEl = $('#list');
+  const emptyEl = $('#emptyState');
+  const enterBtn = $('#enterBtn');
+  const textEl = $('#taskText');
+  const dateEl = $('#taskDate');
+  const timeEl = $('#taskTime');
+  const repeatEl = $('#repeat');
+  const impEl = $('#important');
+  const snoozeBtns = document.querySelectorAll('.snooze button');
 
-  /* theme */
-  const themeBtn=$('#themeBtn'), themeIcon=$('#themeIcon');
-  const setTheme=t=>{document.body.setAttribute('data-theme',t);localStorage.setItem('qp_theme',t);
-    themeIcon.innerHTML=t==='dark'?'<path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79Z"/>':
-    '<path d="M6.76 4.84l-1.8-1.79L3.17 4.84 4.96 6.63 6.76 4.84zM12 2a1 1 0 0 1 1 1v2a1 1 0 1 1-2 0V3a1 1 0 0 1 1-1zm0 15a5 5 0 1 0 0-10 5 5 0 0 0 0 10z"/>';};
-  setTheme(localStorage.getItem('qp_theme')||'dark');
-  themeBtn.onclick=()=>setTheme(document.body.getAttribute('data-theme')==='dark'?'light':'dark');
-
-  /* clock */
-  $('#nowDate').textContent=fmtDate(new Date()); $('#nowTime').textContent=fmtNow12(); setInterval(()=>{$('#nowDate').textContent=fmtDate(new Date()); $('#nowTime').textContent=fmtNow12();},1e3);
-
-  /* state */
-  let tasks=JSON.parse(localStorage.getItem('qp_tasks')||'[]');
-  let points=+localStorage.getItem('qp_points')||0;
-  let streak=+localStorage.getItem('qp_streak')||0;
-  let lastDoneDay=localStorage.getItem('qp_lastDoneDay')||'';
-  let goal=+localStorage.getItem('qp_goal')||3;
-  let focusOnly=false;
-  const save=()=>{localStorage.setItem('qp_tasks',JSON.stringify(tasks));localStorage.setItem('qp_points',points);localStorage.setItem('qp_streak',streak);localStorage.setItem('qp_lastDoneDay',lastDoneDay);localStorage.setItem('qp_goal',goal);};
-
-  /* UI refs */
-  const gameBox=$('#gameBox'), xp=$('#xp'), levelEl=$('#level'), ptsEl=$('#points'), streakEl=$('#streak');
-  const ring=$('#ring'), ringTxt=$('#ringTxt'), goalNum=$('#goalNum'), doneTodayEl=$('#doneToday');
-  const list=$('#list'), empty=$('#empty'), filters=$('#filters');
-  const toast=$('#toast'), pop=$('#pop');
-  const search=$('#search'), focusBtn=$('#focusBtn'), templatesBtn=$('#templatesBtn');
-
-  const countTodayDone=()=>tasks.filter(t=>t.done && t.date===fmtDate(new Date())).length;
-  function updateGamify(){
-    const lvl=Math.max(1,Math.floor(points/120)+1), pct=(points%120)/1.2;
-    levelEl.textContent=lvl; ptsEl.textContent=points; xp.style.width=pct+'%';
-    const done=countTodayDone(), pctGoal=Math.min(100, Math.round(100*done/Math.max(1,goal)));
-    ring.style.setProperty('--p', pctGoal); ringTxt.textContent=pctGoal+'%'; goalNum.textContent=goal; doneTodayEl.textContent=done;
-    gameBox.style.display = tasks.length ? 'grid' : 'none';
-    $('#c-all').textContent=tasks.length;
-    $('#c-today').textContent=tasks.filter(t=>t.date===fmtDate(new Date())).length;
-    $('#c-imp').textContent=tasks.filter(t=>t.imp).length;
-    $('#c-done').textContent=tasks.filter(t=>t.done).length;
-    $('#c-todo').textContent=tasks.filter(t=>!t.done).length;
-    streakEl.textContent=streak;
+  // ====== time header ======
+  const dateFmt = new Intl.DateTimeFormat('zh-CN',{year:'numeric',month:'2-digit',day:'2-digit'});
+  const timeFmt = new Intl.DateTimeFormat('zh-CN',{hour:'numeric',minute:'2-digit',hour12:true});
+  function tick(){
+    const now = new Date();
+    $('#todayDate').textContent = dateFmt.format(now);
+    $('#nowTime').textContent = timeFmt.format(now);
   }
+  tick(); setInterval(tick,1000);
 
-  /* filters */
-  let currentFilter='all';
-  $$('#filters .f').forEach(b=>b.onclick=()=>{$$('#filters .f').forEach(x=>x.classList.remove('active')); b.classList.add('active'); currentFilter=b.dataset.filter; render();});
-
-  /* notif SW */
-  const notifBtn=$('#notifBtn'); let swReg=null, nextTimer=null;
-  async function ensureSW(){
-    if(!('serviceWorker' in navigator)) return null;
-    if(swReg) return swReg;
-    const code=`self.addEventListener('install',e=>self.skipWaiting());
-    self.addEventListener('activate',e=>self.clients.claim());
-    self.addEventListener('message',e=>{const d=e.data||{};
-      if(d.type==='notify'){self.registration.showNotification(d.title||'提醒',{body:d.body||'',tag:d.tag||('t-'+Date.now()),requireInteraction:false});
-    }}); self.addEventListener('notificationclick',e=>{e.notification.close(); e.waitUntil(clients.matchAll({type:'window'}).then(l=>l[0]?l[0].focus():clients.openWindow('./')));});`;
-    const url=URL.createObjectURL(new Blob([code],{type:'text/javascript'}));
-    swReg=await navigator.serviceWorker.register(url,{scope:'./'}); return swReg;
+  // ====== theme toggle ======
+  const themeBtn = $('#themeBtn');
+  function setTheme(mode){
+    if(mode==='light'){ document.body.classList.add('light'); themeBtn.textContent='🌞'; }
+    else { document.body.classList.remove('light'); themeBtn.textContent='🌙'; }
+    localStorage.setItem('theme',mode);
   }
-  async function askNotif(){
-    try{await ensureSW();const p=await Notification.requestPermission();notifBtn.textContent=(p==='granted'?'🔔':'🔕'); if(p==='granted') scheduleNext();}catch(e){}
-  }
-  notifBtn.onclick=askNotif;
+  setTheme(localStorage.getItem('theme')||'dark');
+  themeBtn.addEventListener('click',()=>setTheme(document.body.classList.contains('light')?'dark':'light'));
 
-  function toDateTime(t){ // Date object from task
-    const base=t.date?new Date(t.date+'T00:00:00'):new Date(); const [hh,mm]=(t.time||'09:00').split(':').map(n=>+n); base.setHours(hh,mm,0,0); return base;
-  }
-  function scheduleNext(){
-    if(nextTimer) clearTimeout(nextTimer), nextTimer=null;
-    if(!(Notification.permission==='granted' && swReg)) return;
-    const upcoming = tasks.filter(t=>!t.done && t.date).map(t=>({t,at:+toDateTime(t)})).filter(x=>x.at>Date.now()).sort((a,b)=>a.at-b.at)[0];
-    if(!upcoming) return;
-    const delay = Math.min(2147483647, Math.max(0, upcoming.at - Date.now()));
-    nextTimer=setTimeout(()=>{ navigator.serviceWorker.controller?.postMessage({type:'notify',title:'任务提醒',body:`${upcoming.t.title}${upcoming.t.time?' · '+upcoming.t.time:''}`}); scheduleNext(); }, delay);
-  }
-
-  /* ICS calendar */
-  function ics(t){
-    const s=toDateTime(t), e=new Date(+s+30*60*1000);
-    const f=d=>`${d.getFullYear()}${pad(d.getMonth()+1)}${pad(d.getDate())}T${pad(d.getHours())}${pad(d.getMinutes())}${pad(d.getSeconds())}`;
-    const map={daily:'FREQ=DAILY',weekly:'FREQ=WEEKLY',monthly:'FREQ=MONTHLY',yearly:'FREQ=YEARLY'};
-    const r=(t.repeat&&t.repeat!=='none')?`\nRRULE:${map[t.repeat]}`:'';
-    return ['BEGIN:VCALENDAR','VERSION:2.0','PRODID:-//QingdanPlus//CN','BEGIN:VEVENT',`UID:${t.id}@qingdan.plus`,`DTSTAMP:${f(new Date())}Z`,`DTSTART:${f(s)}`,`DTEND:${f(e)}`,`SUMMARY:${t.title.replace(/\n/g,' ')}`,r,'END:VEVENT','END:VCALENDAR'].join('\r\n');
-  }
-  function downloadICS(t){const blob=new Blob([ics(t)],{type:'text/calendar'}); const a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download=(t.title||'提醒')+'.ics'; a.click();}
-
-  /* toast+confetti */
-  function showToast(msg, ms=2000){toast.textContent=msg;toast.classList.add('show');setTimeout(()=>toast.classList.remove('show'),ms);}
-  function confetti(){const colors=['#6ea8ff','#8ab4ff','#a78bfa','#28d17c','#ffce56','#ff5d6c']; for(let i=0;i<24;i++){const el=document.createElement('div'); el.className='conf'; el.style.background=colors[i%colors.length]; el.style.left=Math.random()*100+'%'; el.style.top='-10px'; el.animate([{transform:`translateY(0) rotate(0)`},{transform:`translate(${(Math.random()*60-30)}px, 120vh) rotate(${Math.random()*720}deg)`}],{duration:1200+Math.random()*800, easing:'cubic-bezier(.2,.6,.2,1)'}).onfinish=()=>el.remove(); pop.appendChild(el);} }
-
-  /* parse smart input */
-  function parseSmart(raw){
-    let text=raw.trim(); let imp=false, rep='none', date='', time='';
-    // important
-    if(/[!！]$/.test(text)){imp=true; text=text.replace(/[!！]+$/,'').trim();}
-    // time 7pm / 19:30 / 7:00 pm
-    let m = text.match(/\b((1[0-2]|0?[1-9])(:[0-5]\d)?\s*(am|pm))\b/i);
-    if(m){ let [h,mm]=m[1].toLowerCase().replace(/\s/g,'').replace('am',' am').replace('pm',' pm').split(/[ :]/); h=parseInt(h,10); mm=(mm||'00'); const ap=m[4].toLowerCase(); if(ap==='pm'&&h<12) h+=12; if(ap==='am'&&h===12) h=0; time=`${pad(h)}:${mm}`; text=text.replace(m[0],'').trim();}
-    m = text.match(/\b([01]?\d|2[0-3]):([0-5]\d)\b/); if(m){time=`${pad(+m[1])}:${m[2]}`; text=text.replace(m[0],'').trim();}
-    // date words
-    const today=new Date(); const tomorrow=new Date(); tomorrow.setDate(today.getDate()+1);
-    if(/(今天|today)/i.test(text)){date=fmtDate(today); text=text.replace(/(今天|today)/ig,'').trim();}
-    if(/(明天|tomorrow)/i.test(text)){date=fmtDate(tomorrow); text=text.replace(/(明天|tomorrow)/ig,'').trim();}
-    // next weekday
-    const wmap={'周一':1,'周二':2,'周三':3,'周四':4,'周五':5,'周六':6,'周日':0,'Monday':1,'Tuesday':2,'Wednesday':3,'Thursday':4,'Friday':5,'Saturday':6,'Sunday':0,'Mon':1,'Tue':2,'Wed':3,'Thu':4,'Fri':5,'Sat':6,'Sun':0};
-    const wk=Object.keys(wmap).find(k=>new RegExp(`\\b(${k})\\b`,'i').test(text));
-    if(wk){const target=wmap[wk]; const d=new Date(); let add=(target - d.getDay() + 7)%7; if(add===0) add=7; d.setDate(d.getDate()+add); date=fmtDate(d); text=text.replace(new RegExp(`\\b(${wk})\\b`,'i'),'').trim();}
-    // ISO date in text
-    m=text.match(/\b(20\d{2})[-/\.](0?[1-9]|1[0-2])[-/\.](0?[1-9]|[12]\d|3[01])\b/); if(m){date=`${m[1]}-${pad(+m[2])}-${pad(+m[3])}`; text=text.replace(m[0],'').trim();}
-    // repeat words
-    if(/(每日|每天|daily)/i.test(raw)) rep='daily';
-    else if(/(每周|weekly)/i.test(raw)) rep='weekly';
-    else if(/(每月|monthly)/i.test(raw)) rep='monthly';
-    else if(/(每年|yearly)/i.test(raw)) rep='yearly';
-    return {text,imp,rep,date,time};
-  }
-
-  /* render */
-  function render(){
-    list.innerHTML='';
-    const q=search.value.trim().toLowerCase();
-    let view=tasks.slice();
-    // focus: top 3 for today, unfinished, sorted
-    if(focusOnly){
-      const today=fmtDate(new Date());
-      view=view.filter(t=>!t.done && t.date===today).slice(0,3);
-    }
-    // filter tab
-    const todayS=fmtDate(new Date());
-    switch(currentFilter){
-      case 'today': view=view.filter(t=>t.date===todayS); break;
-      case 'imp': view=view.filter(t=>t.imp); break;
-      case 'done': view=view.filter(t=>t.done); break;
-      case 'todo': view=view.filter(t=>!t.done); break;
-    }
-    // search
-    if(q) view=view.filter(t=>(t.title+t.date+t.time).toLowerCase().includes(q));
-    // sort: done last, then date/time
-    view.sort((a,b)=> (a.done-b.done) || ((a.date||'9999')+(a.time||'99:99')).localeCompare((b.date||'9999')+(b.time||'99:99')));
-    if(tasks.length===0){ empty.style.display='block'; list.appendChild(empty); filters.style.display='none'; }
-    else{ filters.style.display='flex'; }
-
-    view.forEach(t=>{
-      const el=document.createElement('div'); el.className='task';
-      el.innerHTML=`
-        <div class="check ${t.done?'done':''}" data-id="${t.id}"></div>
-        <div class="body">
-          <div class="title">${t.title}</div>
-          <div class="meta">
-            ${t.date?`<span class="tag">📅 ${t.date}</span>`:''}
-            ${t.time?`<span class="tag">⏰ ${t.time}</span>`:''}
-            ${t.repeat!=='none'?`<span class="tag">🔁 ${({'daily':'每日','weekly':'每周','monthly':'每月','yearly':'每年','custom':'自定义'})[t.repeat]}</span>`:''}
-            ${t.imp?`<span class="tag imp">⭐ 重要</span>`:''}
-          </div>
-        </div>
-        <div class="act">
-          <button class="btn" data-snooze5="${t.id}">稍后5分</button>
-          <button class="btn" data-snooze10="${t.id}">10分</button>
-          <button class="btn" data-snooze30="${t.id}">30分</button>
-          <button class="btn" data-cal="${t.id}">加到日历</button>
-          <button class="btn del" data-del="${t.id}">删除</button>
-        </div>`;
-      list.appendChild(el);
-    });
-    updateGamify();
-    scheduleNext();
-  }
-
-  /* add task */
-  const title=$('#title'), enter=$('#enter'), tf=$('#tf');
-  const dateInput=$('#date'), timeInput=$('#time'), repeatSel=$('#repeat'), imp=$('#important');
-  dateInput.value=fmtDate(new Date()); timeInput.value=new Date().toTimeString().slice(0,5);
-  function showEnter(){ tf.classList.toggle('typing', !!title.value.trim()); }
-  title.addEventListener('input', showEnter);
-  title.addEventListener('keydown', e=>{ if(e.key==='Enter' && title.value.trim()){ e.preventDefault(); add(); }});
-  enter.onclick=add;
-
-  let undoStack=[];
-  function add(){
-    const raw=title.value;
-    const p=parseSmart(raw);
-    const t={ id:crypto.randomUUID(), title:(p.text||raw).trim(), date: (p.date||dateInput.value||''), time: (p.time||timeInput.value||''), repeat:(p.rep||repeatSel.value||'none'), imp:(p.imp||imp.checked||false), done:false, createdAt:Date.now() };
-    tasks.unshift(t); title.value=''; showEnter(); save(); render();
-    showToast('已添加 · 可“加到日历”确保系统提醒'); // hint
-  }
-
-  /* actions */
-  list.addEventListener('click', e=>{
-    const el=e.target;
-    const id = el.dataset.id || el.dataset.del || el.dataset.cal || el.dataset.snooze5 || el.dataset.snooze10 || el.dataset.snooze30;
-    if(!id) return;
-    const t=tasks.find(x=>x.id===id); if(!t) return;
-
-    if(el.dataset.id!==undefined){ // toggle done
-      t.done=!t.done;
-      if(t.done){
-        points+=12; // reward
-        const today=fmtDate(new Date());
-        if(lastDoneDay!==today){
-          const prev=new Date(today); prev.setDate(prev.getDate()-1);
-          streak = (lastDoneDay===fmtDate(prev)) ? (streak+1) : 1;
-          lastDoneDay=today;
-        }
-        confetti();
-      } else {
-        points=Math.max(0,points-12);
+  // ====== notifications sheet ======
+  const sheet = $('#sheet'), bell = $('#bellBtn'), notifToggle = $('#notifToggle');
+  const closeSheet = $('#closeSheet'), testNotif = $('#testNotif');
+  function openSheet(){ sheet.classList.add('open'); sheet.setAttribute('aria-hidden','false'); }
+  function closeSheetFn(){ sheet.classList.remove('open'); sheet.setAttribute('aria-hidden','true'); }
+  bell.addEventListener('click', openSheet);
+  closeSheet.addEventListener('click', closeSheetFn);
+  // load notif pref
+  notifToggle.checked = localStorage.getItem('notifEnabled')==='1';
+  notifToggle.addEventListener('change', async () => {
+    if(notifToggle.checked){
+      if('Notification' in window){
+        try{
+          const perm = await Notification.requestPermission();
+          if(perm!=='granted'){ notifToggle.checked=false; alert('未授予通知权限'); return; }
+        }catch(e){ /* ignore */ }
       }
-      save(); render();
-    }
-    if(el.dataset.del){
-      undoStack.push(t); tasks=tasks.filter(x=>x.id!==id); save(); render();
-      showToast('已删除 · 撤销?',2500);
-      // simple undo click on toast
-      toast.onclick=()=>{ if(undoStack.length){ const back=undoStack.pop(); tasks.unshift(back); save(); render(); toast.classList.remove('show'); } };
-    }
-    if(el.dataset.cal) downloadICS(t);
-    if(el.dataset.snooze5||el.dataset.snooze10||el.dataset.snooze30){
-      const addMin = el.dataset.snooze5?5 : el.dataset.snooze10?10 : 30;
-      const base = toDateTime(t);
-      const next = new Date(+base + addMin*60*1000);
-      t.date = fmtDate(next); t.time = `${pad(next.getHours())}:${pad(next.getMinutes())}`;
-      save(); render(); showToast(`已延后 ${addMin} 分钟`);
+      localStorage.setItem('notifEnabled','1');
+    }else{
+      localStorage.removeItem('notifEnabled');
     }
   });
+  testNotif.addEventListener('click', () => notify('测试提醒','这是一个提醒示例。'));
 
-  /* search */
-  search.addEventListener('input', render);
+  // ====== storage ======
+  const storeKey = 'todo.v3';
+  let tasks = JSON.parse(localStorage.getItem(storeKey)||'[]');
 
-  /* focus mode */
-  focusBtn.onclick=()=>{focusOnly=!focusOnly; focusBtn.classList.toggle('active',focusOnly); focusBtn.textContent=focusOnly?'只看今日Top3':'专注3项'; render();};
+  function save(){ localStorage.setItem(storeKey, JSON.stringify(tasks)); }
+  function uid(){ return Math.random().toString(36).slice(2,9); }
 
-  /* templates */
-  templatesBtn.onclick=()=>{
-    const d=fmtDate(new Date());
-    const tmr=new Date(); tmr.setDate(tmr.getDate()+1);
-    const w=new Date(); w.setDate(w.getDate()+7);
-    const presets=[
-      {title:'今日三件事',date:d,time:'09:00',repeat:'none',imp:true},
-      {title:'复盘日记',date:d,time:'21:00',repeat:'daily',imp:false},
-      {title:'每周规划',date:fmtDate(w),time:'20:00',repeat:'weekly',imp:true},
-      {title:'喝水 8 杯',date:d,time:'',repeat:'daily',imp:false},
-    ];
-    presets.forEach(p=>tasks.unshift({id:crypto.randomUUID(), ...p, done:false, createdAt:Date.now()}));
-    save(); render(); showToast('已添加模板');
-  };
+  // ====== render ======
+  function render(){
+    listEl.innerHTML='';
+    if(!tasks.length){ emptyEl.classList.remove('hide'); return; }
+    emptyEl.classList.add('hide');
+    tasks.sort((a,b)=>Number(a.done)-Number(b.done) || (a.when||'').localeCompare(b.when||''));
+    for(const t of tasks){
+      const row = document.createElement('div');
+      row.className = 'task';
+      row.innerHTML = `
+        <input type="checkbox" ${t.done?'checked':''} aria-label="完成" />
+        <div>
+          <div class="name">${escapeHtml(t.title)}</div>
+          <div class="meta">
+            ${t.when?`<span class="muted">📅 ${fmtReadable(t.when)}</span>`:''}
+            ${t.repeat!=='none'?`<span class="muted">🔁 ${repeatLabel(t.repeat)}</span>`:''}
+            ${t.important?`<span class="muted">⭐ 重要</span>`:''}
+          </div>
+        </div>
+        <div class="row">
+          <button class="btn subtle" data-act="s5">+5分</button>
+          <button class="btn subtle" data-act="s10">+10分</button>
+          <button class="btn subtle" data-act="s30">+30分</button>
+          <button class="btn danger" data-act="del">删除</button>
+        </div>
+      `;
+      // events
+      const [ck] = row.getElementsByTagName('input');
+      ck.addEventListener('change',()=>{ t.done = ck.checked; save(); render(); });
 
-  /* import/export */
-  $('#exportBtn').onclick=()=>{const blob=new Blob([JSON.stringify({tasks,points,streak,lastDoneDay,goal},null,2)],{type:'application/json'}); const a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download='qingdan-plus-backup.json'; a.click();};
-  $('#importFile').addEventListener('change', async e=>{const f=e.target.files[0]; if(!f) return; const d=JSON.parse(await f.text()); tasks=d.tasks||[]; points=d.points||0; streak=d.streak||0; lastDoneDay=d.lastDoneDay||''; goal=d.goal||3; save(); render(); showToast('导入完成');});
+      row.querySelector('[data-act="del"]').addEventListener('click',()=>{
+        tasks = tasks.filter(x=>x.id!==t.id); save(); render();
+      });
+      row.querySelector('[data-act="s5"]').addEventListener('click',()=>snoozeTask(t,5));
+      row.querySelector('[data-act="s10"]').addEventListener('click',()=>snoozeTask(t,10));
+      row.querySelector('[data-act="s30"]').addEventListener('click',()=>snoozeTask(t,30));
 
-  /* filters show/hide, initial */
-  function init(){
-    dateInput.value=fmtDate(new Date());
-    timeInput.value=new Date().toTimeString().slice(0,5);
-    render();
+      listEl.appendChild(row);
+    }
   }
 
-  init();
+  function escapeHtml(s){ return s.replace(/[&<>"']/g,m=>({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' }[m])); }
+  function repeatLabel(v){
+    return {none:'不重复',daily:'每日',weekly:'每周',monthly:'每月',yearly:'每年',custom:'自定义'}[v]||'不重复';
+  }
+  function fmtReadable(iso){
+    const d=new Date(iso);
+    return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')} ${timeFmt.format(d)}`;
+  }
+
+  // ====== add task ======
+  function parseWhen(dateStr,timeStr){
+    if(!dateStr && !timeStr) return null;
+    const d = new Date();
+    if(dateStr){ const [y,m,dd] = dateStr.split('-').map(Number); d.setFullYear(y,m-1,dd); }
+    if(timeStr){ const [hh,mm] = timeStr.split(':').map(Number); d.setHours(hh,mm||0,0,0); }
+    return d.toISOString();
+  }
+
+  function addTask(){
+    const title = textEl.value.trim();
+    if(!title) return;
+    const when = parseWhen(dateEl.value, timeEl.value);
+    const t = { id:uid(), title, when, repeat:repeatEl.value, important:impEl.checked, done:false };
+    tasks.push(t); save(); schedule(t); render();
+    // clear text only
+    textEl.value=''; enterBtn.disabled=true;
+  }
+
+  textEl.addEventListener('input',()=>{ enterBtn.disabled = !textEl.value.trim(); });
+  textEl.addEventListener('keydown',e=>{ if(e.key==='Enter'){ e.preventDefault(); addTask(); }});
+  enterBtn.addEventListener('click', addTask);
+
+  // quick snooze for composer
+  snoozeBtns.forEach(btn=>{
+    btn.addEventListener('click',()=>{
+      const min = Number(btn.dataset.min)||5;
+      const base = dateEl.value && timeEl.value ? new Date(parseWhen(dateEl.value, timeEl.value)) : new Date();
+      base.setMinutes(base.getMinutes()+min);
+      dateEl.value = base.toISOString().slice(0,10);
+      timeEl.value = `${String(base.getHours()).padStart(2,'0')}:${String(base.getMinutes()).padStart(2,'0')}`;
+    });
+  });
+
+  // ====== notifications & scheduling ======
+  function notify(title, body){
+    const enabled = localStorage.getItem('notifEnabled')==='1';
+    if(enabled && 'Notification' in window && Notification.permission==='granted'){
+      new Notification(title, { body });
+    }else{
+      alert(`${title}\n\n${body}`);
+    }
+  }
+
+  function schedule(t){
+    // clear previous timer if any
+    if(t._timer){ clearTimeout(t._timer); t._timer=null; }
+    if(!t.when || t.done) return;
+    const ts = new Date(t.when).getTime() - Date.now();
+    if(ts <= 0) return;
+    t._timer = setTimeout(()=>{
+      notify('到点啦', t.title);
+      // handle repeat
+      if(t.repeat && t.repeat!=='none'){
+        const d = new Date(t.when);
+        switch(t.repeat){
+          case 'daily': d.setDate(d.getDate()+1); break;
+          case 'weekly': d.setDate(d.getDate()+7); break;
+          case 'monthly': d.setMonth(d.getMonth()+1); break;
+          case 'yearly': d.setFullYear(d.getFullYear()+1); break;
+          case 'custom': d.setDate(d.getDate()+3); break; // 简单示例：自定义=+3天
+        }
+        t.when = d.toISOString(); save(); render(); schedule(t);
+      }
+    }, ts);
+  }
+
+  function snoozeTask(t, min){
+    const d = t.when ? new Date(t.when) : new Date();
+    d.setMinutes(d.getMinutes()+min);
+    t.when = d.toISOString(); save(); render(); schedule(t);
+  }
+
+  // ===== init =====
+  // default pickers -> today + next half hour
+  (function initPickers(){
+    const now = new Date();
+    dateEl.value = now.toISOString().slice(0,10);
+    now.setMinutes(now.getMinutes()+30-now.getMinutes()%30,0,0);
+    timeEl.value = `${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}`;
+  })();
+
+  tasks.forEach(schedule);
+  render();
+
 })();
 </script>
 </body>
