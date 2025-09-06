@@ -48,13 +48,16 @@
 
   .composer{margin-top:16px;padding:14px;border-radius:var(--radius);background:var(--panel);box-shadow:var(--shadow)}
   .row{display:flex;gap:10px;align-items:center}
-  .input{flex:1;min-height:52px;padding:12px 14px;border:2px solid transparent;outline:0;border-radius:12px;background:var(--panel-2);color:var(--text);font-size:17px}
+  .input-wrap{position:relative;flex:1}
+  .input{width:100%;min-height:52px;padding:12px 14px;border:2px solid transparent;outline:0;border-radius:12px;background:var(--panel-2);color:var(--text);font-size:17px;padding-right:88px}
   .input:focus{border-color:var(--brand)}
+  .enter-inline{position:absolute;right:8px;top:50%;transform:translateY(-50%);display:none;align-items:center;gap:6px;border:0;border-radius:10px;background:var(--ok);color:#fff;padding:8px 10px;font-weight:800}
+  .input-wrap.has-text .enter-inline{display:inline-flex}
+
   .pickers{display:flex;gap:10px}
   .pill{display:inline-flex;align-items:center;gap:8px;padding:10px 12px;border-radius:999px;background:var(--chip);color:var(--text);cursor:pointer;user-select:none}
   .pill svg{width:18px;height:18px}
-  .add-btn{display:inline-flex;align-items:center;gap:8px;background:var(--ok);white-space:nowrap}
-  .add-btn svg{width:18px;height:18px}
+
   .hint{margin-top:10px;color:var(--muted);font-size:13px}
 
   /* modal date-time sheet */
@@ -93,9 +96,16 @@
 
   <div id="list" class="list"></div>
 
+  <!-- Composer -->
   <div class="composer">
     <div class="row">
-      <input id="taskInput" class="input" placeholder="输入任务…" autocomplete="off" />
+      <div class="input-wrap" id="inputWrap">
+        <input id="taskInput" class="input" placeholder="输入任务…" autocomplete="off" />
+        <button id="enterInline" class="enter-inline" aria-label="添加任务">
+          <svg viewBox="0 0 24 24" fill="currentColor" width="18" height="18"><path d="M19 11H7.83l4.58-4.59L11 5l-7 7 7 7 1.41-1.41L7.83 13H19z"/></svg>
+          Enter
+        </button>
+      </div>
       <div class="pickers">
         <div class="pill" id="datePill" role="button" aria-label="选择日期">
           <svg viewBox="0 0 24 24" fill="currentColor"><path d="M7 2a1 1 0 0 1 1 1v1h8V3a1 1 0 1 1 2 0v1h1a3 3 0 0 1 3 3v12a3 3 0 0 1-3 3H5a3 3 0 0 1-3-3V7a3 3 0 0 1 3-3h1V3a1 1 0 0 1 1-1Zm13 9H4v9a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-9ZM5 7a1 1 0 0 0-1 1v1h16V8a1 1 0 0 0-1-1H5Z"/></svg>
@@ -106,12 +116,8 @@
           <span id="timeLabel">无时间</span>
         </div>
       </div>
-      <button class="btn add-btn" id="tapEnter" title="添加">
-        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M19 11H7.83l4.58-4.59L11 5l-7 7 7 7 1.41-1.41L7.83 13H19z"/></svg>
-        Enter
-      </button>
     </div>
-    <div class="hint">提示：按 <b>Enter</b> 或点击右侧 <b>Enter</b> 按钮可添加；点「📅 ⏰」设置日期与时间</div>
+    <div class="hint">提示：输入内容后右侧将出现 <b>Enter</b> 按钮，或直接按键盘 <b>Enter</b> 添加；点「📅 ⏰」设置日期与时间</div>
   </div>
 
   <footer>© 2025 清单Plus · 本地保存 · 轻快 · 极简</footer>
@@ -136,11 +142,11 @@
 </div>
 
 <script>
-/* ---------- utils ---------- */
 const $ = s=>document.querySelector(s);
 const listEl = $('#list');
 const taskInput = $('#taskInput');
-const tapEnter = $('#tapEnter');
+const inputWrap = $('#inputWrap');
+const enterInline = $('#enterInline');
 
 const todayStrEl = $('#todayStr');
 const nowStrEl   = $('#nowStr');
@@ -158,109 +164,44 @@ const counts = {
 let filter='all';
 let tasks = JSON.parse(localStorage.getItem('qingdan_tasks_v4')||'[]');
 
+/* utils */
 function pad(n){return n<10?'0'+n:n}
-function format12(hm){ // "HH:MM" -> "h:MM AM/PM"
-  if(!hm) return '';
-  const [H,M]=hm.split(':').map(x=>parseInt(x,10));
-  let h=H%12; if(h===0) h=12;
-  return `${h}:${pad(M)} ${H>=12?'PM':'AM'}`;
-}
+function format12(hm){ if(!hm) return ''; const [H,M]=hm.split(':').map(x=>parseInt(x,10)); let h=H%12; if(h===0) h=12; return `${h}:${pad(M)} ${H>=12?'PM':'AM'}`; }
 function isoDate(d){return `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`}
-function prettyDate(iso){
-  const d=new Date(iso+'T00:00:00'); return d.toLocaleDateString(undefined,{month:'short',day:'numeric',year:'numeric'})
-}
-function tick(){
-  const now=new Date();
-  todayStrEl.textContent=isoDate(now);
-  let h=now.getHours(), m=pad(now.getMinutes()); const ap=h>=12?'PM':'AM'; h=h%12; if(h===0)h=12;
-  nowStrEl.textContent=`${h}:${m} ${ap}`;
-  requestAnimationFrame(()=>setTimeout(tick,1000));
-}
+function prettyDate(iso){const d=new Date(iso+'T00:00:00'); return d.toLocaleDateString(undefined,{month:'short',day:'numeric',year:'numeric'})}
+function tick(){const now=new Date(); todayStrEl.textContent=isoDate(now); let h=now.getHours(), m=pad(now.getMinutes()); const ap=h>=12?'PM':'AM'; h=h%12; if(h===0)h=12; nowStrEl.textContent=`${h}:${m} ${ap}`; requestAnimationFrame(()=>setTimeout(tick,1000));}
 tick();
 
-/* ---------- theme ---------- */
+/* theme */
 const modeToggle=$('#modeToggle'), root=document.documentElement, modeIcon=$('#modeIcon'), modeText=$('#modeText');
-function applyMode(m){
-  if(m==='light'){root.classList.add('light'); modeIcon.textContent='☀️'; modeText.textContent='浅色'}
-  else{root.classList.remove('light'); modeIcon.textContent='🌙'; modeText.textContent='深色'}
-}
+function applyMode(m){ if(m==='light'){root.classList.add('light'); modeIcon.textContent='☀️'; modeText.textContent='浅色'} else {root.classList.remove('light'); modeIcon.textContent='🌙'; modeText.textContent='深色'} }
 applyMode(localStorage.getItem('qingdan_theme')||'dark');
-modeToggle.onclick=()=>{
-  const light=root.classList.toggle('light');
-  localStorage.setItem('qingdan_theme', light?'light':'dark');
-  applyMode(light?'light':'dark');
-};
+modeToggle.onclick=()=>{const light=root.classList.toggle('light'); localStorage.setItem('qingdan_theme', light?'light':'dark'); applyMode(light?'light':'dark');};
 
-/* ---------- filter ---------- */
-document.querySelectorAll('.filter-item').forEach(el=>{
-  el.onclick=()=>{filter=el.dataset.filter; render();}
-});
+/* filter */
+document.querySelectorAll('.filter-item').forEach(el=>{ el.onclick=()=>{filter=el.dataset.filter; render();}; });
 
-/* ---------- date/time sheet ---------- */
+/* date/time sheet */
 let pendingDate=null, pendingTime=null;
-function openSheet(){
-  // preload from current pills
-  dateInput.value = pendingDate || isoDate(new Date());
-  timeInput.value = pendingTime || '';
-  sheet.classList.add('show'); sheet.setAttribute('aria-hidden','false');
-}
-function closeSheet(){sheet.classList.remove('show'); sheet.setAttribute('aria-hidden','true')}
+function openSheet(){ dateInput.value = pendingDate || isoDate(new Date()); timeInput.value = pendingTime || ''; sheet.classList.add('show'); sheet.setAttribute('aria-hidden','false'); }
+function closeSheet(){ sheet.classList.remove('show'); sheet.setAttribute('aria-hidden','true'); }
 datePill.onclick=openSheet; timePill.onclick=openSheet;
 dtCancel.onclick=closeSheet;
-dtClear.onclick=()=>{
-  pendingDate = isoDate(new Date());
-  pendingTime = '';
-  dateInput.value = pendingDate; timeInput.value = '';
-  dateLabel.textContent='今天'; timeLabel.textContent='无时间';
-  closeSheet();
-};
-dtSave.onclick=()=>{
-  pendingDate = dateInput.value || isoDate(new Date());
-  pendingTime = timeInput.value || '';
-  // update labels
-  const todayISO=isoDate(new Date());
-  dateLabel.textContent = (pendingDate===todayISO)?'今天':prettyDate(pendingDate);
-  timeLabel.textContent = pendingTime?format12(pendingTime):'无时间';
-  closeSheet();
-};
-// default labels
-(function initDefault(){
-  const t=new Date();
-  pendingDate = isoDate(t); pendingTime='';
-  dateLabel.textContent='今天'; timeLabel.textContent='无时间';
-})();
+dtClear.onclick=()=>{ pendingDate = isoDate(new Date()); pendingTime = ''; dateInput.value=pendingDate; timeInput.value=''; dateLabel.textContent='今天'; timeLabel.textContent='无时间'; closeSheet(); };
+dtSave.onclick=()=>{ pendingDate = dateInput.value || isoDate(new Date()); pendingTime = timeInput.value || ''; const todayISO=isoDate(new Date()); dateLabel.textContent = (pendingDate===todayISO)?'今天':prettyDate(pendingDate); timeLabel.textContent = pendingTime?format12(pendingTime):'无时间'; closeSheet(); };
+(function initDefault(){ const t=new Date(); pendingDate=isoDate(t); pendingTime=''; dateLabel.textContent='今天'; timeLabel.textContent='无时间'; })();
 
-/* ---------- storage helpers ---------- */
+/* storage */
 function save(){localStorage.setItem('qingdan_tasks_v4', JSON.stringify(tasks))}
 function addTask(text, dueDate, dueTime){
   tasks.push({id:Date.now(), text:text.trim(), done:false, important:false, dueDate:dueDate||null, dueTime:dueTime||null});
-  // order by date + time
-  tasks.sort((a,b)=>{
-    const ad=a.dueDate||'9999-12-31', bd=b.dueDate||'9999-12-31';
-    if(ad!==bd) return ad.localeCompare(bd);
-    const at=a.dueTime||'99:99', bt=b.dueTime||'99:99';
-    return at.localeCompare(bt);
-  });
+  tasks.sort((a,b)=>{const ad=a.dueDate||'9999-12-31', bd=b.dueDate||'9999-12-31'; if(ad!==bd) return ad.localeCompare(bd); const at=a.dueTime||'99:99', bt=b.dueTime||'99:99'; return at.localeCompare(bt);});
   save(); render();
 }
 
-/* ---------- render ---------- */
-function matches(t){
-  if(filter==='all') return true;
-  if(filter==='today'){return t.dueDate===isoDate(new Date())}
-  if(filter==='important') return t.important;
-  if(filter==='done') return t.done;
-  if(filter==='todo') return !t.done;
-  return true;
-}
-function updateCounts(){
-  const todayISO=isoDate(new Date());
-  counts.all.textContent=tasks.length;
-  counts.today.textContent=tasks.filter(t=>t.dueDate===todayISO).length;
-  counts.important.textContent=tasks.filter(t=>t.important).length;
-  counts.done.textContent=tasks.filter(t=>t.done).length;
-  counts.todo.textContent=tasks.filter(t=>!t.done).length;
-}
+/* render */
+function matches(t){ if(filter==='all') return true; if(filter==='today'){return t.dueDate===isoDate(new Date())} if(filter==='important') return t.important; if(filter==='done') return t.done; if(filter==='todo') return !t.done; return true; }
+function updateCounts(){ const todayISO=isoDate(new Date()); counts.all.textContent=tasks.length; counts.today.textContent=tasks.filter(t=>t.dueDate===todayISO).length; counts.important.textContent=tasks.filter(t=>t.important).length; counts.done.textContent=tasks.filter(t=>t.done).length; counts.todo.textContent=tasks.filter(t=>!t.done).length; }
 function render(){
   listEl.innerHTML='';
   tasks.filter(matches).forEach(t=>{
@@ -271,10 +212,10 @@ function render(){
 
     const chips=document.createElement('div'); chips.className='chips';
     if(t.dueDate){const c=document.createElement('span'); c.className='chip';
-      c.innerHTML=`<svg viewBox="0 0 24 24" fill="currentColor"><path d="M7 2a1 1 0 0 1 1 1v1h8V3a1 1 0 1 1 2 0v1h1a3 3 0 0 1 3 3v12a3 3 0 0 1-3 3H5a3 3 0 0 1-3-3V7a3 3 0 0 1 3-3h1V3a1 1 0 0 1 1-1Zm13 9H4v9a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-9ZM5 7a1 1 0 0 0-1 1v1h16V8a1 1 0 0 0-1-1H5Z"/></svg>
+      c.innerHTML=`<svg viewBox="0 0 24 24" fill="currentColor" width="15" height="15"><path d="M7 2a1 1 0 0 1 1 1v1h8V3a1 1 0 1 1 2 0v1h1a3 3 0 0 1 3 3v12a3 3 0 0 1-3 3H5a3 3 0 0 1-3-3V7a3 3 0 0 1 3-3h1V3a1 1 0 0 1 1-1Zm13 9H4v9a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-9ZM5 7a1 1 0 0 0-1 1v1h16V8a1 1 0 0 0-1-1H5Z"/></svg>
       ${prettyDate(t.dueDate)}`; chips.appendChild(c);}
     if(t.dueTime){const c=document.createElement('span'); c.className='chip';
-      c.innerHTML=`<svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2a10 10 0 1 1 0 20 10 10 0 0 1 0-20Zm0 2a8 8 0 1 0 0 16 8 8 0 0 0 0-16Zm1 3v5.17l3.59 3.58-1.42 1.42L11 12.59V7h2Z"/></svg>
+      c.innerHTML=`<svg viewBox="0 0 24 24" fill="currentColor" width="15" height="15"><path d="M12 2a10 10 0 1 1 0 20 10 10 0 0 1 0-20Zm0 2a8 8 0 1 0 0 16 8 8 0 0 0 0-16Zm1 3v5.17l3.59 3.58-1.42 1.42L11 12.59V7h2Z"/></svg>
       ${format12(t.dueTime)}`; chips.appendChild(c);}
 
     const del=document.createElement('button'); del.className='chip danger'; del.textContent='删除';
@@ -286,18 +227,19 @@ function render(){
 }
 render();
 
-/* ---------- adding ---------- */
+/* adding */
 function doAdd(){
   const text=taskInput.value.trim();
   if(!text) return;
   addTask(text, pendingDate||null, pendingTime||null);
   taskInput.value='';
-  // keep last chosen date/time as default
+  inputWrap.classList.remove('has-text');
 }
 taskInput.addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault(); doAdd();}});
-tapEnter.addEventListener('click', doAdd);
+enterInline.addEventListener('click', doAdd);
+taskInput.addEventListener('input', ()=>{ if(taskInput.value.trim()) inputWrap.classList.add('has-text'); else inputWrap.classList.remove('has-text'); });
 
-/* ---------- bootstrap ---------- */
+/* bootstrap */
 if(!localStorage.getItem('qingdan_boot_v4')) localStorage.setItem('qingdan_boot_v4','1');
 </script>
 </body>
