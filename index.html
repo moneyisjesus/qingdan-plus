@@ -1,463 +1,360 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
-  <title>清单Plus</title>
-  <link rel="manifest" href="manifest.json" />
-  <meta name="theme-color" content="#0f1226" />
-  <style>
-    :root{
-      --bg:#0f1226;--panel:#1a1d36;--panel-2:#2a2f55;--text:#ffffff;--muted:#a7abcf;--brand:#5a5ee6;--border:#2b2e49;--ok:#21c49d;--warn:#ffb02e;
-    }
-    *{box-sizing:border-box}
-    html,body{height:100%}
-    body{
-      margin:0;background:var(--bg);color:var(--text);
-      font-family:system-ui,-apple-system,"Segoe UI","Microsoft YaHei",Roboto,Ubuntu,"Helvetica Neue",Arial,"Noto Sans","PingFang SC","Hiragino Sans GB",sans-serif;
-      -webkit-font-smoothing:antialiased; -moz-osx-font-smoothing:grayscale;
-    }
-    .app{display:flex;height:100vh;max-width:1200px;margin:0 auto}
-
-    /* Sidebar */
-    .sidebar{
-      width:230px;min-width:200px;background:var(--panel);border-right:1px solid var(--border);
-      padding:18px 14px;display:flex;flex-direction:column;gap:12px
-    }
-    .brand{display:flex;align-items:center;gap:10px}
-    .brand .logo{
-      width:36px;height:36px;border-radius:10px;background:linear-gradient(135deg,#6b6fe9,#3b3fbb);display:grid;place-items:center;
-      font-weight:800
-    }
-    .brand .name{font-size:18px;font-weight:700}
-    .nav{margin-top:8px;display:flex;flex-direction:column;gap:6px}
-    .nav button{
-      width:100%;text-align:left;border:none;border-radius:10px;padding:10px 12px;background:transparent;
-      color:var(--text);cursor:pointer;display:flex;justify-content:space-between;align-items:center;gap:10px
-    }
-    .nav button.active{background:var(--panel-2)}
-    .nav .count{opacity:.65;font-size:12px;background:#ffffff14;padding:2px 7px;border-radius:999px}
-    .spacer{flex:1}
-    .foot-actions{display:flex;gap:8px}
-    .foot-actions button{
-      flex:1;border:none;background:var(--panel-2);color:#fff;border-radius:8px;padding:8px;cursor:pointer
-    }
-
-    /* Main area */
-    .main{flex:1;display:flex;flex-direction:column}
-    .topbar{
-      display:flex;align-items:center;gap:10px; padding:14px;border-bottom:1px solid var(--border)
-    }
-    .title{font-size:20px;font-weight:700;margin-right:auto}
-    .addbar{
-      flex:1;display:flex;gap:10px;background:var(--panel);border:1px solid var(--border);border-radius:10px;padding:8px 10px
-    }
-    .addbar input{
-      flex:1;border:none;background:transparent;color:var(--text);outline:none;font-size:14px
-    }
-    .add-btn{
-      border:none;background:var(--brand);color:#fff;border-radius:8px;padding:8px 14px;cursor:pointer;white-space:nowrap
-    }
-
-    .chips{display:flex;gap:8px;flex-wrap:wrap;padding:10px 14px;border-bottom:1px solid var(--border)}
-    .chip{
-      border:none;background:var(--panel-2);color:var(--text);padding:6px 10px;border-radius:999px;cursor:pointer;font-size:13px
-    }
-
-    .toolbar{
-      padding:8px 14px;display:flex;gap:10px;align-items:center;border-bottom:1px solid var(--border);color:var(--muted);font-size:12px
-    }
-    .toolbar input, .toolbar select{
-      background:var(--panel);border:1px solid var(--border);color:var(--text);border-radius:8px;padding:6px 8px;font-size:12px
-    }
-
-    .list{flex:1;overflow:auto;padding:10px 8px}
-    .task{
-      display:flex;align-items:flex-start;gap:10px;background:var(--panel);border:1px solid var(--border);border-radius:12px;
-      padding:10px 12px;margin:8px 6px
-    }
-    .task .left{display:flex;align-items:flex-start;gap:10px;flex:1}
-    .check{
-      width:20px;height:20px;border-radius:50%;border:2px solid var(--muted);display:grid;place-items:center;cursor:pointer;flex-shrink:0
-    }
-    .check.done{border-color:var(--ok);background:var(--ok)}
-    .titleline{display:flex;align-items:center;gap:8px}
-    .task-title{font-weight:600}
-    .meta{color:var(--muted);font-size:12px;margin-top:4px;display:flex;gap:10px;flex-wrap:wrap}
-    .pill{background:#ffffff14;border-radius:999px;padding:2px 8px}
-    .right{display:flex;gap:6px}
-    .iconbtn{
-      border:none;background:var(--panel-2);color:#fff;border-radius:8px;padding:6px 8px;cursor:pointer
-    }
-    .iconbtn.warn{background:#b84a35}
-    .empty{
-      text-align:center;opacity:.6;margin-top:40px
-    }
-
-    /* Mobile-first tweaks */
-    @media (max-width: 820px){
-      .app{flex-direction:column}
-      .sidebar{
-        width:100%;min-width:auto;flex-direction:row;align-items:center;gap:8px;padding:10px;border-right:none;border-bottom:1px solid var(--border)
-      }
-      .nav{flex-direction:row;gap:8px;overflow:auto}
-      .nav button{padding:8px 10px}
-      .foot-actions{display:none}
-      .title{font-size:18px}
-    }
-  </style>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<meta name="theme-color" content="#0b1020" />
+<title>清单Plus · 我的⼀天</title>
+<style>
+  :root{
+    --bg:#0b1020; --panel:#111730; --muted:#1a2140; --ink:#e9edff;
+    --sub:#a9b0d2; --brand:#6ea8ff; --chip:#243056; --accent:#8bd0ff;
+    --ok:#00d08f; --warn:#ffbe5c; --danger:#ff6b6b; --line:#1f2a4d;
+    --shadow: 0 8px 24px rgba(8,12,28,.38);
+    --radius: 14px;
+  }
+  *{box-sizing:border-box}
+  html,body{height:100%}
+  body{
+    margin:0;background:var(--bg);color:var(--ink);font:16px/1.4 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Inter,"PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;
+    -webkit-tap-highlight-color:transparent;
+  }
+  /* 顶部 */
+  .appbar{
+    position:sticky;top:0;z-index:30;
+    background:linear-gradient(180deg,#0b1020 0%, #0b1020dd 70%, transparent 100%);
+    padding:12px 16px 10px;backdrop-filter:saturate(140%) blur(8px);
+  }
+  .row{display:flex;align-items:center;gap:10px}
+  .space{flex:1}
+  .title{font-size:22px;font-weight:700;letter-spacing:.5px}
+  .pill{
+    background:var(--muted);border-radius:999px;padding:8px 14px;color:var(--ink);font-weight:600;cursor:pointer;user-select:none;
+  }
+  .pill.ghost{background:var(--chip);color:#cfe0ff}
+  .iconbtn{width:36px;height:36px;border-radius:10px;background:var(--muted);display:grid;place-items:center;color:#cfe0ff}
+  .icon{font-size:18px}
+  /* 输入区 */
+  .panel{
+    background:var(--panel);box-shadow:var(--shadow);border-radius:var(--radius);padding:12px;margin:10px 16px 0
+  }
+  .input{
+    background:var(--muted);border:none;color:var(--ink);border-radius:12px;padding:12px 14px;width:100%;outline:none;font-size:15px;
+  }
+  .chips{display:flex;gap:10px;flex-wrap:wrap;margin-top:10px}
+  .chip{border-radius:999px;background:var(--chip);color:#d5e2ff;padding:8px 12px;font-size:13px}
+  .filters{display:flex;gap:8px;align-items:center;margin-top:10px}
+  .ctrl{
+    flex:1;min-width:0;background:var(--muted);border:1px solid var(--line);color:var(--ink);border-radius:12px;padding:8px 10px;font-size:13px;
+  }
+  .add{background:var(--brand);color:#02122e;border:none;border-radius:12px;padding:10px 14px;font-weight:700}
+  .add:active{transform:translateY(1px)}
+  /* 列表 */
+  .section{margin:12px 16px}
+  .sec-title{color:var(--sub);font-size:12px;letter-spacing:.2px;margin:6px 2px}
+  .card{
+    background:var(--panel);border-radius:14px;box-shadow:var(--shadow);overflow:hidden
+  }
+  .task{
+    display:flex;gap:10px;align-items:flex-start;padding:12px;border-bottom:1px solid var(--line)
+  }
+  .task:last-child{border-bottom:none}
+  .check{
+    width:24px;height:24px;border-radius:50%;border:2px solid #6f89c9;display:grid;place-items:center;cursor:pointer;flex:0 0 auto;
+  }
+  .check.done{background:var(--ok);border-color:var(--ok);color:#011}
+  .t-main{flex:1;min-width:0}
+  .t-title{font-weight:700;word-break:break-word}
+  .t-meta{color:#a9b0d2;font-size:12px;margin-top:4px;display:flex;gap:8px;flex-wrap:wrap}
+  .t-actions{display:flex;gap:8px}
+  .tag{background:var(--chip);border-radius:999px;padding:4px 8px;font-size:12px;color:#cfe0ff}
+  .star{color:#ffdc7d}
+  .danger{color:var(--danger)}
+  /* 底部导航 */
+  .tabbar{
+    position:sticky;bottom:0;z-index:30;background:rgba(11,16,32,.8);
+    backdrop-filter:saturate(140%) blur(8px);
+    border-top:1px solid var(--line)
+  }
+  .tabs{display:grid;grid-template-columns:repeat(4,1fr)}
+  .tab{
+    padding:10px 6px;display:grid;place-items:center;color:#cfe0ff;gap:4px
+  }
+  .tab.active{color:#8bd0ff}
+  .tab .icon{font-size:18px}
+  .container{max-width:520px;margin:0 auto}
+  /* 小屏优化 */
+  @media (min-width:461px){
+    .appbar{padding-left:24px;padding-right:24px}
+    .panel,.section{margin-left:24px;margin-right:24px}
+  }
+</style>
 </head>
 <body>
-  <div class="app" id="app">
-    <!-- Sidebar -->
-    <aside class="sidebar">
-      <div class="brand">
-        <div class="logo">清</div>
-        <div class="name">清单Plus</div>
+<div class="container">
+  <!-- 顶部 -->
+  <header class="appbar">
+    <div class="row">
+      <div class="iconbtn" aria-label="应用图标"><span class="icon">🐱‍👓</span></div>
+      <div class="title">清单Plus</div>
+      <div class="space"></div>
+      <button class="iconbtn" id="btnBell" title="提醒">
+        <span class="icon">🔔</span>
+      </button>
+      <button class="iconbtn" id="btnSettings" title="设置">
+        <span class="icon">⚙️</span>
+      </button>
+    </div>
+
+    <div class="panel">
+      <input id="taskInput" class="input" placeholder="添加任务…" />
+      <div class="chips" style="margin-top:10px">
+        <button class="chip" data-quick="today">今天</button>
+        <button class="chip" data-quick="tomorrow">明天</button>
+        <button class="chip" data-quick="nextMonday">下周一</button>
+        <button class="chip" data-quick="am9">上午9:00</button>
+        <button class="chip" data-quick="pm3">下午3:00</button>
       </div>
-
-      <div class="nav" id="nav">
-        <button data-list="myday" class="active">我的一天 <span class="count" id="count-myday">0</span></button>
-        <button data-list="important">重要 <span class="count" id="count-important">0</span></button>
-        <button data-list="planned">计划 <span class="count" id="count-planned">0</span></button>
-        <button data-list="all">任务 <span class="count" id="count-all">0</span></button>
-      </div>
-
-      <div class="spacer"></div>
-
-      <div class="foot-actions">
-        <button id="exportBtn">导出</button>
-        <button id="importBtn">导入</button>
-        <button id="settingsBtn">设置</button>
-      </div>
-    </aside>
-
-    <!-- Main -->
-    <main class="main">
-      <div class="topbar">
-        <div class="title" id="title">我的一天</div>
-
-        <div class="addbar">
-          <input id="taskInput" type="text" placeholder="添加任务…" />
-        </div>
-        <button class="add-btn" id="addBtn">添加</button>
-      </div>
-
-      <div class="chips">
-        <button class="chip" data-chip="today">今天</button>
-        <button class="chip" data-chip="tomorrow">明天</button>
-        <button class="chip" data-chip="nextmon">下周一</button>
-        <button class="chip" data-chip="9am">上午9:00</button>
-        <button class="chip" data-chip="3pm">下午3:00</button>
-      </div>
-
-      <div class="toolbar">
-        <span>日期</span>
-        <input type="date" id="datePicker">
-        <span>时间</span>
-        <input type="time" id="timePicker">
-        <span>重复</span>
-        <select id="repeatSel">
+      <div class="filters">
+        <input id="date" type="date" class="ctrl" />
+        <input id="time" type="time" class="ctrl" />
+        <select id="priority" class="ctrl">
+          <option value="0">优先级：无</option>
+          <option value="1">⭐</option>
+          <option value="2">⭐⭐</option>
+          <option value="3">⭐⭐⭐</option>
+        </select>
+        <select id="repeat" class="ctrl" style="flex:1.2">
           <option value="none">不重复</option>
           <option value="daily">每天</option>
+          <option value="workdays">工作日</option>
           <option value="weekly">每周</option>
           <option value="monthly">每月</option>
         </select>
+        <button id="addBtn" class="add">添加</button>
       </div>
+    </div>
+  </header>
 
-      <div class="list" id="list">
-        <p class="empty">没有任务</p>
+  <!-- 今日列表 -->
+  <section class="section">
+    <div class="sec-title">我的一天</div>
+    <div id="list" class="card"></div>
+  </section>
+
+  <!-- 其他列表（通过底部切换） -->
+  <section class="section" id="emptyHint" style="display:none;color:#a9b0d2">暂无内容</section>
+
+  <!-- 底部导航 -->
+  <nav class="tabbar">
+    <div class="tabs">
+      <button class="tab active" data-tab="inbox">
+        <span class="icon">📅</span><small>我的一天</small>
+      </button>
+      <button class="tab" data-tab="important">
+        <span class="icon">⭐</span><small>重要</small>
+      </button>
+      <button class="tab" data-tab="planned">
+        <span class="icon">🗓️</span><small>计划</small>
+      </button>
+      <button class="tab" data-tab="all">
+        <span class="icon">✅</span><small>任务</small>
+      </button>
+    </div>
+  </nav>
+</div>
+
+<script>
+/* ------------ 数据与工具 ------------- */
+const storeKey='qdplus_tasks_v1';
+const $=s=>document.querySelector(s);
+const $$=s=>document.querySelectorAll(s);
+const fmt=(d)=>d?new Date(d):null;
+const todayStr=()=>new Date().toISOString().slice(0,10);
+const nextMonday=()=>{
+  const d=new Date(); const day=d.getDay()||7; // 1..7
+  const diff=8-day; d.setDate(d.getDate()+diff);return d.toISOString().slice(0,10);
+};
+const setAtTime=(dateISO,hhmm)=>{
+  if(!dateISO) return null;
+  const d=new Date(dateISO);
+  if(hhmm){
+    const [h,m]=hhmm.split(':').map(Number);
+    d.setHours(h,m,0,0);
+  }
+  return d.toISOString();
+}
+let tasks=JSON.parse(localStorage.getItem(storeKey)||'[]');
+
+/* ------------ 渲染 ------------- */
+let currentTab='inbox'; // inbox/important/planned/all
+const listEl=$("#list"), emptyHint=$("#emptyHint");
+
+function badge(t){
+  const bits=[];
+  if(t.date){
+    const ds=new Date(t.date);
+    bits.push(`<span class="tag">📅 ${ds.toLocaleDateString()}</span>`);
+  }
+  if(t.time){
+    bits.push(`<span class="tag">⏰ ${t.time}</span>`);
+  }
+  if(t.repeat!=='none'){
+    const map={daily:"每天",workdays:"工作日",weekly:"每周",monthly:"每月"};
+    bits.push(`<span class="tag">🔁 ${map[t.repeat]||t.repeat}</span>`);
+  }
+  if(t.priority>0){
+    bits.push(`<span class="tag">⭐`.padEnd(4+t.priority,'⭐')+`</span>`);
+  }
+  return bits.join('');
+}
+function filterByTab(arr){
+  const today=todayStr();
+  if(currentTab==='inbox') return arr.filter(t=>t.date===today || (!t.date && !t.done));
+  if(currentTab==='important') return arr.filter(t=>t.priority>0 && !t.done);
+  if(currentTab==='planned') return arr.filter(t=>t.date && !t.done);
+  return arr; // all
+}
+function render(){
+  const data=filterByTab(tasks).sort((a,b)=>{
+    // 排序：未完成>已完成；优先级；日期时间
+    if(a.done!==b.done) return a.done?1:-1;
+    if(b.priority!==a.priority) return b.priority-a.priority;
+    return (a.date||'').localeCompare(b.date||'') || (a.time||'').localeCompare(b.time||'');
+  });
+  listEl.innerHTML = data.map(t=>`
+    <div class="task" data-id="${t.id}">
+      <button class="check ${t.done?'done':''}" title="完成">${t.done?'✓':''}</button>
+      <div class="t-main">
+        <div class="t-title">${escapeHTML(t.title)}</div>
+        <div class="t-meta">${badge(t)}</div>
       </div>
-    </main>
-  </div>
+      <div class="t-actions">
+        <button class="iconbtn star" data-act="star" title="标为重要">⭐</button>
+        <button class="iconbtn danger" data-act="del" title="删除">🗑️</button>
+      </div>
+    </div>
+  `).join('');
+  emptyHint.style.display=data.length?'none':'block';
+}
+function escapeHTML(s){return (s||'').replace(/[&<>"']/g,m=>({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' }[m]))}
 
-  <script>
-    // ---------- Utilities ----------
-    const $ = (s, r = document) => r.querySelector(s);
-    const $$ = (s, r = document) => [...r.querySelectorAll(s)];
+function save(){ localStorage.setItem(storeKey,JSON.stringify(tasks)); render(); }
 
-    const fmtDate = (d) => {
-      if(!d) return "";
-      const dt = (d instanceof Date) ? d : new Date(d);
-      const y = dt.getFullYear();
-      const m = String(dt.getMonth()+1).padStart(2,'0');
-      const da = String(dt.getDate()).padStart(2,'0');
-      return `${y}-${m}-${da}`;
-    };
-    const fmtTime = (t) => t || "";
-    const today = () => new Date(new Date().setHours(0,0,0,0));
-    const addDays = (date, n) => new Date(date.getTime() + n*86400000);
-    const getNextMonday = () => {
-      const d = today();
-      const day = d.getDay() || 7; // Sun=0 -> 7
-      const add = (8 - day);
-      return addDays(d, add);
-    };
+/* ------------ 添加 / 快捷 ------------- */
+$("#addBtn").addEventListener('click', addTask);
+$("#taskInput").addEventListener('keydown', e=>{if(e.key==='Enter') addTask();});
 
-    // ---------- State ----------
-    const storeKey = "qingdan_plus_tasks_v1";
-    let tasks = JSON.parse(localStorage.getItem(storeKey) || "[]");
-    let currentList = localStorage.getItem("qingdan_plus_current") || "myday";
+function addTask(){
+  const title=$("#taskInput").value.trim();
+  const date=$("#date").value||null;
+  const time=$("#time").value||null;
+  const priority=parseInt($("#priority").value,10)||0;
+  const repeat=$("#repeat").value;
+  if(!title){ $("#taskInput").focus(); return; }
+  const id=Date.now().toString(36)+Math.random().toString(36).slice(2);
+  const iso=setAtTime(date,time);
+  tasks.push({id,title,date, time, priority, repeat, done:false, notifyAt: iso});
+  save();
+  notifySchedule();
+  clearInputs();
+}
+function clearInputs(){
+  $("#taskInput").value='';
+  $("#date").value=''; $("#time").value='';
+  $("#priority").value='0'; $("#repeat").value='none';
+}
+$$('.chip').forEach(btn=>{
+  btn.addEventListener('click', ()=>{
+    const k=btn.dataset.quick;
+    if(k==='today') $("#date").value = todayStr();
+    if(k==='tomorrow'){ const d=new Date(); d.setDate(d.getDate()+1); $("#date").value=d.toISOString().slice(0,10); }
+    if(k==='nextMonday') $("#date").value = nextMonday();
+    if(k==='am9') $("#time").value='09:00';
+    if(k==='pm3') $("#time").value='15:00';
+  });
+});
 
-    // Quick selections buffer
-    let quickDue = null;  // string yyyy-mm-dd
-    let quickTime = null; // string HH:mm
-    let quickRepeat = "none";
+/* ------------ 列表交互 ------------- */
+listEl.addEventListener('click', e=>{
+  const task = e.target.closest('.task'); if(!task) return;
+  const id   = task.dataset.id;
+  const t    = tasks.find(x=>x.id===id);
+  if(e.target.classList.contains('check')){
+    t.done = !t.done;
+    if(t.done){ t.notifyAt=null; } // 完成就不提醒
+    save(); return;
+  }
+  const act = e.target.closest('[data-act]')?.dataset.act;
+  if(act==='star'){
+    t.priority = t.priority===0 ? 2 : 0; // 点一下设中等星，再点取消
+    save(); return;
+  }
+  if(act==='del'){
+    tasks = tasks.filter(x=>x.id!==id); save(); return;
+  }
+});
 
-    // ---------- Elements ----------
-    const nav = $("#nav");
-    const title = $("#title");
-    const listEl = $("#list");
-    const taskInput = $("#taskInput");
-    const addBtn = $("#addBtn");
-
-    const datePicker = $("#datePicker");
-    const timePicker = $("#timePicker");
-    const repeatSel = $("#repeatSel");
-
-    // ---------- Navigation ----------
-    nav.addEventListener("click", (e)=>{
-      const btn = e.target.closest("button[data-list]");
-      if(!btn) return;
-      $$(".nav button").forEach(b=>b.classList.remove("active"));
-      btn.classList.add("active");
-      currentList = btn.dataset.list;
-      localStorage.setItem("qingdan_plus_current", currentList);
-      title.textContent = btn.textContent.replace(/\s+\d+$/, "").trim();
-      render();
-    });
-
-    // ---------- Quick chips ----------
-    $$(".chip").forEach(chip=>{
-      chip.addEventListener("click", ()=>{
-        switch(chip.dataset.chip){
-          case "today":
-            quickDue = fmtDate(today());
-            datePicker.value = quickDue;
-            break;
-          case "tomorrow":
-            quickDue = fmtDate(addDays(today(),1));
-            datePicker.value = quickDue;
-            break;
-          case "nextmon":
-            quickDue = fmtDate(getNextMonday());
-            datePicker.value = quickDue;
-            break;
-          case "9am":
-            quickTime = "09:00";
-            timePicker.value = "09:00";
-            break;
-          case "3pm":
-            quickTime = "15:00";
-            timePicker.value = "15:00";
-            break;
-        }
-      });
-    });
-
-    // When picker changes, sync buffer
-    datePicker.addEventListener("change", ()=> quickDue = datePicker.value || null);
-    timePicker.addEventListener("change", ()=> quickTime = timePicker.value || null);
-    repeatSel.addEventListener("change", ()=> quickRepeat = repeatSel.value);
-
-    // ---------- Add task ----------
-    const addTask = ()=>{
-      const title = taskInput.value.trim();
-      if(!title) return;
-
-      const t = {
-        id: crypto.randomUUID(),
-        title,
-        done:false,
-        important:false,
-        createdAt: Date.now(),
-        due: quickDue,   // yyyy-mm-dd
-        time: quickTime, // HH:mm
-        repeat: quickRepeat, // none/daily/weekly/monthly
-        myDay: (currentList==="myday"), // mark when adding in My Day
-      };
-
-      // If adding in “重要”
-      if(currentList==="important") t.important = true;
-
-      tasks.push(t);
-      persist();
-      taskInput.value="";
-      render();
-    };
-    addBtn.addEventListener("click", addTask);
-    taskInput.addEventListener("keydown", (e)=>{
-      if(e.key==="Enter") addTask();
-    });
-
-    // ---------- Render ----------
-    function matchesCurrentList(t){
-      if(currentList==="all") return !t.done;
-      if(currentList==="important") return t.important && !t.done;
-      if(currentList==="planned") return t.due && !t.done;
-      // 我的⼀天: 1) 显式加到 myDay 或 2) 今天到期，且未完成
-      if(currentList==="myday"){
-        const isToday = (t.due && t.due === fmtDate(today()));
-        return (t.myDay || isToday) && !t.done;
-      }
-      return !t.done;
-    }
-
-    function render(){
-      // Counts
-      const counts = {
-        myday: tasks.filter(t => (t.myDay || (t.due===fmtDate(today()))) && !t.done).length,
-        important: tasks.filter(t => t.important && !t.done).length,
-        planned: tasks.filter(t => t.due && !t.done).length,
-        all: tasks.filter(t => !t.done).length,
-      };
-      $("#count-myday").textContent = counts.myday;
-      $("#count-important").textContent = counts.important;
-      $("#count-planned").textContent = counts.planned;
-      $("#count-all").textContent = counts.all;
-
-      // List
-      const filtered = tasks.filter(matchesCurrentList).sort((a,b)=>a.done-b.done || (a.due||"").localeCompare(b.due||"") || b.createdAt - a.createdAt);
-      listEl.innerHTML = "";
-      if(filtered.length===0){
-        listEl.innerHTML = `<p class="empty">没有任务</p>`;
-        return;
-      }
-
-      for(const t of filtered){
-        const li = document.createElement("div");
-        li.className = "task";
-
-        const left = document.createElement("div");
-        left.className = "left";
-
-        const chk = document.createElement("div");
-        chk.className = "check" + (t.done ? " done" : "");
-        chk.title = t.done ? "标记为未完成" : "标记为完成";
-        chk.addEventListener("click", ()=>{
-          t.done = !t.done;
-          // simple repeat handling: when marking done and repeat set, create next
-          if(t.done && t.repeat && t.repeat!=="none" && t.due){
-            const cur = new Date(t.due);
-            let next = new Date(cur);
-            if(t.repeat==="daily") next = addDays(cur,1);
-            if(t.repeat==="weekly") next = addDays(cur,7);
-            if(t.repeat==="monthly"){ next = new Date(cur); next.setMonth(cur.getMonth()+1); }
-            tasks.push({
-              ...t,
-              id: crypto.randomUUID(),
-              done:false,
-              createdAt: Date.now(),
-              due: fmtDate(next),
-            });
-          }
-          persist(); render();
-        });
-
-        const body = document.createElement("div");
-        body.style.flex = "1";
-
-        const titleline = document.createElement("div");
-        titleline.className = "titleline";
-        const span = document.createElement("span");
-        span.className = "task-title";
-        span.textContent = t.title;
-        if(t.done){ span.style.textDecoration = "line-through"; span.style.opacity = ".6"; }
-        titleline.appendChild(span);
-
-        const meta = document.createElement("div");
-        meta.className = "meta";
-        if(t.due) meta.innerHTML += `<span class="pill">到期 ${t.due}${t.time?(" "+t.time):""}</span>`;
-        if(t.repeat && t.repeat!=="none"){
-          const map = {daily:"每天",weekly:"每周",monthly:"每月"};
-          meta.innerHTML += `<span class="pill">${map[t.repeat]||t.repeat}</span>`;
-        }
-        if(t.important) meta.innerHTML += `<span class="pill">⭐ 重要</span>`;
-        if(t.myDay) meta.innerHTML += `<span class="pill">☀ 我的⼀天</span>`;
-
-        body.appendChild(titleline);
-        body.appendChild(meta);
-
-        left.appendChild(chk);
-        left.appendChild(body);
-
-        const right = document.createElement("div");
-        right.className = "right";
-
-        const star = document.createElement("button");
-        star.className = "iconbtn";
-        star.textContent = t.important ? "⭐" : "☆";
-        star.title = t.important ? "取消重要" : "标记重要";
-        star.addEventListener("click",()=>{
-          t.important = !t.important; persist(); render();
-        });
-
-        const sun = document.createElement("button");
-        sun.className = "iconbtn";
-        sun.textContent = t.myDay ? "☀" : "◯";
-        sun.title = t.myDay ? "从我的一天移除" : "加入我的一天";
-        sun.addEventListener("click",()=>{
-          t.myDay = !t.myDay; persist(); render();
-        });
-
-        const del = document.createElement("button");
-        del.className = "iconbtn warn";
-        del.textContent = "删除";
-        del.addEventListener("click",()=>{
-          tasks = tasks.filter(x => x.id!==t.id);
-          persist(); render();
-        });
-
-        right.appendChild(star);
-        right.appendChild(sun);
-        right.appendChild(del);
-
-        li.appendChild(left);
-        li.appendChild(right);
-        listEl.appendChild(li);
-      }
-    }
-
-    function persist(){ localStorage.setItem(storeKey, JSON.stringify(tasks)); }
-
-    // ---------- Import/Export (simple JSON file) ----------
-    $("#exportBtn")?.addEventListener("click", ()=>{
-      const blob = new Blob([JSON.stringify(tasks,null,2)], {type:"application/json"});
-      const a = document.createElement("a");
-      a.href = URL.createObjectURL(blob);
-      a.download = "清单Plus-导出.json";
-      a.click();
-    });
-    $("#importBtn")?.addEventListener("click", ()=>{
-      const inp = document.createElement("input");
-      inp.type="file"; inp.accept="application/json";
-      inp.onchange = ()=> {
-        const f = inp.files?.[0]; if(!f) return;
-        const rd = new FileReader();
-        rd.onload = ()=> {
-          try{
-            const data = JSON.parse(rd.result);
-            if(Array.isArray(data)){ tasks = data; persist(); render(); }
-            else alert("文件格式不正确");
-          }catch{ alert("导入失败"); }
-        };
-        rd.readAsText(f);
-      };
-      inp.click();
-    });
-
-    // ---------- Init ----------
-    // restore quick pickers to empty
-    quickDue = null; quickTime = null; quickRepeat = "none";
-    datePicker.value = ""; timePicker.value = ""; repeatSel.value = "none";
-
-    // activate nav according to last selection
-    $$(".nav button").forEach(b=>{
-      b.classList.toggle("active", b.dataset.list === currentList);
-    });
-    title.textContent = {myday:"我的一天",important:"重要",planned:"计划",all:"任务"}[currentList] || "我的一天";
-
+/* ------------ 选项卡 ------------- */
+$$('.tab').forEach(tab=>{
+  tab.addEventListener('click', ()=>{
+    $$('.tab').forEach(t=>t.classList.remove('active'));
+    tab.classList.add('active');
+    currentTab = tab.dataset.tab;
     render();
-  </script>
+  });
+});
+
+/* ------------ 通知与提醒 ------------- */
+async function requestNotify(){
+  if(!('Notification' in window)) return;
+  if(Notification.permission==='default'){
+    try{ await Notification.requestPermission(); }catch{}
+  }
+}
+async function notifySchedule(){
+  // 简易轮询（仅当页面打开时触发，已足够用；更高级可用 service worker + Push）
+  if(window.__tick) return;
+  window.__tick = setInterval(()=>{
+    const now = Date.now();
+    for(const t of tasks){
+      if(t.done || !t.notifyAt) continue;
+      const at = new Date(t.notifyAt).getTime();
+      if(at && now >= at){
+        try{
+          if(Notification.permission==='granted'){
+            new Notification('提醒：'+t.title,{ body: (t.date||'')+' '+(t.time||''), tag:t.id});
+          }
+        }catch{}
+        // 处理重复
+        if(t.repeat && t.repeat!=='none'){
+          const d=new Date(at);
+          if(t.repeat==='daily') d.setDate(d.getDate()+1);
+          if(t.repeat==='workdays'){ // 周一到周五
+            do{ d.setDate(d.getDate()+1); }while([0,6].includes(d.getDay()));
+          }
+          if(t.repeat==='weekly') d.setDate(d.getDate()+7);
+          if(t.repeat==='monthly') d.setMonth(d.getMonth()+1);
+          t.date = d.toISOString().slice(0,10);
+          t.notifyAt = setAtTime(t.date, t.time);
+        }else{
+          t.notifyAt=null; // 单次
+        }
+      }
+    }
+    save();
+  }, 1000*20); // 20秒检查一次
+}
+
+/* ------------ 启动 ------------- */
+requestNotify();
+render();
+notifySchedule();
+
+// 注册现有 service worker（如果仓库里有）
+if('serviceWorker' in navigator){
+  navigator.serviceWorker.register('./pwabuilder-sw.js').catch(()=>{});
+}
+</script>
 </body>
 </html>
