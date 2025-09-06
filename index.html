@@ -17,55 +17,68 @@
     --shadow:0 10px 30px rgba(22,29,64,.10);
   }
   *{box-sizing:border-box}
-  body{margin:0; background:var(--bg); color:var(--text);
-    font:16px/1.6 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,"PingFang SC","Microsoft YaHei",sans-serif;}
-  .app{max-width:1100px; margin-inline:auto; padding:14px 10px 88px;}
-  .topbar{display:flex; align-items:center; gap:12px; margin:6px 0 14px;}
-  .brand{display:flex; align-items:center; gap:10px; font-weight:800;}
-  .logo{width:34px;height:34px;border-radius:10px; background:radial-gradient(120% 120% at 10% 10%, var(--accent), var(--accent-2)); box-shadow:0 6px 16px rgba(77,99,255,.35)}
+  body{margin:0;background:var(--bg);color:var(--text);
+    font:16px/1.6 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,"PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;}
+  .app{max-width:1100px;margin-inline:auto;padding:14px 10px 88px}
+  .topbar{display:flex;align-items:center;gap:14px;margin:6px 0 14px}
+  .logo{width:44px;height:44px;border-radius:12px;
+    background:radial-gradient(120% 120% at 10% 10%, var(--accent), var(--accent-2));
+    box-shadow:0 6px 16px rgba(77,99,255,.35)}
+  .brand{display:flex;flex-direction:column}
+  .brand .name{font-weight:900;letter-spacing:.2px}
+  .brand .sub{color:var(--muted);margin-top:-2px}
   .grow{flex:1}
-  .moon{display:inline-flex; align-items:center; justify-content:center; width:44px;height:44px;border-radius:12px;
-    background:var(--panel); color:var(--muted); border:1px solid rgba(255,255,255,.06); box-shadow:var(--shadow); cursor:pointer; font-size:20px}
-  .grid{display:grid; grid-template-columns:240px 1fr; gap:16px}
+  .now{display:flex;flex-direction:column;align-items:flex-end;gap:2px}
+  .now .date{font-weight:800;font-size:16px}
+  .now .time{font-weight:900;font-size:22px;letter-spacing:.5px}
+  .moon{display:inline-flex;align-items:center;justify-content:center;width:44px;height:44px;border-radius:12px;
+    background:var(--panel);color:var(--muted);border:1px solid rgba(255,255,255,.06);box-shadow:var(--shadow);cursor:pointer;font-size:20px}
+  .grid{display:grid;grid-template-columns:240px 1fr;gap:16px}
   @media (max-width:900px){.grid{grid-template-columns:1fr}}
-  .side{background:var(--panel); border-radius:var(--radius); border:1px solid rgba(255,255,255,.06); box-shadow:var(--shadow); padding:14px; position:sticky; top:10px; height:max-content}
-  .side h4{margin:6px 6px 10px; color:var(--muted); font-weight:700; font-size:12px}
-  .nav{display:flex; flex-direction:column; gap:6px}
-  .nav button{all:unset; display:flex; align-items:center; justify-content:space-between; padding:14px; border-radius:12px; cursor:pointer; color:var(--text);}
+  .side{background:var(--panel);border-radius:var(--radius);border:1px solid rgba(255,255,255,.06);box-shadow:var(--shadow);padding:14px;position:sticky;top:10px;height:max-content}
+  .side h4{margin:6px 6px 10px;color:var(--muted);font-weight:700;font-size:12px}
+  .nav{display:flex;flex-direction:column;gap:6px}
+  .nav button{all:unset;display:flex;align-items:center;justify-content:space-between;padding:14px;border-radius:12px;cursor:pointer;color:var(--text)}
   .nav button:hover{background:var(--chip-hover)}
-  .nav button.active{background:var(--chip); outline:1.5px solid color-mix(in oklab, var(--accent) 60%, transparent)}
-  .count{color:var(--muted); font-weight:700; font-size:13px}
-  .board{background:var(--panel); border-radius:var(--radius); border:1px solid rgba(255,255,255,.06); box-shadow:var(--shadow); padding:14px}
-  .list{display:flex; flex-direction:column; gap:12px}
-  .item{display:grid; grid-template-columns:auto 1fr auto; gap:10px; align-items:center; background:rgba(255,255,255,.02);
-    border:1px solid rgba(255,255,255,.06); padding:12px 14px; border-radius:14px}
-  .check{width:22px;height:22px; accent-color:var(--accent); cursor:pointer}
-  .title input{all:unset; color:var(--text); font-weight:700; font-size:16px}
-  .meta{color:var(--muted); font-size:13px; display:flex; gap:10px; align-items:center; margin-top:2px}
-  .badge{padding:2px 8px; border-radius:999px; background:var(--chip); border:1px solid rgba(255,255,255,.06)}
-  .rating{display:flex; gap:3px}
-  .star{width:20px;height:20px; cursor:pointer; background:linear-gradient(90deg,#ffd057,#ffac33); opacity:.35;
+  .nav button.active{background:var(--chip);outline:1.5px solid color-mix(in oklab, var(--accent) 60%, transparent)}
+  .count{color:var(--muted);font-weight:700;font-size:13px}
+  .board{background:var(--panel);border-radius:var(--radius);border:1px solid rgba(255,255,255,.06);box-shadow:var(--shadow);padding:14px}
+  .list{display:flex;flex-direction:column;gap:12px}
+  .item{display:grid;grid-template-columns:auto 1fr auto;gap:10px;align-items:center;background:rgba(255,255,255,.02);
+    border:1px solid rgba(255,255,255,.06);padding:12px 14px;border-radius:14px}
+  .check{width:22px;height:22px;accent-color:var(--accent);cursor:pointer}
+  .title input{all:unset;color:var(--text);font-weight:700;font-size:16px}
+  .meta{color:var(--muted);font-size:13px;display:flex;gap:10px;align-items:center;margin-top:2px}
+  .badge{padding:2px 8px;border-radius:999px;background:var(--chip);border:1px solid rgba(255,255,255,.06)}
+  .rating{display:flex;gap:3px}
+  .star{width:20px;height:20px;cursor:pointer;background:linear-gradient(90deg,#ffd057,#ffac33);opacity:.35;
     -webkit-mask:url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 2.5 9.7 8H4l4.6 3.4L6.7 17l5.3-3.3 5.3 3.3-1.9-5.6L19.9 8h-5.7L12 2.5z"/></svg>') center/contain no-repeat}
   .star.on{opacity:1}
-  /* Chips */
-  .chips{display:flex; gap:8px; flex-wrap:wrap; margin:10px 0 0}
-  .chip{padding:10px 14px; border-radius:999px; background:var(--chip); color:var(--text); border:1px solid rgba(255,255,255,.06); cursor:pointer; font-weight:700; font-size:13px}
-  .chip:hover{background:var(--chip-hover)}
-  .chip.active{background:linear-gradient(90deg, var(--accent), var(--accent-2)); border-color:transparent}
-  /* Composer */
-  .composer{position:fixed; left:0; right:0; bottom:0; z-index:10; background:linear-gradient(to top, color-mix(in oklab, var(--bg) 100%, transparent), transparent 30%); padding:18px 10px 20px}
-  .composer .wrap{max-width:1100px; margin:0 auto; background:var(--panel); border-radius:20px; border:1px solid rgba(255,255,255,.06); box-shadow:var(--shadow); padding:14px}
-  .row{display:grid; grid-template-columns:1fr 140px 100px 120px; gap:12px; align-items:center}
-  @media (max-width:600px){.row{grid-template-columns:1fr 130px 100px 110px}}
-  .field,input[type="date"],input[type="time"],select{background:var(--chip); border:1px solid rgba(255,255,255,.06); border-radius:14px; padding:14px 16px; font-size:16px; color:var(--text)}
-  .add{all:unset; text-align:center; background:linear-gradient(90deg, var(--accent), var(--accent-2)); padding:14px 18px; border-radius:14px; color:#fff; font-weight:800; font-size:16px; cursor:pointer}
+
+  /* Composer (bottom) */
+  .composer{position:fixed;left:0;right:0;bottom:0;z-index:10;background:linear-gradient(to top,color-mix(in oklab,var(--bg) 100%,transparent),transparent 30%);padding:18px 10px 20px}
+  .composer .wrap{max-width:1100px;margin:0 auto;background:var(--panel);border-radius:20px;border:1px solid rgba(255,255,255,.06);box-shadow:var(--shadow);padding:14px}
+  .row{display:grid;grid-template-columns:1fr 160px 120px 120px;gap:12px;align-items:center}
+  @media (max-width:620px){.row{grid-template-columns:1fr 150px 110px 110px}}
+  .field,input[type="date"],input[type="time"],select{
+    background:var(--chip);border:1px solid rgba(255,255,255,.06);border-radius:14px;padding:16px 16px;font-size:17px;color:var(--text)}
+  .add{all:unset;text-align:center;background:linear-gradient(90deg,var(--accent),var(--accent-2));padding:16px 18px;border-radius:14px;color:#fff;font-weight:800;font-size:17px;cursor:pointer}
 </style>
 </head>
 <body>
   <div class="app">
     <header class="topbar">
-      <div class="brand"><div class="logo"></div><div style="font-weight:900">清单Plus</div></div>
+      <div class="logo" aria-hidden="true"></div>
+      <div class="brand">
+        <div class="name">清单Plus</div>
+        <div class="sub">记录 · 提醒 · 专注</div>
+      </div>
       <div class="grow"></div>
+      <!-- live date & time -->
+      <div class="now">
+        <div class="date" id="nowDate">—</div>
+        <div class="time" id="nowTime">—</div>
+      </div>
       <button class="moon" id="themeBtn">🌙</button>
     </header>
 
@@ -82,7 +95,6 @@
       </aside>
 
       <main class="board">
-        <!-- (Removed today/tomorrow/week/month chips from here) -->
         <div class="list" id="taskList"></div>
         <p id="emptyTip" class="muted" style="text-align:center;margin:30px 0 10px;">没有任务。到底部添加新任务～</p>
       </main>
@@ -98,16 +110,6 @@
         <input id="timeInput" type="time" />
         <button id="addBtn" class="add">添加</button>
       </div>
-      <!-- Weekday chips moved BELOW the time -->
-      <div class="chips" id="weekdayChips">
-        <button class="chip" data-wd="1">周一</button>
-        <button class="chip" data-wd="2">周二</button>
-        <button class="chip" data-wd="3">周三</button>
-        <button class="chip" data-wd="4">周四</button>
-        <button class="chip" data-wd="5">周五</button>
-        <button class="chip" data-wd="6">周六</button>
-        <button class="chip" data-wd="0">周日</button>
-      </div>
     </div>
   </div>
 
@@ -121,42 +123,61 @@ localStorage.setItem("theme",document.documentElement.classList.contains("light"
 $("#themeBtn").textContent=document.documentElement.classList.contains("light")?"🌞":"🌙";};
 if(localStorage.getItem("theme")==="light"){document.documentElement.classList.add("light");$("#themeBtn").textContent="🌞";}
 
+/* Live date & time in header */
+function pad(n){return n<10?'0'+n:n}
+function fmtDate(d){return `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`}
+function fmtTime(d){return `${pad(d.getHours())}:${pad(d.getMinutes())}`}
+function tickNow(){
+  const d=new Date();
+  $("#nowDate").textContent=fmtDate(d);
+  $("#nowTime").textContent=fmtTime(d);
+}
+tickNow(); setInterval(tickNow, 1000*15); // update every 15s
+
 /* Helpers */
 function save(){localStorage.setItem("qingdan-tasks",JSON.stringify(tasks))}
 function todayStr(d=new Date()){return d.toISOString().slice(0,10)}
-function addDays(d,n){let x=new Date(d);x.setDate(x.getDate()+n);return x}
-function dateOfWeek(w){let d=new Date(),diff=w-d.getDay();return todayStr(addDays(d,diff>=0?diff:diff+7))}
 
 /* Render */
 function render(){
-  let list=$("#taskList");list.innerHTML="";
-  let shown=tasks.filter(t=>{
+  const list=$("#taskList"); list.innerHTML="";
+  const shown=tasks.filter(t=>{
     if(filter==="today")return t.date===todayStr();
     if(filter==="important")return t.star>=4&&!t.done;
     if(filter==="done")return t.done;
-    if(filter==="todo")return!t.done; return true;
+    if(filter==="todo")return!t.done;
+    return true;
   }).sort((a,b)=>{
-    const ad=a.done?1:0, bd=b.done?1:0; if(ad!==bd)return ad-bd;
-    const at=a.date||'9999-99-99', bt=b.date||'9999-9999'; if(at!==bt)return at.localeCompare(bt);
+    const ad=a.done?1:0,bd=b.done?1:0; if(ad!==bd)return ad-bd;
+    const at=a.date||'9999-99-99',bt=b.date||'9999-99-99'; if(at!==bt)return at.localeCompare(bt);
     return (b.star||0)-(a.star||0);
   });
+
   shown.forEach(t=>{
-    let el=document.createElement("div");el.className="item"+(t.done?" done":"");el.innerHTML=
-    `<input type=checkbox class=check ${t.done?"checked":""}>
-    <div class=title><input value="${t.title}" /><div class=meta>
-      ${t.date?`<span class=badge>📅 ${t.date}</span>`:""}
-      ${t.time?`<span class=badge>⏰ ${t.time}</span>`:""}
-      ${t.star?`<span class=badge>⭐ ${t.star}</span>`:""}
-    </div></div>
-    <div class=actions><div class=rating></div><button class=btn-ghost>删除</button></div>`;
+    const el=document.createElement("div");
+    el.className="item"+(t.done?" done":"");
+    el.innerHTML=`<input type=checkbox class=check ${t.done?"checked":""}>
+      <div class=title>
+        <input value="${t.title}" />
+        <div class=meta>
+          ${t.date?`<span class=badge>📅 ${t.date}</span>`:""}
+          ${t.time?`<span class=badge>⏰ ${t.time}</span>`:""}
+          ${t.star?`<span class=badge>⭐ ${t.star}</span>`:""}
+        </div>
+      </div>
+      <div class=actions>
+        <div class=rating></div>
+        <button class=btn-ghost style="color:var(--danger)">删除</button>
+      </div>`;
     el.querySelector(".check").onchange=e=>{t.done=e.target.checked;save();render()};
     el.querySelector(".title input").onchange=e=>{t.title=e.target.value;save()};
     el.querySelector(".btn-ghost").onclick=()=>{tasks=tasks.filter(x=>x!==t);save();render()};
-    let r=el.querySelector(".rating");
-    for(let i=1;i<=5;i++){let s=document.createElement("i");s.className="star"+(i<=t.star?" on":"");
-      s.onclick=()=>{t.star=i;save();render()}; r.appendChild(s)}
+    const r=el.querySelector(".rating");
+    for(let i=1;i<=5;i++){const s=document.createElement("i");s.className="star"+(i<=t.star?" on":"");
+      s.onclick=()=>{t.star=i;save();render()}; r.appendChild(s);}
     list.appendChild(el);
   });
+
   $("#emptyTip").style.display=shown.length?"none":"block";
   $("#cAll").textContent=tasks.length;
   $("#cToday").textContent=tasks.filter(t=>t.date===todayStr()).length;
@@ -166,21 +187,15 @@ function render(){
 }
 
 /* Filters */
-$("#filterNav").onclick=e=>{let b=e.target.closest("button[data-filter]");if(!b)return;
-  filter=b.dataset.filter; $$("#filterNav button").forEach(x=>x.classList.remove("active")); b.classList.add("active"); render() }
-
-/* Weekday chips BELOW time */
-$("#weekdayChips").onclick=e=>{
-  const b=e.target.closest(".chip"); if(!b) return;
-  const wd=+b.dataset.wd;
-  $("#dateInput").value = dateOfWeek(wd);
-  b.classList.add("active"); setTimeout(()=>b.classList.remove("active"),450);
+$("#filterNav").onclick=e=>{
+  const b=e.target.closest("button[data-filter]"); if(!b) return;
+  filter=b.dataset.filter; $$("#filterNav button").forEach(x=>x.classList.remove("active")); b.classList.add("active"); render();
 }
 
 /* Add */
 $("#addBtn").onclick=()=>{
-  let title=$("#taskInput").value.trim(); if(!title) return;
-  tasks.push({id:Date.now(), title, date:$("#dateInput").value, time:$("#timeInput").value, star:0, done:false});
+  const title=$("#taskInput").value.trim(); if(!title) return;
+  tasks.push({id:Date.now(),title,date:$("#dateInput").value,time:$("#timeInput").value,star:0,done:false});
   save(); $("#taskInput").value=""; render();
 }
 
