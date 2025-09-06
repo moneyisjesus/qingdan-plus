@@ -7,102 +7,58 @@
 <meta name="theme-color" content="#0f1221" />
 <style>
   :root{
-    --bg:#0f1221;
-    --panel:#141831;
-    --muted:#a7b0d4;
-    --text:#e9edff;
-    --accent:#6d8bff;
-    --accent-2:#9b72ff;
-    --chip:#1a1f3f;
-    --chip-hover:#23294f;
-    --ok:#32d27d;
-    --warn:#ffbd2f;
-    --danger:#ff5a6b;
-    --shadow: 0 10px 30px rgba(0,0,0,.35);
-    --radius:16px;
+    --bg:#0f1221; --panel:#141831; --muted:#a7b0d4; --text:#e9edff;
+    --accent:#6d8bff; --accent-2:#9b72ff; --chip:#1a1f3f; --chip-hover:#23294f;
+    --ok:#32d27d; --warn:#ffbd2f; --danger:#ff5a6b; --shadow:0 10px 30px rgba(0,0,0,.35); --radius:16px;
   }
   html.light{
-    --bg:#f6f8ff;
-    --panel:#ffffff;
-    --muted:#6b7598;
-    --text:#0f1221;
-    --accent:#4662ff;
-    --accent-2:#6c4bff;
-    --chip:#eef2ff;
-    --chip-hover:#e4e9ff;
-    --shadow: 0 10px 30px rgba(22,29,64,.10);
+    --bg:#f6f8ff; --panel:#ffffff; --muted:#6b7598; --text:#0f1221;
+    --accent:#4662ff; --accent-2:#6c4bff; --chip:#eef2ff; --chip-hover:#e4e9ff;
+    --shadow:0 10px 30px rgba(22,29,64,.10);
   }
   *{box-sizing:border-box}
-  body{
-    margin:0; background:var(--bg); color:var(--text);
-    font: 16px/1.6 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,"PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;
-  }
-  .app{ max-width:1100px; margin-inline:auto; padding:14px 10px 88px; }
-  .topbar{ display:flex; align-items:center; gap:12px; margin:6px 0 14px; }
-  .brand{ display:flex; align-items:center; gap:10px; font-weight:800; letter-spacing:.3px; }
-  .logo{ width:34px; height:34px; border-radius:10px;
-    background: radial-gradient(120% 120% at 10% 10%, var(--accent), var(--accent-2));
-    box-shadow: 0 6px 16px rgba(77,99,255,.35);}
+  body{margin:0; background:var(--bg); color:var(--text);
+    font:16px/1.6 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,"PingFang SC","Microsoft YaHei",sans-serif;}
+  .app{max-width:1100px; margin-inline:auto; padding:14px 10px 88px;}
+  .topbar{display:flex; align-items:center; gap:12px; margin:6px 0 14px;}
+  .brand{display:flex; align-items:center; gap:10px; font-weight:800;}
+  .logo{width:34px;height:34px;border-radius:10px; background:radial-gradient(120% 120% at 10% 10%, var(--accent), var(--accent-2)); box-shadow:0 6px 16px rgba(77,99,255,.35)}
   .grow{flex:1}
-  .moon{ display:inline-flex; align-items:center; justify-content:center;
-    width:44px; height:44px; border-radius:12px; background:var(--panel);
-    color:var(--muted); border:1px solid rgba(255,255,255,.06);
-    box-shadow: var(--shadow); cursor:pointer; transition:.2s transform;
-    font-size:20px; }
-  .moon:active{ transform: scale(.95); }
-
-  .grid{ display:grid; grid-template-columns: 240px 1fr; gap:16px; }
-  @media (max-width:900px){ .grid{ grid-template-columns: 1fr; } }
-
-  /* Sidebar */
-  .side{ background:var(--panel); border-radius:var(--radius);
-    border:1px solid rgba(255,255,255,.06); box-shadow:var(--shadow);
-    padding:14px; position:sticky; top:10px; height:max-content; }
-  .side h4{margin:6px 6px 10px; color:var(--muted); font-weight:700; font-size:12px; letter-spacing:.6px}
-  .nav{ display:flex; flex-direction:column; gap:6px; }
-  .nav button{ all:unset; display:flex; align-items:center; justify-content:space-between;
-    padding:14px; border-radius:12px; cursor:pointer;
-    background:transparent; color:var(--text); border:1px solid transparent; font-size:15px;}
-  .nav button:hover{ background:var(--chip-hover); }
-  .nav button.active{ background:var(--chip); border-color:rgba(255,255,255,.08);
-    outline: 1.5px solid color-mix(in oklab, var(--accent) 60%, transparent);}
-  .count{ color:var(--muted); font-weight:700; font-size:13px; }
-
-  /* Board */
-  .board{ background:var(--panel); border-radius:var(--radius);
-    border:1px solid rgba(255,255,255,.06); box-shadow:var(--shadow); padding:14px;}
-  .chips{ display:flex; gap:8px; flex-wrap:wrap; margin:4px 0 14px; }
-  .chip{ padding:10px 14px; border-radius:999px; background:var(--chip); color:var(--text);
-    border:1px solid rgba(255,255,255,.06); cursor:pointer; transition:.2s; font-weight:700; font-size:13px;}
-  .chip:hover{ background:var(--chip-hover) }
-  .chip.active{ background:linear-gradient(90deg, var(--accent), var(--accent-2)); border-color:transparent;}
-
-  .list{ display:flex; flex-direction:column; gap:12px; }
-  .item{ display:grid; grid-template-columns:auto 1fr auto; gap:10px; align-items:center;
-    background:rgba(255,255,255,.02); border:1px solid rgba(255,255,255,.06);
-    padding:12px 14px; border-radius:14px;}
-  .check{ width:22px; height:22px; accent-color: var(--accent); cursor:pointer; }
-  .title input{ all:unset; color:var(--text); font-weight:700; font-size:16px; }
-  .meta{ color:var(--muted); font-size:13px; display:flex; gap:10px; align-items:center; margin-top:2px;}
-  .badge{ padding:2px 8px; border-radius:999px; background:var(--chip); border:1px solid rgba(255,255,255,.06);}
-  .rating{ display:flex; gap:3px; }
-  .star{ width:20px; height:20px; cursor:pointer; background: linear-gradient(90deg, #ffd057, #ffac33); opacity:.35;
-    -webkit-mask: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 2.5 9.7 8H4l4.6 3.4L6.7 17l5.3-3.3 5.3 3.3-1.9-5.6L19.9 8h-5.7L12 2.5z"/></svg>') center/contain no-repeat;}
+  .moon{display:inline-flex; align-items:center; justify-content:center; width:44px;height:44px;border-radius:12px;
+    background:var(--panel); color:var(--muted); border:1px solid rgba(255,255,255,.06); box-shadow:var(--shadow); cursor:pointer; font-size:20px}
+  .grid{display:grid; grid-template-columns:240px 1fr; gap:16px}
+  @media (max-width:900px){.grid{grid-template-columns:1fr}}
+  .side{background:var(--panel); border-radius:var(--radius); border:1px solid rgba(255,255,255,.06); box-shadow:var(--shadow); padding:14px; position:sticky; top:10px; height:max-content}
+  .side h4{margin:6px 6px 10px; color:var(--muted); font-weight:700; font-size:12px}
+  .nav{display:flex; flex-direction:column; gap:6px}
+  .nav button{all:unset; display:flex; align-items:center; justify-content:space-between; padding:14px; border-radius:12px; cursor:pointer; color:var(--text);}
+  .nav button:hover{background:var(--chip-hover)}
+  .nav button.active{background:var(--chip); outline:1.5px solid color-mix(in oklab, var(--accent) 60%, transparent)}
+  .count{color:var(--muted); font-weight:700; font-size:13px}
+  .board{background:var(--panel); border-radius:var(--radius); border:1px solid rgba(255,255,255,.06); box-shadow:var(--shadow); padding:14px}
+  .list{display:flex; flex-direction:column; gap:12px}
+  .item{display:grid; grid-template-columns:auto 1fr auto; gap:10px; align-items:center; background:rgba(255,255,255,.02);
+    border:1px solid rgba(255,255,255,.06); padding:12px 14px; border-radius:14px}
+  .check{width:22px;height:22px; accent-color:var(--accent); cursor:pointer}
+  .title input{all:unset; color:var(--text); font-weight:700; font-size:16px}
+  .meta{color:var(--muted); font-size:13px; display:flex; gap:10px; align-items:center; margin-top:2px}
+  .badge{padding:2px 8px; border-radius:999px; background:var(--chip); border:1px solid rgba(255,255,255,.06)}
+  .rating{display:flex; gap:3px}
+  .star{width:20px;height:20px; cursor:pointer; background:linear-gradient(90deg,#ffd057,#ffac33); opacity:.35;
+    -webkit-mask:url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 2.5 9.7 8H4l4.6 3.4L6.7 17l5.3-3.3 5.3 3.3-1.9-5.6L19.9 8h-5.7L12 2.5z"/></svg>') center/contain no-repeat}
   .star.on{opacity:1}
-
+  /* Chips */
+  .chips{display:flex; gap:8px; flex-wrap:wrap; margin:10px 0 0}
+  .chip{padding:10px 14px; border-radius:999px; background:var(--chip); color:var(--text); border:1px solid rgba(255,255,255,.06); cursor:pointer; font-weight:700; font-size:13px}
+  .chip:hover{background:var(--chip-hover)}
+  .chip.active{background:linear-gradient(90deg, var(--accent), var(--accent-2)); border-color:transparent}
   /* Composer */
-  .composer{ position:fixed; left:0; right:0; bottom:0; z-index:10;
-    background:linear-gradient(to top, color-mix(in oklab, var(--bg) 100%, transparent), transparent 30%);
-    padding:18px 10px 20px;}
-  .composer .wrap{ max-width:1100px; margin:0 auto; background:var(--panel);
-    border-radius:20px; border:1px solid rgba(255,255,255,.06); box-shadow:var(--shadow); padding:14px;}
-  .row{ display:grid; grid-template-columns: 1fr 140px 100px 100px auto; gap:12px; align-items:center;}
-  @media (max-width:600px){ .row{ grid-template-columns: 1fr 130px 90px 90px; } }
-  .field,input[type="date"],input[type="time"],select{
-    background:var(--chip); border:1px solid rgba(255,255,255,.06);
-    border-radius:14px; padding:14px 16px; font-size:16px; color:var(--text);}
-  .add{ all:unset; text-align:center; background:linear-gradient(90deg, var(--accent), var(--accent-2));
-    padding:14px 18px; border-radius:14px; color:#fff; font-weight:800; font-size:16px; cursor:pointer;}
+  .composer{position:fixed; left:0; right:0; bottom:0; z-index:10; background:linear-gradient(to top, color-mix(in oklab, var(--bg) 100%, transparent), transparent 30%); padding:18px 10px 20px}
+  .composer .wrap{max-width:1100px; margin:0 auto; background:var(--panel); border-radius:20px; border:1px solid rgba(255,255,255,.06); box-shadow:var(--shadow); padding:14px}
+  .row{display:grid; grid-template-columns:1fr 140px 100px 120px; gap:12px; align-items:center}
+  @media (max-width:600px){.row{grid-template-columns:1fr 130px 100px 110px}}
+  .field,input[type="date"],input[type="time"],select{background:var(--chip); border:1px solid rgba(255,255,255,.06); border-radius:14px; padding:14px 16px; font-size:16px; color:var(--text)}
+  .add{all:unset; text-align:center; background:linear-gradient(90deg, var(--accent), var(--accent-2)); padding:14px 18px; border-radius:14px; color:#fff; font-weight:800; font-size:16px; cursor:pointer}
 </style>
 </head>
 <body>
@@ -126,39 +82,31 @@
       </aside>
 
       <main class="board">
-        <div class="chips" id="quickChips">
-          <button class="chip" data-chip="today">今天</button>
-          <button class="chip" data-chip="tomorrow">明天</button>
-          <button class="chip" data-chip="mon">周一</button>
-          <button class="chip" data-chip="tue">周二</button>
-          <button class="chip" data-chip="wed">周三</button>
-          <button class="chip" data-chip="thu">周四</button>
-          <button class="chip" data-chip="fri">周五</button>
-          <button class="chip" data-chip="sat">周六</button>
-          <button class="chip" data-chip="sun">周日</button>
-          <button class="chip" data-chip="week">本周</button>
-          <button class="chip" data-chip="month">本月</button>
-        </div>
+        <!-- (Removed today/tomorrow/week/month chips from here) -->
         <div class="list" id="taskList"></div>
         <p id="emptyTip" class="muted" style="text-align:center;margin:30px 0 10px;">没有任务。到底部添加新任务～</p>
       </main>
     </div>
   </div>
 
+  <!-- Composer at bottom -->
   <div class="composer">
     <div class="wrap">
       <div class="row">
         <input id="taskInput" class="field" placeholder="输入任务…" />
         <input id="dateInput" type="date" />
         <input id="timeInput" type="time" />
-        <select id="repeatInput">
-          <option value="none">不重复</option>
-          <option value="daily">每天</option>
-          <option value="weekly">每周</option>
-          <option value="monthly">每月</option>
-          <option value="yearly">每年</option>
-        </select>
         <button id="addBtn" class="add">添加</button>
+      </div>
+      <!-- Weekday chips moved BELOW the time -->
+      <div class="chips" id="weekdayChips">
+        <button class="chip" data-wd="1">周一</button>
+        <button class="chip" data-wd="2">周二</button>
+        <button class="chip" data-wd="3">周三</button>
+        <button class="chip" data-wd="4">周四</button>
+        <button class="chip" data-wd="5">周五</button>
+        <button class="chip" data-wd="6">周六</button>
+        <button class="chip" data-wd="0">周日</button>
       </div>
     </div>
   </div>
@@ -167,49 +115,77 @@
 const $=s=>document.querySelector(s),$$=s=>Array.from(document.querySelectorAll(s));
 let tasks=JSON.parse(localStorage.getItem("qingdan-tasks")||"[]"),filter="all";
 
+/* Theme */
 $("#themeBtn").onclick=()=>{document.documentElement.classList.toggle("light");
 localStorage.setItem("theme",document.documentElement.classList.contains("light")?"light":"dark");
 $("#themeBtn").textContent=document.documentElement.classList.contains("light")?"🌞":"🌙";};
 if(localStorage.getItem("theme")==="light"){document.documentElement.classList.add("light");$("#themeBtn").textContent="🌞";}
 
+/* Helpers */
 function save(){localStorage.setItem("qingdan-tasks",JSON.stringify(tasks))}
 function todayStr(d=new Date()){return d.toISOString().slice(0,10)}
 function addDays(d,n){let x=new Date(d);x.setDate(x.getDate()+n);return x}
 function dateOfWeek(w){let d=new Date(),diff=w-d.getDay();return todayStr(addDays(d,diff>=0?diff:diff+7))}
 
-function render(){let list=$("#taskList");list.innerHTML="";
-let shown=tasks.filter(t=>{
- if(filter==="today")return t.date===todayStr();
- if(filter==="important")return t.star>=4&&!t.done;
- if(filter==="done")return t.done;
- if(filter==="todo")return!t.done; return true;
-});
-shown.forEach(t=>{let el=document.createElement("div");el.className="item"+(t.done?" done":"");el.innerHTML=
-`<input type=checkbox class=check ${t.done?"checked":""}>
-<div class=title><input value="${t.title}" /><div class=meta>
-${t.date?`<span class=badge>📅 ${t.date}</span>`:""}
-${t.time?`<span class=badge>⏰ ${t.time}</span>`:""}
-${t.star?`<span class=badge>⭐ ${t.star}</span>`:""}
-</div></div>
-<div class=actions><div class=rating></div>
-<button class=btn-ghost>删除</button></div>`;
-el.querySelector(".check").onchange=e=>{t.done=e.target.checked;save();render()};
-el.querySelector("input").onchange=e=>{t.title=e.target.value;save()};
-el.querySelector(".btn-ghost").onclick=()=>{tasks=tasks.filter(x=>x!==t);save();render()};
-let r=el.querySelector(".rating");for(let i=1;i<=5;i++){let s=document.createElement("i");
-s.className="star"+(i<=t.star?" on":"");s.onclick=()=>{t.star=i;save();render()};r.appendChild(s)};list.appendChild(el)});
-$("#emptyTip").style.display=shown.length?"none":"block";}
-
-$("#filterNav").onclick=e=>{let b=e.target.closest("button");if(!b)return;filter=b.dataset.filter;$$('#filterNav button').forEach(x=>x.classList.remove("active"));b.classList.add("active");render()}
-$("#quickChips").onclick=e=>{
- let b=e.target.closest(".chip");if(!b)return;let map={
-  today:todayStr(),tomorrow:todayStr(addDays(new Date(),1)),
-  mon:dateOfWeek(1),tue:dateOfWeek(2),wed:dateOfWeek(3),thu:dateOfWeek(4),
-  fri:dateOfWeek(5),sat:dateOfWeek(6),sun:dateOfWeek(0)}; if(map[b.dataset.chip])$("#dateInput").value=map[b.dataset.chip];
+/* Render */
+function render(){
+  let list=$("#taskList");list.innerHTML="";
+  let shown=tasks.filter(t=>{
+    if(filter==="today")return t.date===todayStr();
+    if(filter==="important")return t.star>=4&&!t.done;
+    if(filter==="done")return t.done;
+    if(filter==="todo")return!t.done; return true;
+  }).sort((a,b)=>{
+    const ad=a.done?1:0, bd=b.done?1:0; if(ad!==bd)return ad-bd;
+    const at=a.date||'9999-99-99', bt=b.date||'9999-9999'; if(at!==bt)return at.localeCompare(bt);
+    return (b.star||0)-(a.star||0);
+  });
+  shown.forEach(t=>{
+    let el=document.createElement("div");el.className="item"+(t.done?" done":"");el.innerHTML=
+    `<input type=checkbox class=check ${t.done?"checked":""}>
+    <div class=title><input value="${t.title}" /><div class=meta>
+      ${t.date?`<span class=badge>📅 ${t.date}</span>`:""}
+      ${t.time?`<span class=badge>⏰ ${t.time}</span>`:""}
+      ${t.star?`<span class=badge>⭐ ${t.star}</span>`:""}
+    </div></div>
+    <div class=actions><div class=rating></div><button class=btn-ghost>删除</button></div>`;
+    el.querySelector(".check").onchange=e=>{t.done=e.target.checked;save();render()};
+    el.querySelector(".title input").onchange=e=>{t.title=e.target.value;save()};
+    el.querySelector(".btn-ghost").onclick=()=>{tasks=tasks.filter(x=>x!==t);save();render()};
+    let r=el.querySelector(".rating");
+    for(let i=1;i<=5;i++){let s=document.createElement("i");s.className="star"+(i<=t.star?" on":"");
+      s.onclick=()=>{t.star=i;save();render()}; r.appendChild(s)}
+    list.appendChild(el);
+  });
+  $("#emptyTip").style.display=shown.length?"none":"block";
+  $("#cAll").textContent=tasks.length;
+  $("#cToday").textContent=tasks.filter(t=>t.date===todayStr()).length;
+  $("#cImportant").textContent=tasks.filter(t=>t.star>=4&&!t.done).length;
+  $("#cDone").textContent=tasks.filter(t=>t.done).length;
+  $("#cTodo").textContent=tasks.filter(t=>!t.done).length;
 }
-$("#addBtn").onclick=()=>{let title=$("#taskInput").value.trim();if(!title)return;
-tasks.push({id:Date.now(),title,date:$("#dateInput").value,time:$("#timeInput").value,star:0,done:false});
-save();$("#taskInput").value="";render()}
+
+/* Filters */
+$("#filterNav").onclick=e=>{let b=e.target.closest("button[data-filter]");if(!b)return;
+  filter=b.dataset.filter; $$("#filterNav button").forEach(x=>x.classList.remove("active")); b.classList.add("active"); render() }
+
+/* Weekday chips BELOW time */
+$("#weekdayChips").onclick=e=>{
+  const b=e.target.closest(".chip"); if(!b) return;
+  const wd=+b.dataset.wd;
+  $("#dateInput").value = dateOfWeek(wd);
+  b.classList.add("active"); setTimeout(()=>b.classList.remove("active"),450);
+}
+
+/* Add */
+$("#addBtn").onclick=()=>{
+  let title=$("#taskInput").value.trim(); if(!title) return;
+  tasks.push({id:Date.now(), title, date:$("#dateInput").value, time:$("#timeInput").value, star:0, done:false});
+  save(); $("#taskInput").value=""; render();
+}
+
+/* Init */
+if(!$("#dateInput").value) $("#dateInput").value=todayStr();
 render();
 </script>
 </body>
