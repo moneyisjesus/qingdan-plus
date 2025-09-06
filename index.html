@@ -6,16 +6,13 @@
 <title>我的一天</title>
 <meta name="theme-color" content="#0b1220" />
 <style>
-  :root{
-    --bg:#0b1220;--card:#121a2a;--muted:#7c8aa5;--txt:#eaf1ff;--accent:#4e9bff;--ok:#39d98a;--danger:#ff6b6b;--ring:rgba(78,155,255,.25);
-  }
-  .light{
-    --bg:#f6f7fb;--card:#ffffff;--muted:#667085;--txt:#0b1220;--accent:#316de8;--ok:#12b76a;--danger:#ef4444;--ring:rgba(49,109,232,.2);
-  }
+  :root{--bg:#0b1220;--card:#121a2a;--muted:#7c8aa5;--txt:#eaf1ff;--accent:#4e9bff;--ok:#39d98a;--danger:#ff6b6b;--ring:rgba(78,155,255,.25);}
+  .light{--bg:#f6f7fb;--card:#ffffff;--muted:#667085;--txt:#0b1220;--accent:#316de8;--ok:#12b76a;--danger:#ef4444;--ring:rgba(49,109,232,.2);}
   *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
   html,body{height:100%}
   body{margin:0;background:var(--bg);color:var(--txt);font:16px/1.5 system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,'Noto Sans SC','PingFang SC',sans-serif}
   .wrap{max-width:780px;margin:0 auto;padding:16px 16px 80px}
+
   /* header */
   .top{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:8px 0 12px}
   .title{font-size:24px;font-weight:800;letter-spacing:.5px}
@@ -23,44 +20,52 @@
   .clock .date{font-size:14px;color:var(--muted)}
   .clock .time{font-size:20px;font-weight:800}
   .iconbtn{display:inline-flex;align-items:center;justify-content:center;width:40px;height:40px;border-radius:12px;background:var(--card);box-shadow:0 0 0 1px rgba(255,255,255,.04);color:var(--txt)}
-  .row{display:flex;align-items:center;gap:10px}
-  /* card */
+
+  /* card & inputs */
   .card{background:var(--card);border-radius:16px;padding:14px 12px;box-shadow:0 0 0 1px rgba(255,255,255,.04)}
   .label{font-size:13px;color:var(--muted);margin-bottom:6px}
   .input{display:flex;align-items:center;background:#0000;border:1.5px solid rgba(126,141,173,.25);border-radius:14px;padding:12px}
   .input:focus-within{border-color:var(--accent);box-shadow:0 0 0 6px var(--ring)}
   .input input{flex:1;background:transparent;border:0;outline:none;color:var(--txt);font-size:16px}
-  .chip{display:inline-flex;align-items:center;gap:6px;background:#0000;border:1.5px solid rgba(126,141,173,.25);border-radius:12px;padding:10px 12px;font-size:14px;color:var(--txt)}
-  .chip:focus-visible{outline:none;border-color:var(--accent);box-shadow:0 0 0 6px var(--ring)}
-  .chip .icon{opacity:.75}
-  .chips{display:flex;gap:10px;flex-wrap:wrap;margin-top:10px}
-  .right{margin-left:auto}
   .btn{display:inline-flex;align-items:center;justify-content:center;padding:12px 14px;border-radius:12px;background:var(--accent);color:#fff;border:0;font-size:15px}
   .btn:disabled{opacity:.5}
   .subtle{background:transparent;border:1.5px solid rgba(126,141,173,.25);color:var(--txt)}
-  /* quick snooze */
-  .snooze{display:flex;gap:8px;margin-top:10px}
-  .snooze button{flex:1;padding:10px 0;border-radius:12px;border:1.5px solid rgba(126,141,173,.25);background:#0000;color:var(--txt)}
-  .snooze button:active{transform:scale(.98)}
+  .chips{display:flex;gap:10px;flex-wrap:wrap;margin-top:12px}
+  .chip{display:inline-flex;align-items:center;gap:6px;background:#0000;border:1.5px solid rgba(126,141,173,.25);border-radius:12px;padding:10px 12px;font-size:14px;color:var(--txt)}
+  .chip:focus-visible{outline:none;border-color:var(--accent);box-shadow:0 0 0 6px var(--ring)}
+  .chip .icon{opacity:.75}
+
+  .helper{font-size:12px;color:var(--muted);margin-top:6px}
+
   /* list */
   .list{margin-top:16px;display:flex;flex-direction:column;gap:10px}
   .task{background:var(--card);border-radius:16px;padding:12px;display:grid;grid-template-columns:auto 1fr auto;gap:10px;align-items:center;box-shadow:0 0 0 1px rgba(255,255,255,.04)}
   .task .name{font-weight:600}
   .meta{display:flex;gap:8px;flex-wrap:wrap}
-  .count{margin-left:6px;padding:2px 8px;border-radius:999px;font-size:12px;background:rgba(126,141,173,.16);color:var(--muted)}
-  .ok{color:var(--ok)}
-  .danger{color:var(--danger)}
   .muted{color:var(--muted)}
-  /* bell panel */
+  .danger{color:var(--danger)}
+  .ok{color:var(--ok)}
+  .pill{padding:2px 8px;border-radius:999px;background:rgba(126,141,173,.16);font-size:12px;color:var(--muted)}
+
+  /* stars */
+  .stars{display:inline-flex;align-items:center;gap:6px}
+  .star{font-size:18px;opacity:.35;cursor:pointer}
+  .star.active{opacity:1;color:#ffd54d}
+  .stars .count{font-size:12px;color:var(--muted);margin-left:4px}
+
+  /* edit chips inside task */
+  .mini{padding:6px 10px;border-radius:10px;font-size:13px}
+  .hidden{position:absolute;opacity:0;pointer-events:none;height:0;width:0}
+
+  /* bell sheet */
   .sheet{position:fixed;inset:auto 0 0 0;translate:0 100%;transition:translate .25s ease;background:var(--card);border-radius:16px 16px 0 0;box-shadow:0 -12px 30px rgba(0,0,0,.35);padding:16px 16px 24px;max-width:780px;margin:0 auto}
   .sheet.open{translate:0 0}
   .sheet h3{margin:0 0 12px 0}
-  .sheet .row{justify-content:space-between}
+  .row{display:flex;align-items:center;justify-content:space-between;gap:12px}
   .switch{position:relative;width:46px;height:28px;border-radius:999px;background:rgba(126,141,173,.3)}
   .switch input{opacity:0;width:0;height:0}
   .knob{position:absolute;top:3px;left:3px;width:22px;height:22px;border-radius:50%;background:#fff;transition:left .2s}
   .switch input:checked + .knob{left:21px;background:var(--accent)}
-  .helper{font-size:12px;color:var(--muted);margin-top:6px}
   .empty{padding:18px;text-align:center;color:var(--muted);border:1.5px dashed rgba(126,141,173,.35);border-radius:14px}
   .hide{display:none}
 </style>
@@ -79,15 +84,15 @@
       <button class="iconbtn" id="themeBtn" aria-label="深浅模式">🌙</button>
     </div>
 
-    <!-- INPUT CARD -->
-    <div class="card" id="composer">
+    <!-- COMPOSER -->
+    <div class="card">
       <div class="label">输入任务</div>
       <div class="input">
-        <input id="taskText" placeholder="例如：明天 7:30 跑步，每天提醒" autocomplete="off" />
-        <button id="enterBtn" class="btn subtle right" disabled>添加</button>
+        <input id="taskText" placeholder="例如：明天 7:30 跑步（支持重复与优先级）" autocomplete="off" />
+        <button id="enterBtn" class="btn subtle" disabled>添加</button>
       </div>
 
-      <div class="chips" style="margin-top:12px">
+      <div class="chips">
         <label class="chip">
           <span class="icon">📅</span>
           <input type="date" id="taskDate" />
@@ -96,7 +101,6 @@
           <span class="icon">⏰</span>
           <input type="time" id="taskTime" />
         </label>
-
         <label class="chip">
           <span class="icon">🔁</span>
           <select id="repeat">
@@ -108,21 +112,19 @@
             <option value="custom">自定义</option>
           </select>
         </label>
-
         <label class="chip">
           <span class="icon">⭐</span>
-          <input id="important" type="checkbox" /> 重要
+          <select id="priority">
+            <option value="0">0 星</option>
+            <option value="1">1 星</option>
+            <option value="2">2 星</option>
+            <option value="3">3 星</option>
+            <option value="4">4 星（最重要）</option>
+          </select>
         </label>
       </div>
 
-      <!-- 快速稍后 -->
-      <div class="snooze">
-        <button data-min="5">稍后 5 分钟</button>
-        <button data-min="10">稍后 10 分钟</button>
-        <button data-min="30">稍后 30 分钟</button>
-      </div>
-
-      <div class="helper">提示：输入后可按 <b>Enter</b> 直接添加；日期与时间随时可修改。</div>
+      <div class="helper">提示：输入后按 <b>Enter</b> 或点“添加”。日期与时间随时可修改。</div>
     </div>
 
     <!-- LIST -->
@@ -134,8 +136,8 @@
       <h3>提醒设置</h3>
       <div class="row">
         <div>
-          <div>允许通知</div>
-          <div class="helper">启用后到点将推送提醒（浏览器/系统支持时）。</div>
+          <div>允许通知（Android）</div>
+          <div class="helper">启用后到点将推送提醒；若系统或浏览器不支持，将使用安全提示框。</div>
         </div>
         <label class="switch">
           <input id="notifToggle" type="checkbox">
@@ -146,7 +148,6 @@
         <button id="testNotif" class="btn subtle">测试提醒</button>
         <button id="closeSheet" class="btn">完成</button>
       </div>
-      <div class="helper">iOS Safari 需要添加到主屏幕(PWA)并允许通知后才会推送；否则会使用对话框提醒。</div>
     </div>
 
   </div>
@@ -161,10 +162,9 @@
   const dateEl = $('#taskDate');
   const timeEl = $('#taskTime');
   const repeatEl = $('#repeat');
-  const impEl = $('#important');
-  const snoozeBtns = document.querySelectorAll('.snooze button');
+  const prioEl = $('#priority');
 
-  // ====== time header ======
+  // ===== header clock =====
   const dateFmt = new Intl.DateTimeFormat('zh-CN',{year:'numeric',month:'2-digit',day:'2-digit'});
   const timeFmt = new Intl.DateTimeFormat('zh-CN',{hour:'numeric',minute:'2-digit',hour12:true});
   function tick(){
@@ -174,7 +174,7 @@
   }
   tick(); setInterval(tick,1000);
 
-  // ====== theme toggle ======
+  // ===== theme toggle =====
   const themeBtn = $('#themeBtn');
   function setTheme(mode){
     if(mode==='light'){ document.body.classList.add('light'); themeBtn.textContent='🌞'; }
@@ -184,122 +184,27 @@
   setTheme(localStorage.getItem('theme')||'dark');
   themeBtn.addEventListener('click',()=>setTheme(document.body.classList.contains('light')?'dark':'light'));
 
-  // ====== notifications sheet ======
+  // ===== notifications sheet (Android-first wording) =====
   const sheet = $('#sheet'), bell = $('#bellBtn'), notifToggle = $('#notifToggle');
   const closeSheet = $('#closeSheet'), testNotif = $('#testNotif');
   function openSheet(){ sheet.classList.add('open'); sheet.setAttribute('aria-hidden','false'); }
   function closeSheetFn(){ sheet.classList.remove('open'); sheet.setAttribute('aria-hidden','true'); }
   bell.addEventListener('click', openSheet);
   closeSheet.addEventListener('click', closeSheetFn);
-  // load notif pref
   notifToggle.checked = localStorage.getItem('notifEnabled')==='1';
   notifToggle.addEventListener('change', async () => {
-    if(notifToggle.checked){
-      if('Notification' in window){
-        try{
-          const perm = await Notification.requestPermission();
-          if(perm!=='granted'){ notifToggle.checked=false; alert('未授予通知权限'); return; }
-        }catch(e){ /* ignore */ }
-      }
+    if(notifToggle.checked && 'Notification' in window){
+      try{
+        const perm = await Notification.requestPermission();
+        if(perm!=='granted'){ notifToggle.checked=false; alert('未授予通知权限'); return; }
+      }catch(e){}
       localStorage.setItem('notifEnabled','1');
     }else{
       localStorage.removeItem('notifEnabled');
     }
   });
-  testNotif.addEventListener('click', () => notify('测试提醒','这是一个提醒示例。'));
+  testNotif.addEventListener('click', () => notify('测试提醒','这是一个示例提醒。'));
 
-  // ====== storage ======
-  const storeKey = 'todo.v3';
-  let tasks = JSON.parse(localStorage.getItem(storeKey)||'[]');
-
-  function save(){ localStorage.setItem(storeKey, JSON.stringify(tasks)); }
-  function uid(){ return Math.random().toString(36).slice(2,9); }
-
-  // ====== render ======
-  function render(){
-    listEl.innerHTML='';
-    if(!tasks.length){ emptyEl.classList.remove('hide'); return; }
-    emptyEl.classList.add('hide');
-    tasks.sort((a,b)=>Number(a.done)-Number(b.done) || (a.when||'').localeCompare(b.when||''));
-    for(const t of tasks){
-      const row = document.createElement('div');
-      row.className = 'task';
-      row.innerHTML = `
-        <input type="checkbox" ${t.done?'checked':''} aria-label="完成" />
-        <div>
-          <div class="name">${escapeHtml(t.title)}</div>
-          <div class="meta">
-            ${t.when?`<span class="muted">📅 ${fmtReadable(t.when)}</span>`:''}
-            ${t.repeat!=='none'?`<span class="muted">🔁 ${repeatLabel(t.repeat)}</span>`:''}
-            ${t.important?`<span class="muted">⭐ 重要</span>`:''}
-          </div>
-        </div>
-        <div class="row">
-          <button class="btn subtle" data-act="s5">+5分</button>
-          <button class="btn subtle" data-act="s10">+10分</button>
-          <button class="btn subtle" data-act="s30">+30分</button>
-          <button class="btn danger" data-act="del">删除</button>
-        </div>
-      `;
-      // events
-      const [ck] = row.getElementsByTagName('input');
-      ck.addEventListener('change',()=>{ t.done = ck.checked; save(); render(); });
-
-      row.querySelector('[data-act="del"]').addEventListener('click',()=>{
-        tasks = tasks.filter(x=>x.id!==t.id); save(); render();
-      });
-      row.querySelector('[data-act="s5"]').addEventListener('click',()=>snoozeTask(t,5));
-      row.querySelector('[data-act="s10"]').addEventListener('click',()=>snoozeTask(t,10));
-      row.querySelector('[data-act="s30"]').addEventListener('click',()=>snoozeTask(t,30));
-
-      listEl.appendChild(row);
-    }
-  }
-
-  function escapeHtml(s){ return s.replace(/[&<>"']/g,m=>({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' }[m])); }
-  function repeatLabel(v){
-    return {none:'不重复',daily:'每日',weekly:'每周',monthly:'每月',yearly:'每年',custom:'自定义'}[v]||'不重复';
-  }
-  function fmtReadable(iso){
-    const d=new Date(iso);
-    return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')} ${timeFmt.format(d)}`;
-  }
-
-  // ====== add task ======
-  function parseWhen(dateStr,timeStr){
-    if(!dateStr && !timeStr) return null;
-    const d = new Date();
-    if(dateStr){ const [y,m,dd] = dateStr.split('-').map(Number); d.setFullYear(y,m-1,dd); }
-    if(timeStr){ const [hh,mm] = timeStr.split(':').map(Number); d.setHours(hh,mm||0,0,0); }
-    return d.toISOString();
-  }
-
-  function addTask(){
-    const title = textEl.value.trim();
-    if(!title) return;
-    const when = parseWhen(dateEl.value, timeEl.value);
-    const t = { id:uid(), title, when, repeat:repeatEl.value, important:impEl.checked, done:false };
-    tasks.push(t); save(); schedule(t); render();
-    // clear text only
-    textEl.value=''; enterBtn.disabled=true;
-  }
-
-  textEl.addEventListener('input',()=>{ enterBtn.disabled = !textEl.value.trim(); });
-  textEl.addEventListener('keydown',e=>{ if(e.key==='Enter'){ e.preventDefault(); addTask(); }});
-  enterBtn.addEventListener('click', addTask);
-
-  // quick snooze for composer
-  snoozeBtns.forEach(btn=>{
-    btn.addEventListener('click',()=>{
-      const min = Number(btn.dataset.min)||5;
-      const base = dateEl.value && timeEl.value ? new Date(parseWhen(dateEl.value, timeEl.value)) : new Date();
-      base.setMinutes(base.getMinutes()+min);
-      dateEl.value = base.toISOString().slice(0,10);
-      timeEl.value = `${String(base.getHours()).padStart(2,'0')}:${String(base.getMinutes()).padStart(2,'0')}`;
-    });
-  });
-
-  // ====== notifications & scheduling ======
   function notify(title, body){
     const enabled = localStorage.getItem('notifEnabled')==='1';
     if(enabled && 'Notification' in window && Notification.permission==='granted'){
@@ -309,15 +214,155 @@
     }
   }
 
+  // ===== storage =====
+  const storeKey = 'todo.v4';
+  let tasks = JSON.parse(localStorage.getItem(storeKey)||'[]');
+  function save(){ localStorage.setItem(storeKey, JSON.stringify(tasks)); }
+  function uid(){ return Math.random().toString(36).slice(2,9); }
+
+  // ===== helpers =====
+  function escapeHtml(s){ return s.replace(/[&<>"']/g,m=>({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' }[m])); }
+  function fmtReadable(iso){ const d=new Date(iso); return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')} ${timeFmt.format(d)}`; }
+  function parseWhen(dateStr,timeStr){
+    if(!dateStr && !timeStr) return null;
+    const d = new Date();
+    if(dateStr){ const [y,m,dd] = dateStr.split('-').map(Number); d.setFullYear(y,m-1,dd); }
+    if(timeStr){ const [hh,mm] = timeStr.split(':').map(Number); d.setHours(hh,mm||0,0,0); }
+    return d.toISOString();
+  }
+  function repeatLabel(v){ return {none:'不重复',daily:'每日',weekly:'每周',monthly:'每月',yearly:'每年',custom:'自定义'}[v]||'不重复'; }
+
+  // ===== add task =====
+  function addTask(){
+    const title = textEl.value.trim();
+    if(!title) return;
+    const when = parseWhen(dateEl.value, timeEl.value);
+    const t = { id:uid(), title, when, repeat:repeatEl.value, priority:Number(prioEl.value||0), done:false };
+    tasks.push(t); save(); schedule(t); render();
+    textEl.value=''; enterBtn.disabled=true;
+  }
+  textEl.addEventListener('input',()=>{ enterBtn.disabled = !textEl.value.trim(); });
+  textEl.addEventListener('keydown',e=>{ if(e.key==='Enter'){ e.preventDefault(); addTask(); }});
+  enterBtn.addEventListener('click', addTask);
+
+  // ===== render =====
+  function render(){
+    listEl.innerHTML='';
+    if(!tasks.length){ emptyEl.classList.remove('hide'); return; }
+    emptyEl.classList.add('hide');
+    // sort: by done, priority desc, then time
+    tasks.sort((a,b)=>Number(a.done)-Number(b.done) || (b.priority||0)-(a.priority||0) || (a.when||'').localeCompare(b.when||''));
+    for(const t of tasks){
+      listEl.appendChild(renderTask(t));
+    }
+  }
+
+  function renderTask(t){
+    const row = document.createElement('div');
+    row.className='task';
+    const whenTxt = t.when ? fmtReadable(t.when) : '无时间';
+
+    row.innerHTML = `
+      <input type="checkbox" ${t.done?'checked':''} aria-label="完成" />
+      <div>
+        <div class="name">${escapeHtml(t.title)}</div>
+        <div class="meta">
+          <span class="muted">📅 ${whenTxt}</span>
+          ${t.repeat!=='none'?`<span class="pill">🔁 ${repeatLabel(t.repeat)}</span>`:''}
+        </div>
+        <div class="meta" style="margin-top:8px">
+          <!-- editable date/time chips -->
+          <button class="chip mini" data-edit="date">📅 修改日期</button>
+          <input class="hidden" type="date" id="d-${t.id}">
+          <button class="chip mini" data-edit="time">⏰ 修改时间</button>
+          <input class="hidden" type="time" id="h-${t.id}">
+          <div class="stars" data-id="${t.id}">
+            <span class="star" data-v="1">★</span>
+            <span class="star" data-v="2">★</span>
+            <span class="star" data-v="3">★</span>
+            <span class="star" data-v="4">★</span>
+            <span class="count">(${t.priority||0})</span>
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <button class="btn danger" data-act="del">删除</button>
+      </div>
+    `;
+
+    // Checkbox complete
+    const [ck] = row.getElementsByTagName('input');
+    ck.addEventListener('change',()=>{ t.done = ck.checked; save(); render(); });
+
+    // Delete
+    row.querySelector('[data-act="del"]').addEventListener('click',()=>{
+      tasks = tasks.filter(x=>x.id!==t.id); save(); render();
+    });
+
+    // Date edit
+    const dateBtn = row.querySelector('[data-edit="date"]');
+    const dateInput = row.querySelector(`#d-${t.id}`);
+    if(t.when){ dateInput.value = new Date(t.when).toISOString().slice(0,10); }
+    dateBtn.addEventListener('click',()=>dateInput.showPicker ? dateInput.showPicker() : dateInput.click());
+    dateInput.addEventListener('change',()=>{
+      const d = dateInput.value;
+      const cur = t.when ? new Date(t.when) : new Date();
+      if(d){
+        const [y,m,dd] = d.split('-').map(Number);
+        cur.setFullYear(y,m-1,dd);
+        t.when = cur.toISOString();
+        save(); render(); schedule(t);
+      }
+    });
+
+    // Time edit
+    const timeBtn = row.querySelector('[data-edit="time"]');
+    const timeInput = row.querySelector(`#h-${t.id}`);
+    if(t.when){
+      const cur = new Date(t.when);
+      timeInput.value = `${String(cur.getHours()).padStart(2,'0')}:${String(cur.getMinutes()).padStart(2,'0')}`;
+    }
+    timeBtn.addEventListener('click',()=>timeInput.showPicker ? timeInput.showPicker() : timeInput.click());
+    timeInput.addEventListener('change',()=>{
+      const tm = timeInput.value;
+      const cur = t.when ? new Date(t.when) : new Date();
+      if(tm){
+        const [hh,mm]=tm.split(':').map(Number);
+        cur.setHours(hh,mm||0,0,0);
+        t.when = cur.toISOString();
+        save(); render(); schedule(t);
+      }
+    });
+
+    // Stars (1–4)
+    const stars = row.querySelectorAll('.star');
+    function paintStars(){
+      stars.forEach(s=>{
+        const v = Number(s.dataset.v);
+        s.classList.toggle('active', v <= (t.priority||0));
+      });
+      row.querySelector('.stars .count').textContent = `(${t.priority||0})`;
+    }
+    paintStars();
+    stars.forEach(s=>{
+      s.addEventListener('click',()=>{
+        t.priority = Number(s.dataset.v);
+        save(); paintStars(); render();
+      });
+    });
+
+    return row;
+  }
+
+  // ===== scheduling =====
   function schedule(t){
-    // clear previous timer if any
     if(t._timer){ clearTimeout(t._timer); t._timer=null; }
     if(!t.when || t.done) return;
     const ts = new Date(t.when).getTime() - Date.now();
     if(ts <= 0) return;
     t._timer = setTimeout(()=>{
       notify('到点啦', t.title);
-      // handle repeat
+      // repeat forward
       if(t.repeat && t.repeat!=='none'){
         const d = new Date(t.when);
         switch(t.repeat){
@@ -325,21 +370,14 @@
           case 'weekly': d.setDate(d.getDate()+7); break;
           case 'monthly': d.setMonth(d.getMonth()+1); break;
           case 'yearly': d.setFullYear(d.getFullYear()+1); break;
-          case 'custom': d.setDate(d.getDate()+3); break; // 简单示例：自定义=+3天
+          case 'custom': d.setDate(d.getDate()+3); break;
         }
         t.when = d.toISOString(); save(); render(); schedule(t);
       }
     }, ts);
   }
 
-  function snoozeTask(t, min){
-    const d = t.when ? new Date(t.when) : new Date();
-    d.setMinutes(d.getMinutes()+min);
-    t.when = d.toISOString(); save(); render(); schedule(t);
-  }
-
   // ===== init =====
-  // default pickers -> today + next half hour
   (function initPickers(){
     const now = new Date();
     dateEl.value = now.toISOString().slice(0,10);
@@ -347,9 +385,9 @@
     timeEl.value = `${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}`;
   })();
 
+  // load theme + tasks
   tasks.forEach(schedule);
   render();
-
 })();
 </script>
 </body>
