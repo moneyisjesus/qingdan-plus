@@ -45,6 +45,7 @@
   .chip svg{width:15px;height:15px;opacity:.9}
   .danger{color:#fff;background:linear-gradient(135deg,#ff7a7a,#ff4d4d)}
   .btn{border:0;border-radius:12px;padding:10px 14px;background:var(--brand);color:#fff;font-weight:700;cursor:pointer}
+  .ghost{background:var(--chip);color:var(--text)}
 
   .composer{margin-top:16px;padding:14px;border-radius:var(--radius);background:var(--panel);box-shadow:var(--shadow)}
   .row{display:flex;gap:10px;align-items:center}
@@ -60,16 +61,18 @@
 
   .hint{margin-top:10px;color:var(--muted);font-size:13px}
 
-  /* modal date-time sheet */
-  .sheet{position:fixed;inset:0;display:none;place-items:end center;background:rgba(0,0,0,.45);z-index:50}
-  .sheet.show{display:grid}
-  .sheet-card{width:100%;max-width:560px;background:var(--panel);color:var(--text);border-top-left-radius:16px;border-top-right-radius:16px;box-shadow:var(--shadow);padding:16px 14px 12px}
-  .sheet-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}
-  .sheet-title{font-weight:800}
-  .sheet-body{display:grid;grid-template-columns:1fr 1fr;gap:12px}
-  .sheet-body input{width:100%;border:2px solid transparent;background:var(--panel-2);color:var(--text);padding:12px;border-radius:12px;font-size:16px}
-  .sheet-foot{display:flex;gap:10px;justify-content:flex-end;margin-top:12px}
-  .ghost{background:var(--chip);color:var(--text)}
+  /* quick panel (inline) */
+  .quick{display:none;margin-top:12px;padding:12px;border-radius:12px;background:var(--panel-2)}
+  .quick.show{display:block}
+  .quick .grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+  .quick input{width:100%;border:2px solid transparent;background:var(--panel);color:var(--text);padding:11px;border-radius:12px;font-size:16px}
+  .quick .row2{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
+  .seg{padding:8px 12px;border-radius:999px;background:var(--chip);cursor:pointer;color:var(--muted);user-select:none}
+  .seg.active{background:linear-gradient(135deg,#7c8cff,#a677ff);color:#fff;font-weight:800}
+  .quick .foot{display:flex;gap:8px;justify-content:flex-end;margin-top:10px}
+
+  .summary{margin-top:10px;color:var(--muted);font-size:14px}
+  .summary b{color:var(--text)}
   footer{margin:24px 0 8px;text-align:center;color:var(--muted);font-size:12px}
 </style>
 </head>
@@ -117,31 +120,38 @@
         </div>
       </div>
     </div>
-    <div class="hint">提示：输入内容后右侧将出现 <b>Enter</b> 按钮，或直接按键盘 <b>Enter</b> 添加；点「📅 ⏰」设置日期与时间</div>
+
+    <!-- summary below input -->
+    <div class="summary">提醒：<b id="repeatSummary">不重复</b></div>
+
+    <!-- inline quick panel (date/time + repeat) -->
+    <div class="quick" id="quickPanel">
+      <div class="grid">
+        <input id="dateInput" type="date" />
+        <input id="timeInput" type="time" />
+      </div>
+      <div class="row2" id="repeatSeg">
+        <div class="seg active" data-repeat="none">不重复</div>
+        <div class="seg" data-repeat="daily">每日</div>
+        <div class="seg" data-repeat="weekly">每周</div>
+        <div class="seg" data-repeat="monthly">每月</div>
+        <div class="seg" data-repeat="yearly">每年</div>
+        <div class="seg" data-repeat="custom">自定义</div>
+      </div>
+      <div class="foot">
+        <button class="btn ghost" id="quickClose">关闭</button>
+        <button class="btn" id="quickApply">应用</button>
+      </div>
+    </div>
+
+    <div class="hint">提示：输入后右侧会出现 <b>Enter</b> 按钮添加；点击「📅 ⏰」立即展开日期与时间；下方可选择“重复”方式</div>
   </div>
 
   <footer>© 2025 清单Plus · 本地保存 · 轻快 · 极简</footer>
 </div>
 
-<!-- Date/Time Sheet -->
-<div class="sheet" id="dtSheet" aria-hidden="true">
-  <div class="sheet-card" role="dialog" aria-modal="true" aria-labelledby="dtTitle">
-    <div class="sheet-head">
-      <div class="sheet-title" id="dtTitle">选择日期与时间</div>
-      <button class="btn ghost" id="dtCancel">取消</button>
-    </div>
-    <div class="sheet-body">
-      <input id="dateInput" type="date" />
-      <input id="timeInput" type="time" />
-    </div>
-    <div class="sheet-foot">
-      <button class="btn ghost" id="dtClear">清空</button>
-      <button class="btn" id="dtSave">保存</button>
-    </div>
-  </div>
-</div>
-
 <script>
+/* ---------- helpers ---------- */
 const $ = s=>document.querySelector(s);
 const listEl = $('#list');
 const taskInput = $('#taskInput');
@@ -154,15 +164,17 @@ const nowStrEl   = $('#nowStr');
 const datePill = $('#datePill'), timePill = $('#timePill');
 const dateLabel = $('#dateLabel'), timeLabel = $('#timeLabel');
 
-const sheet = $('#dtSheet'), dtCancel = $('#dtCancel'), dtSave = $('#dtSave'), dtClear=$('#dtClear');
-const dateInput = $('#dateInput'), timeInput = $('#timeInput');
+const quick = $('#quickPanel'), dateInput = $('#dateInput'), timeInput = $('#timeInput');
+const quickClose = $('#quickClose'), quickApply = $('#quickApply');
+
+const repeatSeg = $('#repeatSeg'), repeatSummary = $('#repeatSummary');
 
 const counts = {
   all: $('#count-all'), today: $('#count-today'), important: $('#count-important'),
   done: $('#count-done'), todo: $('#count-todo')
 };
 let filter='all';
-let tasks = JSON.parse(localStorage.getItem('qingdan_tasks_v4')||'[]');
+let tasks = JSON.parse(localStorage.getItem('qingdan_tasks_v5')||'[]');
 
 /* utils */
 function pad(n){return n<10?'0'+n:n}
@@ -181,20 +193,53 @@ modeToggle.onclick=()=>{const light=root.classList.toggle('light'); localStorage
 /* filter */
 document.querySelectorAll('.filter-item').forEach(el=>{ el.onclick=()=>{filter=el.dataset.filter; render();}; });
 
-/* date/time sheet */
-let pendingDate=null, pendingTime=null;
-function openSheet(){ dateInput.value = pendingDate || isoDate(new Date()); timeInput.value = pendingTime || ''; sheet.classList.add('show'); sheet.setAttribute('aria-hidden','false'); }
-function closeSheet(){ sheet.classList.remove('show'); sheet.setAttribute('aria-hidden','true'); }
-datePill.onclick=openSheet; timePill.onclick=openSheet;
-dtCancel.onclick=closeSheet;
-dtClear.onclick=()=>{ pendingDate = isoDate(new Date()); pendingTime = ''; dateInput.value=pendingDate; timeInput.value=''; dateLabel.textContent='今天'; timeLabel.textContent='无时间'; closeSheet(); };
-dtSave.onclick=()=>{ pendingDate = dateInput.value || isoDate(new Date()); pendingTime = timeInput.value || ''; const todayISO=isoDate(new Date()); dateLabel.textContent = (pendingDate===todayISO)?'今天':prettyDate(pendingDate); timeLabel.textContent = pendingTime?format12(pendingTime):'无时间'; closeSheet(); };
-(function initDefault(){ const t=new Date(); pendingDate=isoDate(t); pendingTime=''; dateLabel.textContent='今天'; timeLabel.textContent='无时间'; })();
+/* selection state (pending) */
+let pendingDate = isoDate(new Date());
+let pendingTime = '';
+let pendingRepeat = 'none';
+
+/* chips labels */
+function repeatLabel(rep){
+  return ({none:'不重复',daily:'每日',weekly:'每周',monthly:'每月',yearly:'每年',custom:'自定义'})[rep]||'不重复';
+}
+
+/* open inline quick panel with prefilled values */
+function toggleQuick(show){
+  if(show===undefined) quick.classList.toggle('show');
+  else quick.classList.toggle('show', show);
+  dateInput.value = pendingDate;
+  timeInput.value = pendingTime;
+  // highlight current repeat
+  repeatSeg.querySelectorAll('.seg').forEach(s=>{
+    s.classList.toggle('active', s.dataset.repeat===pendingRepeat);
+  });
+}
+
+datePill.onclick=()=>toggleQuick(true);
+timePill.onclick=()=>toggleQuick(true);
+quickClose.onclick=()=>toggleQuick(false);
+quickApply.onclick=()=>{
+  pendingDate = dateInput.value || isoDate(new Date());
+  pendingTime = timeInput.value || '';
+  dateLabel.textContent = (pendingDate===isoDate(new Date()))?'今天':prettyDate(pendingDate);
+  timeLabel.textContent = pendingTime?format12(pendingTime):'无时间';
+  repeatSummary.textContent = repeatLabel(pendingRepeat);
+  toggleQuick(false);
+};
+
+// clicking a repeat pill
+repeatSeg.addEventListener('click', (e)=>{
+  const el=e.target.closest('.seg'); if(!el) return;
+  pendingRepeat = el.dataset.repeat;
+  repeatSeg.querySelectorAll('.seg').forEach(s=>s.classList.toggle('active', s===el));
+  repeatSummary.textContent = repeatLabel(pendingRepeat);
+});
 
 /* storage */
-function save(){localStorage.setItem('qingdan_tasks_v4', JSON.stringify(tasks))}
-function addTask(text, dueDate, dueTime){
-  tasks.push({id:Date.now(), text:text.trim(), done:false, important:false, dueDate:dueDate||null, dueTime:dueTime||null});
+function save(){localStorage.setItem('qingdan_tasks_v5', JSON.stringify(tasks))}
+function addTask(text, dueDate, dueTime, repeat){
+  tasks.push({id:Date.now(), text:text.trim(), done:false, important:false, dueDate:dueDate||null, dueTime:dueTime||null, repeat:repeat||'none'});
+  // sort by date then time
   tasks.sort((a,b)=>{const ad=a.dueDate||'9999-12-31', bd=b.dueDate||'9999-12-31'; if(ad!==bd) return ad.localeCompare(bd); const at=a.dueTime||'99:99', bt=b.dueTime||'99:99'; return at.localeCompare(bt);});
   save(); render();
 }
@@ -209,14 +254,15 @@ function render(){
     const cb=document.createElement('input'); cb.type='checkbox'; cb.checked=t.done;
     cb.onchange=()=>{t.done=cb.checked; save(); render();};
     const title=document.createElement('div'); title.className='title'; title.textContent=t.text; if(t.done) title.style.textDecoration='line-through';
-
     const chips=document.createElement('div'); chips.className='chips';
+
     if(t.dueDate){const c=document.createElement('span'); c.className='chip';
       c.innerHTML=`<svg viewBox="0 0 24 24" fill="currentColor" width="15" height="15"><path d="M7 2a1 1 0 0 1 1 1v1h8V3a1 1 0 1 1 2 0v1h1a3 3 0 0 1 3 3v12a3 3 0 0 1-3 3H5a3 3 0 0 1-3-3V7a3 3 0 0 1 3-3h1V3a1 1 0 0 1 1-1Zm13 9H4v9a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-9ZM5 7a1 1 0 0 0-1 1v1h16V8a1 1 0 0 0-1-1H5Z"/></svg>
       ${prettyDate(t.dueDate)}`; chips.appendChild(c);}
     if(t.dueTime){const c=document.createElement('span'); c.className='chip';
       c.innerHTML=`<svg viewBox="0 0 24 24" fill="currentColor" width="15" height="15"><path d="M12 2a10 10 0 1 1 0 20 10 10 0 0 1 0-20Zm0 2a8 8 0 1 0 0 16 8 8 0 0 0 0-16Zm1 3v5.17l3.59 3.58-1.42 1.42L11 12.59V7h2Z"/></svg>
       ${format12(t.dueTime)}`; chips.appendChild(c);}
+    if(t.repeat && t.repeat!=='none'){const c=document.createElement('span'); c.className='chip'; c.textContent=repeatLabel(t.repeat); chips.appendChild(c);}
 
     const del=document.createElement('button'); del.className='chip danger'; del.textContent='删除';
     del.onclick=()=>{tasks=tasks.filter(x=>x.id!==t.id); save(); render();};
@@ -231,7 +277,7 @@ render();
 function doAdd(){
   const text=taskInput.value.trim();
   if(!text) return;
-  addTask(text, pendingDate||null, pendingTime||null);
+  addTask(text, pendingDate||null, pendingTime||null, pendingRepeat||'none');
   taskInput.value='';
   inputWrap.classList.remove('has-text');
 }
@@ -239,8 +285,8 @@ taskInput.addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();
 enterInline.addEventListener('click', doAdd);
 taskInput.addEventListener('input', ()=>{ if(taskInput.value.trim()) inputWrap.classList.add('has-text'); else inputWrap.classList.remove('has-text'); });
 
-/* bootstrap */
-if(!localStorage.getItem('qingdan_boot_v4')) localStorage.setItem('qingdan_boot_v4','1');
+/* counts bootstrap */
+if(!localStorage.getItem('qingdan_boot_v5')) localStorage.setItem('qingdan_boot_v5','1');
 </script>
 </body>
 </html>
