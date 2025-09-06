@@ -5,6 +5,14 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
 <title>我的一天</title>
 <meta name="theme-color" content="#0b1220" />
+
+<!-- PWA: manifest & icons -->
+<link rel="manifest" href="manifest.json">
+<link rel="icon" sizes="192x192" href="logo-192.png">
+<link rel="apple-touch-icon" sizes="192x192" href="logo-192.png">
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+
 <style>
   :root{--bg:#0b1220;--card:#121a2a;--mut:#7c8aa5;--txt:#eaf1ff;--acc:#4e9bff;--ok:#39d98a;--dang:#ff6b6b;--ring:rgba(78,155,255,.25)}
   .light{--bg:#f6f7fb;--card:#fff;--mut:#667085;--txt:#0b1220;--acc:#316de8;--ok:#12b76a;--dang:#ef4444;--ring:rgba(49,109,232,.2)}
@@ -55,6 +63,17 @@
   .mini{padding:6px 10px;border-radius:10px;font-size:13px;border:1.5px solid rgba(126,141,173,.28);background:#0000;color:var(--txt)}
   .ok{color:var(--ok)}
 </style>
+
+<!-- PWA: register the service worker -->
+<script>
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+      navigator.serviceWorker.register('service-worker.js')
+        .then(reg => console.log('✅ Service Worker:', reg.scope))
+        .catch(err => console.error('❌ SW failed:', err));
+    });
+  }
+</script>
 </head>
 <body>
   <div class="wrap">
