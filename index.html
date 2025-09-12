@@ -622,6 +622,23 @@
         .language-option:hover {
             background: var(--light);
         }
+
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: var(--success);
+            color: white;
+            padding: 10px 15px;
+            border-radius: 10px;
+            z-index: 1000;
+            transform: translateX(300px);
+            transition: transform 0.3s;
+        }
+
+        .notification.show {
+            transform: translateX(0);
+        }
     </style>
 </head>
 <body>
@@ -642,15 +659,15 @@
             
             <div class="stats-row">
                 <div class="stat-card">
-                    <div class="stat-number">12</div>
+                    <div class="stat-number" id="todayTasks">12</div>
                     <div class="stat-label">Today</div>
                 </div>
                 <div class="stat-card">
-                    <div class="stat-number">89%</div>
+                    <div class="stat-number" id="completionRate">89%</div>
                     <div class="stat-label">Complete</div>
                 </div>
                 <div class="stat-card">
-                    <div class="stat-number">3</div>
+                    <div class="stat-number" id="urgentTasks">3</div>
                     <div class="stat-label">Urgent</div>
                 </div>
                 <div class="stat-card">
@@ -662,15 +679,15 @@
 
         <!-- Language Selector -->
         <div class="language-selector" id="languageSelector">
-            <div class="language-option">🇺🇸 English</div>
-            <div class="language-option">🇪🇸 Español</div>
-            <div class="language-option">🇫🇷 Français</div>
-            <div class="language-option">🇩🇪 Deutsch</div>
-            <div class="language-option">🇨🇳 中文</div>
-            <div class="language-option">🇯🇵 日本語</div>
-            <div class="language-option">🇰🇷 한국어</div>
-            <div class="language-option">🇮🇳 हिंदी</div>
-            <div class="language-option">🇸🇦 العربية</div>
+            <div class="language-option" onclick="selectLanguage('en')">🇺🇸 English</div>
+            <div class="language-option" onclick="selectLanguage('es')">🇪🇸 Español</div>
+            <div class="language-option" onclick="selectLanguage('fr')">🇫🇷 Français</div>
+            <div class="language-option" onclick="selectLanguage('de')">🇩🇪 Deutsch</div>
+            <div class="language-option" onclick="selectLanguage('zh')">🇨🇳 中文</div>
+            <div class="language-option" onclick="selectLanguage('ja')">🇯🇵 日本語</div>
+            <div class="language-option" onclick="selectLanguage('ko')">🇰🇷 한국어</div>
+            <div class="language-option" onclick="selectLanguage('hi')">🇮🇳 हिंदी</div>
+            <div class="language-option" onclick="selectLanguage('ar')">🇸🇦 العربية</div>
         </div>
 
         <!-- AI Suggestion -->
@@ -686,23 +703,23 @@
 
         <!-- Quick Actions -->
         <div class="quick-actions">
-            <div class="quick-action">
+            <div class="quick-action" onclick="activateFocusMode()">
                 <div class="quick-action-icon">🎯</div>
                 <div class="quick-action-label">Focus Mode</div>
             </div>
-            <div class="quick-action">
+            <div class="quick-action" onclick="showAnalytics()">
                 <div class="quick-action-icon">📊</div>
                 <div class="quick-action-label">Analytics</div>
             </div>
-            <div class="quick-action">
+            <div class="quick-action" onclick="manageTags()">
                 <div class="quick-action-icon">🏷️</div>
                 <div class="quick-action-label">Tags</div>
             </div>
-            <div class="quick-action">
+            <div class="quick-action" onclick="openCalendar()">
                 <div class="quick-action-icon">📅</div>
                 <div class="quick-action-label">Calendar</div>
             </div>
-            <div class="quick-action">
+            <div class="quick-action" onclick="viewTeams()">
                 <div class="quick-action-icon">👥</div>
                 <div class="quick-action-label">Teams</div>
             </div>
@@ -711,24 +728,24 @@
         <!-- Task Input -->
         <div class="task-input-container">
             <div class="task-input-wrapper">
-                <input type="text" class="task-input" placeholder="What needs to be done?" id="taskInput">
+                <input type="text" class="task-input" placeholder="What needs to be done?" id="taskInput" onkeypress="handleKeyPress(event)">
                 <button class="add-btn" onclick="addTask()">Add</button>
             </div>
             <div class="input-options">
-                <div class="option-chip">📅 Today</div>
-                <div class="option-chip">⚡ High Priority</div>
-                <div class="option-chip">🤖 AI Suggest</div>
-                <div class="option-chip">⏰ Set Reminder</div>
-                <div class="option-chip">🏷️ Add Tags</div>
+                <div class="option-chip" onclick="toggleChip(this)" data-value="today">📅 Today</div>
+                <div class="option-chip" onclick="toggleChip(this)" data-value="high">⚡ High Priority</div>
+                <div class="option-chip" onclick="toggleChip(this)" data-value="ai">🤖 AI Suggest</div>
+                <div class="option-chip" onclick="toggleChip(this)" data-value="reminder">⏰ Set Reminder</div>
+                <div class="option-chip" onclick="toggleChip(this)" data-value="tags">🏷️ Add Tags</div>
             </div>
         </div>
 
         <!-- Tasks Container -->
-        <div class="tasks-container">
+        <div class="tasks-container" id="tasksContainer">
             <!-- Today's Tasks -->
             <div class="section-header">
                 <span class="section-title">Today's Focus</span>
-                <span class="section-count">5 tasks</span>
+                <span class="section-count" id="todayCount">5 tasks</span>
             </div>
             
             <div class="task-card">
@@ -777,7 +794,7 @@
             <!-- Smart Suggestions -->
             <div class="section-header">
                 <span class="section-title">🤖 AI Recommendations</span>
-                <span class="section-count">3 suggestions</span>
+                <span class="section-count" id="aiCount">3 suggestions</span>
             </div>
 
             <div class="task-card">
@@ -812,23 +829,23 @@
 
         <!-- Bottom Navigation -->
         <div class="bottom-nav">
-            <div class="nav-item active">
+            <div class="nav-item active" onclick="switchTab('home')">
                 <div class="nav-icon">🏠</div>
                 <div class="nav-label">Home</div>
             </div>
-            <div class="nav-item">
+            <div class="nav-item" onclick="switchTab('lists')">
                 <div class="nav-icon">📋</div>
                 <div class="nav-label">Lists</div>
             </div>
-            <div class="nav-item">
+            <div class="nav-item" onclick="switchTab('insights')">
                 <div class="nav-icon">📈</div>
                 <div class="nav-label">Insights</div>
             </div>
-            <div class="nav-item">
+            <div class="nav-item" onclick="switchTab('goals')">
                 <div class="nav-icon">🎯</div>
                 <div class="nav-label">Goals</div>
             </div>
-            <div class="nav-item">
+            <div class="nav-item" onclick="switchTab('settings')">
                 <div class="nav-icon">⚙️</div>
                 <div class="nav-label">Settings</div>
             </div>
@@ -876,57 +893,4 @@
                         <span class="feature-icon">📊</span>
                         <div class="feature-text">
                             <div class="feature-title">Advanced Analytics</div>
-                            <div class="feature-desc">Deep insights into your productivity patterns</div>
-                        </div>
-                    </li>
-                    <li class="feature-item">
-                        <span class="feature-icon">🏆</span>
-                        <div class="feature-text">
-                            <div class="feature-title">Gamification</div>
-                            <div class="feature-desc">Earn rewards and compete with friends</div>
-                        </div>
-                    </li>
-                    <li class="feature-item">
-                        <span class="feature-icon">🔄</span>
-                        <div class="feature-text">
-                            <div class="feature-title">Smart Sync</div>
-                            <div class="feature-desc">Seamless sync across all devices with offline support</div>
-                        </div>
-                    </li>
-                </ul>
-                <button class="add-btn" style="width: 100%;" onclick="closeModal()">Amazing! Let's Start</button>
-            </div>
-        </div>
-    </div>
-
-    <script>
-        // App state
-        let tasks = [];
-        let currentLanguage = 'en';
-        
-        // Toggle task completion
-        function toggleTask(checkbox) {
-            const taskCard = checkbox.closest('.task-card');
-            taskCard.classList.toggle('completed');
-            
-            // Haptic feedback simulation
-            if (navigator.vibrate) {
-                navigator.vibrate(50);
-            }
-            
-            // Update stats
-            updateStats();
-        }
-        
-        // Add new task
-        function addTask() {
-            const input = document.getElementById('taskInput');
-            const taskText = input.value.trim();
-            
-            if (taskText) {
-                // AI-powered task analysis would happen here
-                const newTask = {
-                    id: Date.now(),
-                    title: taskText,
-                    priority: analyzePriority(taskText),
-                    tags: extractTags(taskText),
+                            <div class="feature-desc">Deep
