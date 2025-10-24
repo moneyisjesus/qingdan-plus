@@ -3,9 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TaskFlow Pro - Interactive</title>
+    <title>TaskFlow Pro - Revolutionary Task Management</title>
     <style>
-        /* [Previous CSS from your file remains unchanged] */
         * {
             margin: 0;
             padding: 0;
@@ -319,7 +318,6 @@
             transition: all 0.3s;
             position: relative;
             overflow: hidden;
-            animation: fadeIn 0.3s ease;
         }
 
         .task-card:hover {
@@ -345,9 +343,17 @@
             width: 4px;
         }
 
-        .task-priority.high { background: var(--danger); }
-        .task-priority.medium { background: var(--warning); }
-        .task-priority.low { background: var(--success); }
+        .task-priority.high {
+            background: var(--danger);
+        }
+
+        .task-priority.medium {
+            background: var(--warning);
+        }
+
+        .task-priority.low {
+            background: var(--success);
+        }
 
         .task-content {
             display: flex;
@@ -421,31 +427,6 @@
             border: 1px solid rgba(99, 102, 241, 0.3);
         }
 
-        .delete-btn {
-            position: absolute;
-            top: 15px;
-            right: 15px;
-            width: 24px;
-            height: 24px;
-            background: #f1f5f9;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: #94a3b8;
-            font-size: 14px;
-            cursor: pointer;
-            opacity: 0;
-            transition: all 0.3s;
-        }
-        .task-card:hover .delete-btn {
-            opacity: 1;
-        }
-        .delete-btn:hover {
-            background: var(--danger);
-            color: white;
-        }
-
         .bottom-nav {
             position: fixed;
             bottom: 0;
@@ -472,10 +453,22 @@
             flex: 1;
         }
 
-        .nav-item:hover { background: var(--light); }
-        .nav-item.active { color: var(--primary); }
-        .nav-icon { font-size: 24px; margin-bottom: 4px; }
-        .nav-label { font-size: 11px; }
+        .nav-item:hover {
+            background: var(--light);
+        }
+
+        .nav-item.active {
+            color: var(--primary);
+        }
+
+        .nav-icon {
+            font-size: 24px;
+            margin-bottom: 4px;
+        }
+
+        .nav-label {
+            font-size: 11px;
+        }
 
         .floating-ai-btn {
             position: fixed;
@@ -497,19 +490,32 @@
         }
 
         @keyframes float {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-10px); }
+            0%, 100% {
+                transform: translateY(0);
+            }
+            50% {
+                transform: translateY(-10px);
+            }
         }
 
         .modal {
             display: none;
             position: fixed;
-            top: 0; left: 0; right: 0; bottom: 0;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
             background: rgba(0, 0, 0, 0.5);
             z-index: 1000;
             animation: fadeIn 0.3s;
         }
-        .modal.active { display: flex; align-items: center; justify-content: center; }
+
+        .modal.active {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
         .modal-content {
             background: white;
             border-radius: 20px;
@@ -518,8 +524,19 @@
             width: 90%;
             animation: slideUp 0.3s;
         }
-        .modal-header { font-size: 20px; font-weight: 600; margin-bottom: 20px; color: var(--dark); }
-        .feature-list { list-style: none; margin: 20px 0; }
+
+        .modal-header {
+            font-size: 20px;
+            font-weight: 600;
+            margin-bottom: 20px;
+            color: var(--dark);
+        }
+
+        .feature-list {
+            list-style: none;
+            margin: 20px 0;
+        }
+
         .feature-item {
             display: flex;
             align-items: center;
@@ -530,23 +547,44 @@
             border-radius: 12px;
             transition: all 0.3s;
         }
+
         .feature-item:hover {
             transform: translateX(5px);
             background: linear-gradient(135deg, rgba(99, 102, 241, 0.1), rgba(34, 211, 238, 0.1));
         }
-        .feature-icon { font-size: 24px; }
-        .feature-text { flex: 1; }
-        .feature-title { font-weight: 600; color: var(--dark); margin-bottom: 2px; }
-        .feature-desc { font-size: 12px; color: #64748b; }
+
+        .feature-icon {
+            font-size: 24px;
+        }
+
+        .feature-text {
+            flex: 1;
+        }
+
+        .feature-title {
+            font-weight: 600;
+            color: var(--dark);
+            margin-bottom: 2px;
+        }
+
+        .feature-desc {
+            font-size: 12px;
+            color: #64748b;
+        }
 
         @keyframes fadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
         }
 
         .language-selector {
             position: absolute;
-            top: 60px; right: 20px;
+            top: 60px;
+            right: 20px;
             background: white;
             border-radius: 12px;
             padding: 10px;
@@ -554,14 +592,23 @@
             display: none;
             z-index: 200;
         }
+
         .language-selector.active {
             display: block;
             animation: slideDown 0.3s;
         }
+
         @keyframes slideDown {
-            from { transform: translateY(-10px); opacity: 0; }
-            to { transform: translateY(0); opacity: 1; }
+            from {
+                transform: translateY(-10px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
         }
+
         .language-option {
             padding: 8px 15px;
             cursor: pointer;
@@ -571,221 +618,315 @@
             align-items: center;
             gap: 8px;
         }
-        .language-option:hover { background: var(--light); }
-        
-        /* [Additional styles for new elements like delete button, etc.] */
+
+        .language-option:hover {
+            background: var(--light);
+        }
     </style>
 </head>
 <body>
     <div class="app-container">
+        <!-- Header -->
         <div class="header">
             <div class="header-top">
-                <div class="app-title"><span>🚀 TaskFlow Pro</span><span class="ai-badge">AI Powered</span></div>
+                <div class="app-title">
+                    <span>🚀 TaskFlow Pro</span>
+                    <span class="ai-badge">AI Powered</span>
+                </div>
                 <div class="header-actions">
                     <button class="icon-btn" onclick="toggleLanguage()">🌐</button>
                     <button class="icon-btn" onclick="showFeatures()">✨</button>
-                    <button class="icon-btn" onclick="showUserProfile()">👤</button>
+                    <button class="icon-btn">👤</button>
                 </div>
             </div>
+            
             <div class="stats-row">
-                <div class="stat-card"><div class="stat-number" id="todayTasks">0</div><div class="stat-label">Today</div></div>
-                <div class="stat-card"><div class="stat-number" id="completionRate">0%</div><div class="stat-label">Complete</div></div>
-                <div class="stat-card"><div class="stat-number" id="urgentTasks">0</div><div class="stat-label">Urgent</div></div>
-                <div class="stat-card"><div class="stat-number">🔥5</div><div class="stat-label">Streak</div></div>
+                <div class="stat-card">
+                    <div class="stat-number">12</div>
+                    <div class="stat-label">Today</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">89%</div>
+                    <div class="stat-label">Complete</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">3</div>
+                    <div class="stat-label">Urgent</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">🔥5</div>
+                    <div class="stat-label">Streak</div>
+                </div>
             </div>
         </div>
+
+        <!-- Language Selector -->
         <div class="language-selector" id="languageSelector">
-            <div class="language-option" onclick="selectLanguage('en')">🇺🇸 English</div>
-            <div class="language-option" onclick="selectLanguage('es')">🇪🇸 Español</div>
-            <div class="language-option" onclick="selectLanguage('fr')">🇫🇷 Français</div>
-            <div class="language-option" onclick="selectLanguage('de')">🇩🇪 Deutsch</div>
+            <div class="language-option">🇺🇸 English</div>
+            <div class="language-option">🇪🇸 Español</div>
+            <div class="language-option">🇫🇷 Français</div>
+            <div class="language-option">🇩🇪 Deutsch</div>
+            <div class="language-option">🇨🇳 中文</div>
+            <div class="language-option">🇯🇵 日本語</div>
+            <div class="language-option">🇰🇷 한국어</div>
+            <div class="language-option">🇮🇳 हिंदी</div>
+            <div class="language-option">🇸🇦 العربية</div>
         </div>
+
+        <!-- AI Suggestion -->
         <div class="ai-suggestion">
-            <div class="ai-suggestion-header"><span>🤖</span><span>AI Insight</span></div>
-            <div class="ai-suggestion-text">Based on your productivity patterns, I suggest tackling "Project Proposal" first while your energy is high. You typically perform best on creative tasks before 2 PM.</div>
+            <div class="ai-suggestion-header">
+                <span>🤖</span>
+                <span>AI Insight</span>
+            </div>
+            <div class="ai-suggestion-text">
+                Based on your productivity patterns, I suggest tackling "Project Proposal" first while your energy is high. You typically perform best on creative tasks before 2 PM.
+            </div>
         </div>
+
+        <!-- Quick Actions -->
         <div class="quick-actions">
-            <div class="quick-action" onclick="activateFocusMode()"><div class="quick-action-icon">🎯</div><div class="quick-action-label">Focus Mode</div></div>
-            <div class="quick-action" onclick="showAnalytics()"><div class="quick-action-icon">📊</div><div class="quick-action-label">Analytics</div></div>
-            <div class="quick-action" onclick="manageTags()"><div class="quick-action-icon">🏷️</div><div class="quick-action-label">Tags</div></div>
-            <div class="quick-action" onclick="openCalendar()"><div class="quick-action-icon">📅</div><div class="quick-action-label">Calendar</div></div>
+            <div class="quick-action">
+                <div class="quick-action-icon">🎯</div>
+                <div class="quick-action-label">Focus Mode</div>
+            </div>
+            <div class="quick-action">
+                <div class="quick-action-icon">📊</div>
+                <div class="quick-action-label">Analytics</div>
+            </div>
+            <div class="quick-action">
+                <div class="quick-action-icon">🏷️</div>
+                <div class="quick-action-label">Tags</div>
+            </div>
+            <div class="quick-action">
+                <div class="quick-action-icon">📅</div>
+                <div class="quick-action-label">Calendar</div>
+            </div>
+            <div class="quick-action">
+                <div class="quick-action-icon">👥</div>
+                <div class="quick-action-label">Teams</div>
+            </div>
         </div>
+
+        <!-- Task Input -->
         <div class="task-input-container">
             <div class="task-input-wrapper">
-                <input type="text" class="task-input" placeholder="What needs to be done?" id="taskInput" onkeypress="handleKeyPress(event)">
+                <input type="text" class="task-input" placeholder="What needs to be done?" id="taskInput">
                 <button class="add-btn" onclick="addTask()">Add</button>
             </div>
             <div class="input-options">
-                <div class="option-chip" onclick="toggleChip(this)" data-value="today">📅 Today</div>
-                <div class="option-chip" onclick="toggleChip(this)" data-value="high">⚡ High Priority</div>
-                <div class="option-chip" onclick="toggleChip(this)" data-value="ai">🤖 AI Suggest</div>
+                <div class="option-chip">📅 Today</div>
+                <div class="option-chip">⚡ High Priority</div>
+                <div class="option-chip">🤖 AI Suggest</div>
+                <div class="option-chip">⏰ Set Reminder</div>
+                <div class="option-chip">🏷️ Add Tags</div>
             </div>
         </div>
-        <div class="tasks-container" id="tasksContainer">
-            <div class="section-header"><span class="section-title">Today's Focus</span><span class="section-count" id="todayCount">0 tasks</span></div>
+
+        <!-- Tasks Container -->
+        <div class="tasks-container">
+            <!-- Today's Tasks -->
+            <div class="section-header">
+                <span class="section-title">Today's Focus</span>
+                <span class="section-count">5 tasks</span>
             </div>
+            
+            <div class="task-card">
+                <div class="task-priority high"></div>
+                <div class="task-content">
+                    <div class="task-checkbox" onclick="toggleTask(this)"></div>
+                    <div class="task-details">
+                        <div class="task-title">Complete project proposal</div>
+                        <div class="task-meta">
+                            <span class="task-tag">📅 Due in 2 hours</span>
+                            <span class="task-tag">🏢 Work</span>
+                            <span class="task-tag ai-generated">🤖 AI Priority</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="task-card">
+                <div class="task-priority medium"></div>
+                <div class="task-content">
+                    <div class="task-checkbox" onclick="toggleTask(this)"></div>
+                    <div class="task-details">
+                        <div class="task-title">Team meeting preparation</div>
+                        <div class="task-meta">
+                            <span class="task-tag">⏰ 3:00 PM</span>
+                            <span class="task-tag">👥 Team</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="task-card completed">
+                <div class="task-priority low"></div>
+                <div class="task-content">
+                    <div class="task-checkbox" onclick="toggleTask(this)"></div>
+                    <div class="task-details">
+                        <div class="task-title">Review morning emails</div>
+                        <div class="task-meta">
+                            <span class="task-tag">✅ Completed</span>
+                            <span class="task-tag">📧 Communication</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Smart Suggestions -->
+            <div class="section-header">
+                <span class="section-title">🤖 AI Recommendations</span>
+                <span class="section-count">3 suggestions</span>
+            </div>
+
+            <div class="task-card">
+                <div class="task-priority low"></div>
+                <div class="task-content">
+                    <div class="task-checkbox" onclick="toggleTask(this)"></div>
+                    <div class="task-details">
+                        <div class="task-title">Take a 15-minute break</div>
+                        <div class="task-meta">
+                            <span class="task-tag ai-generated">🤖 Wellness</span>
+                            <span class="task-tag">💆 Self-care</span>
+                            <span class="task-tag">⏰ Now</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="task-card">
+                <div class="task-priority medium"></div>
+                <div class="task-content">
+                    <div class="task-checkbox" onclick="toggleTask(this)"></div>
+                    <div class="task-details">
+                        <div class="task-title">Prepare for tomorrow's presentation</div>
+                        <div class="task-meta">
+                            <span class="task-tag ai-generated">🤖 Predicted</span>
+                            <span class="task-tag">📊 Important</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Bottom Navigation -->
         <div class="bottom-nav">
-            <div class="nav-item active" onclick="switchTab('home', this)">
-                <div class="nav-icon">🏠</div><div class="nav-label">Home</div>
+            <div class="nav-item active">
+                <div class="nav-icon">🏠</div>
+                <div class="nav-label">Home</div>
             </div>
-            <div class="nav-item" onclick="switchTab('lists', this)">
-                <div class="nav-icon">📋</div><div class="nav-label">Lists</div>
+            <div class="nav-item">
+                <div class="nav-icon">📋</div>
+                <div class="nav-label">Lists</div>
             </div>
-            <div class="nav-item" onclick="switchTab('insights', this)">
-                <div class="nav-icon">📈</div><div class="nav-label">Insights</div>
+            <div class="nav-item">
+                <div class="nav-icon">📈</div>
+                <div class="nav-label">Insights</div>
+            </div>
+            <div class="nav-item">
+                <div class="nav-icon">🎯</div>
+                <div class="nav-label">Goals</div>
+            </div>
+            <div class="nav-item">
+                <div class="nav-icon">⚙️</div>
+                <div class="nav-label">Settings</div>
             </div>
         </div>
-        <div class="floating-ai-btn" onclick="showAIAssistant()"><span>✨</span></div>
-        <div class="modal" id="featuresModal" onclick="closeModal(event)">
+
+        <!-- Floating AI Button -->
+        <div class="floating-ai-btn" onclick="showAIAssistant()">
+            <span>✨</span>
+        </div>
+
+        <!-- Features Modal -->
+        <div class="modal" id="featuresModal">
             <div class="modal-content">
                 <div class="modal-header">🚀 Revolutionary Features</div>
                 <ul class="feature-list">
-                    <li class="feature-item"><span class="feature-icon">🤖</span><div class="feature-text"><div class="feature-title">AI Task Prediction</div><div class="feature-desc">Learns your patterns and suggests tasks</div></div></li>
-                    <li class="feature-item"><span class="feature-icon">🌐</span><div class="feature-text"><div class="feature-title">Universal Language Support</div><div class="feature-desc">Real-time translation</div></div></li>
-                    <li class="feature-item"><span class="feature-icon">🧠</span><div class="feature-text"><div class="feature-title">Smart Scheduling</div><div class="feature-desc">Arranges tasks based on energy levels</div></div></li>
+                    <li class="feature-item">
+                        <span class="feature-icon">🤖</span>
+                        <div class="feature-text">
+                            <div class="feature-title">AI Task Prediction</div>
+                            <div class="feature-desc">Learns your patterns and suggests tasks before you think of them</div>
+                        </div>
+                    </li>
+                    <li class="feature-item">
+                        <span class="feature-icon">🌐</span>
+                        <div class="feature-text">
+                            <div class="feature-title">Universal Language Support</div>
+                            <div class="feature-desc">Works seamlessly in 100+ languages with real-time translation</div>
+                        </div>
+                    </li>
+                    <li class="feature-item">
+                        <span class="feature-icon">🧠</span>
+                        <div class="feature-text">
+                            <div class="feature-title">Smart Scheduling</div>
+                            <div class="feature-desc">Automatically arranges tasks based on your energy levels</div>
+                        </div>
+                    </li>
+                    <li class="feature-item">
+                        <span class="feature-icon">🎯</span>
+                        <div class="feature-text">
+                            <div class="feature-title">Focus Mode</div>
+                            <div class="feature-desc">Blocks distractions and optimizes your productivity</div>
+                        </div>
+                    </li>
+                    <li class="feature-item">
+                        <span class="feature-icon">📊</span>
+                        <div class="feature-text">
+                            <div class="feature-title">Advanced Analytics</div>
+                            <div class="feature-desc">Deep insights into your productivity patterns</div>
+                        </div>
+                    </li>
+                    <li class="feature-item">
+                        <span class="feature-icon">🏆</span>
+                        <div class="feature-text">
+                            <div class="feature-title">Gamification</div>
+                            <div class="feature-desc">Earn rewards and compete with friends</div>
+                        </div>
+                    </li>
+                    <li class="feature-item">
+                        <span class="feature-icon">🔄</span>
+                        <div class="feature-text">
+                            <div class="feature-title">Smart Sync</div>
+                            <div class="feature-desc">Seamless sync across all devices with offline support</div>
+                        </div>
+                    </li>
                 </ul>
+                <button class="add-btn" style="width: 100%;" onclick="closeModal()">Amazing! Let's Start</button>
             </div>
         </div>
     </div>
 
     <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            // Initial state setup
-            updateAllCounts();
-
-            // Pre-populate with a few example tasks
-            createTask('Complete project proposal', 'high', false, ['📅 Due in 2 hours', '🏢 Work', '🤖 AI Priority']);
-            createTask('Team meeting preparation', 'medium', false, ['⏰ 3:00 PM', '👥 Team']);
-            createTask('Review morning emails', 'low', true, ['✅ Completed', '📧 Communication']);
-        });
-
-        const taskInput = document.getElementById('taskInput');
-        const tasksContainer = document.getElementById('tasksContainer');
-        const highPriorityChip = document.querySelector('.option-chip[data-value="high"]');
-        const featuresModal = document.getElementById('featuresModal');
-        const languageSelector = document.getElementById('languageSelector');
-
-        // --- Core Task Functions ---
-
-        function handleKeyPress(event) {
-            if (event.key === 'Enter') {
-                addTask();
-            }
-        }
-
-        function addTask() {
-            const taskText = taskInput.value.trim();
-            if (taskText === '') {
-                alert("Please enter a task!");
-                return;
-            }
-
-            const priority = highPriorityChip.classList.contains('active') ? 'high' : 'low';
-            const tags = highPriorityChip.classList.contains('active') ? ['⚡ Urgent'] : ['😊 General'];
+        // App state
+        let tasks = [];
+        let currentLanguage = 'en';
+        
+        // Toggle task completion
+        function toggleTask(checkbox) {
+            const taskCard = checkbox.closest('.task-card');
+            taskCard.classList.toggle('completed');
             
-            createTask(taskText, priority, false, tags);
+            // Haptic feedback simulation
+            if (navigator.vibrate) {
+                navigator.vibrate(50);
+            }
             
-            taskInput.value = '';
-            highPriorityChip.classList.remove('active');
-            taskInput.focus();
+            // Update stats
+            updateStats();
         }
         
-        function createTask(title, priority, isCompleted, tags = []) {
-            const card = document.createElement('div');
-            card.className = `task-card ${isCompleted ? 'completed' : ''}`;
+        // Add new task
+        function addTask() {
+            const input = document.getElementById('taskInput');
+            const taskText = input.value.trim();
             
-            let tagsHTML = tags.map(tag => `<span class="task-tag">${tag}</span>`).join('');
-
-            card.innerHTML = `
-                <div class="task-priority ${priority}"></div>
-                <div class="task-content">
-                    <div class="task-checkbox" onclick="toggleTask(this)"></div>
-                    <div class="task-details">
-                        <div class="task-title">${title}</div>
-                        <div class="task-meta">${tagsHTML}</div>
-                    </div>
-                </div>
-                <div class="delete-btn" onclick="deleteTask(this)">✖</div>
-            `;
-
-            tasksContainer.appendChild(card);
-            updateAllCounts();
-        }
-
-        function toggleTask(element) {
-            const taskCard = element.closest('.task-card');
-            taskCard.classList.toggle('completed');
-            updateAllCounts();
-        }
-
-        function deleteTask(element) {
-            const taskCard = element.closest('.task-card');
-            taskCard.style.animation = 'fadeOut 0.3s ease';
-            setTimeout(() => {
-                taskCard.remove();
-                updateAllCounts();
-            }, 300);
-        }
-
-        // --- UI and State Management ---
-
-        function updateAllCounts() {
-            const allTasks = document.querySelectorAll('.task-card');
-            const completedTasks = document.querySelectorAll('.task-card.completed');
-            const urgentTasks = document.querySelectorAll('.task-priority.high:not(.completed)');
-
-            const total = allTasks.length;
-            const completed = completedTasks.length;
-
-            // Header stats
-            document.getElementById('todayTasks').textContent = total - completed;
-            document.getElementById('urgentTasks').textContent = urgentTasks.length;
-            const completionRate = total > 0 ? Math.round((completed / total) * 100) : 0;
-            document.getElementById('completionRate').textContent = `${completionRate}%`;
-
-            // Section count
-            document.getElementById('todayCount').textContent = `${total} tasks`;
-        }
-
-        function toggleChip(element) {
-            element.classList.toggle('active');
-        }
-
-        function switchTab(tabName, element) {
-            document.querySelectorAll('.nav-item').forEach(item => item.classList.remove('active'));
-            element.classList.add('active');
-            alert(`Switched to ${tabName} tab!`);
-        }
-
-        // --- Modals and Popups ---
-
-        function showFeatures() {
-            featuresModal.classList.add('active');
-        }
-
-        function closeModal(event) {
-            // Close if clicking on the modal background itself
-            if (event.target.id === 'featuresModal') {
-                featuresModal.classList.remove('active');
-            }
-        }
-
-        function toggleLanguage() {
-            languageSelector.classList.toggle('active');
-        }
-
-        function selectLanguage(langCode) {
-            alert(`Language set to ${langCode.toUpperCase()}`);
-            languageSelector.classList.remove('active');
-        }
-
-        // --- Placeholder Functions for Quick Actions ---
-        function activateFocusMode() { alert('Focus Mode activated!'); }
-        function showAnalytics() { alert('Showing productivity analytics!'); }
-        function manageTags() { alert('Opening tag manager!'); }
-        function openCalendar() { alert('Displaying calendar view!'); }
-        function showUserProfile() { alert('User profile coming soon!'); }
-        function showAIAssistant() { alert('AI Assistant at your service!'); }
-    </script>
-</body>
-</html>
+            if (taskText) {
+                // AI-powered task analysis would happen here
+                const newTask = {
+                    id: Date.now(),
+                    title: taskText,
+                    priority: analyzePriority(taskText),
+                    tags: extractTags(taskText),
