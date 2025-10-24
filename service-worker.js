@@ -1,5 +1,5 @@
 // Minimal offline cache
-const CACHE = "qingdan-plus-v1";
+const CACHE = "qingdan-plus-v2";
 const ASSETS = [
   "/qingdan-plus/",
   "/qingdan-plus/index.html",
